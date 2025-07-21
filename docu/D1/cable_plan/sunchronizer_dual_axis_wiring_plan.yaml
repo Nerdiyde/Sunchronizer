@@ -1,0 +1,170 @@
+metadata:
+
+  title: Sunchronizer Dual Axis V1.3
+  pn: SCZ-DUAL-1.3
+
+  authors:
+    Created:
+      name: F. Steppat
+      date: 2020-05-20
+    Approved:
+      name: F. Steppat
+      date: 2020-05-20
+
+  template:
+    name: din-6771
+    sheetsize: A3
+        
+connectors:
+  X1_M:
+    notes: Connector for elevation axis motor control on the electronics housing.
+    type: SP13 2-Pin
+    subtype: male
+    pinlabels: [+12V, GND]
+  X2_M:
+    notes: Connector for azimuth axis motor control on the electronics housing.
+    type: SP13 2-Pin
+    subtype: male
+    pinlabels: [+12V, GND]
+  X3_M:
+    notes: Connector for Sensornest on the electronics housing.
+    type: SP13 6-Pin
+    subtype: male
+    pinlabels: [+5V, GND, SCL, SDA, UART_RX, UART_TX]
+  X4_M:
+    notes: Connector for azimuth axis endstops on the electronics housing.
+    type: SP13 4-Pin
+    subtype: male
+    pinlabels: [GND, SIG_MAX_CCW, GND, SIG_MIN_CCW]
+
+  X1_F:
+    notes: Connector for elevation axis motor control on the motor cable.
+    type: SP13 2-Pin
+    subtype: female
+    pinlabels: [+12V, GND]
+  X2_F:
+    notes: Connector for azimuth axis motor control on the motor cable.
+    type: SP13 2-Pin
+    subtype: female
+    pinlabels: [+12V, GND]
+  X3_F:
+    notes: Connector for Sensornest on the sensornest cable.
+    type: SP13 6-Pin
+    subtype: female
+    pinlabels: [+12V, GND, SCL, SDA, UART_RX, UART_TX]
+  X4_F:
+    notes: Connector for Sensornest on the endstop cable.
+    type: SP13 4-Pin
+    subtype: female
+    pinlabels: [GND, SIG_MAX_CCW, GND, SIG_MIN_CCW]
+
+
+  X1_I:
+    notes: Internal connector for elevation axis motor control.
+    type: JST-XH-02
+    subtype: male
+    pinlabels: [+12V, GND]
+  X2_I:
+    notes: Internal connector for azimuth axis motor control.
+    type: JST-XH-02
+    subtype: male
+    pinlabels: [+12V, GND]
+  X3_I:
+    notes: Internal connector for Sensornest.
+    type: JST-XH-06
+    subtype: male
+    pinlabels: [+5V, GND, SCL, SDA, UART_RX, UART_TX]
+  X4_I:
+    notes: Internal connector for azimuth axis endstop cable.
+    type: JST-XH-04
+    subtype: male
+    pinlabels: [GND, SIG_MAX_CCW, GND, SIG_MIN_CCW]
+
+cables:
+  W1:
+    notes: Cable to connect elevation axis motor to the electronics housing.
+    length: 0.8
+    gauge: 0.25 mm2
+    colors: [BK, RD]
+    color: BK
+    show_equiv: true
+  W2:
+    notes: Cable to connect azimuth axis motor to the electronics housing.
+    length: 1.5
+    gauge: 0.25 mm2
+    colors: [BK, RD]
+    color: BK
+    show_equiv: true
+  W3:
+    notes: Cable to connect the Sensornest to the electronics housing.
+    length: 2.3
+    gauge: 0.25 mm2
+    colors: [BK, RD, YE, GN, BU, WH]
+    color: BK
+    show_equiv: true
+  W4:
+    notes: Cable to connect the azimuth axis endstops to the electronics housing.
+    gauge: 0.25 mm2
+    length: 0.75
+    colors: [BK, RD, YE, GN]
+    color: BK
+    show_equiv: true
+
+  W1_I:
+    notes: Cable to connect elevation axis motor to the electronics housing.
+    length: 0.15
+    gauge: 0.25 mm2
+    colors: [BK, RD]
+    show_equiv: true
+    category: bundle
+  W2_I:
+    notes: Cable to connect azimuth axis motor to the electronics housing.
+    length: 0.15
+    gauge: 0.25 mm2
+    colors: [BK, RD]
+    show_equiv: true 
+    category: bundle
+  W3_I:
+    notes: Cable to connect the Sensornest to the electronics housing.
+    length: 0.15
+    gauge: 0.25 mm2
+    colors: [BK, RD, YE, GN, BU, WH]
+    show_equiv: true
+    category: bundle
+  W4_I:
+    notes: Cable to connect the azimuth axis endstops to the electronics housing.
+    length: 0.15
+    gauge: 0.25 mm2
+    colors: [BK, RD, YE, GN]
+    show_equiv: true
+    category: bundle
+
+connections:
+  -
+    - X1_I: [1-2]
+    - W1_I: [1-2]
+    - X1_M: [1-2]
+    - ==
+    - X1_F: [1-2]
+    - W1: [1-2]
+  -
+    - X2_I: [1-2]
+    - W2_I: [1-2]
+    - X2_M: [1-2]
+    - ==
+    - X2_F: [1-2]
+    - W2: [1-2]
+  -
+    - X3_I: [1-6]
+    - W3_I: [1-6]
+    - X3_M: [1-6]
+    - ==
+    - X3_F: [1-6]
+    - W3: [1-6]
+  -
+    - X4_I: [1-4]
+    - W4_I: [1-4]
+    - X4_M: [1-4]
+    - ==
+    - X4_F: [1-4]
+    - W4: [1-4]
