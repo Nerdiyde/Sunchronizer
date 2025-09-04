@@ -27,6 +27,9 @@ The Sunchronizer is designed to be used in combination with a HomeAssistant inst
 - The STLs for the build are available for sale on my blog.
     - Sunchronizer S1 (Single Axis version): https://nerdiy.de/en/product-2/sunchronizer-s1-400w-solartracker-fuer-elevation-achse-3d-druckbar-stl-dateien/
     - Sunchronizer D1 (Dual Axis version): https://nerdiy.de/en/product-2/sunchronizer-d1-dual-axis-solartracker-fuer-azimut-und-elevation-achse-3d-druckbar-stl-dateien/
+- The Fimrware needs to external components that need to be added before firmware compilation
+    - DS3231 Real Time Clock (RTC) Component for ESPHome: https://github.com/Nerdiyde/DS3231-RTC-component-for-ESPHome/
+    - BNO085 RVC component for ESPHome: https://github.com/Nerdiyde/BNO085-RVC-component-for-ESPHome/
 
 
 ### Electronics
