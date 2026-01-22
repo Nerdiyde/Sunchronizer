@@ -1,0 +1,89 @@
+name: Build ESPHome Firmware
+
+on:
+  push:
+    branches:
+      - master
+      - main
+    paths:
+      - 'firmware/config/**/*.yaml'
+      - '.github/workflows/build-firmware.yml'
+  pull_request:
+    branches:
+      - master
+      - main
+    paths:
+      - 'firmware/config/**/*.yaml'
+  workflow_dispatch:  # Allows manual trigger from GitHub UI
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        include:
+          - config_file: firmware/config/pcb_v1.3/sunchronizer_firmware_pcb_v1.3.yaml
+            binary_name: sunchronizer_firmware_pcb_v1.3
+            version: v1.3
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install ESPHome
+        run: |
+          pip install --upgrade pip
+          pip install esphome
+
+      - name: Compile firmware
+        run: |
+          esphome compile ${{ matrix.config_file }}
+
+      - name: Move compiled binary
+        run: |
+          mkdir -p build-output
+          cp firmware/config/pcb_v1.3/.esphome/build/sunchronizer-firmware-*/firmware.bin build-output/${{ matrix.binary_name }}.bin 2>/dev/null || true
+          # Alternative: find the binary in build directory
+          find . -name "firmware.bin" -path "*${{ matrix.version }}*" -exec cp {} build-output/${{ matrix.binary_name }}.bin \;
+
+      - name: Upload firmware artifact
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: firmware-${{ matrix.version }}
+          path: build-output/
+          retention-days: 30
+
+      - name: Create Release (on master push)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master' && success()
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: firmware-${{ github.run_number }}
+          release_name: Firmware Build #${{ github.run_number }}
+          body: |
+            Automatically compiled firmware from commit ${{ github.sha }}
+            
+            **Configuration**: ${{ matrix.config_file }}
+            **PCB Version**: ${{ matrix.version }}
+            
+            Download the binary from Artifacts or attach it to this release.
+          draft: false
+          prerelease: false
+
+      - name: Upload binary to Release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master' && success()
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: build-output/${{ matrix.binary_name }}.bin
+          asset_name: ${{ matrix.binary_name }}.bin
+          tag: firmware-${{ github.run_number }}
+          overwrite: true

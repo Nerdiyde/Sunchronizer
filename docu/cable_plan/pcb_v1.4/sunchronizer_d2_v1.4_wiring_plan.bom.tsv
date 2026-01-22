@@ -1,0 +1,22 @@
+Id	Description	Qty	Unit	Designators
+1	Cable, 2 x 0.25 mm², BK	3.8	m	W1, W2, W5
+2	Cable, 3 x 0.25 mm², BK	0.75	m	W4
+3	Cable, 6 x 0.25 mm², BK	2.3	m	W3
+4	Connector, JST-XH-02, male, 2 pins	3		X1_Intern, X2_Intern, X5_Intern
+5	Connector, JST-XH-03, male, 3 pins	1		X4_Intern
+6	Connector, JST-XH-06, male, 6 pins	1		X3_Intern
+7	Connector, SP13 2-Pin, female, 2 pins	3		X1_Female, X2_Female, X5_Female
+8	Connector, SP13 2-Pin, male, 2 pins	3		X1_Male, X2_Male, X5_Male
+9	Connector, SP13 3-Pin, female, 3 pins	1		X4_Female
+10	Connector, SP13 3-Pin, male, 3 pins	1		X4_Male
+11	Connector, SP13 6-Pin, female, 6 pins	1		X3_Female
+12	Connector, SP13 6-Pin, male, 6 pins	1		X3_Male
+13	Connector, direct solder, 2 pins	2		X1_Motor, X2_Motor
+14	Connector, direct solder, 3 pins	2		X4_1_CCW_Endstop, X4_2_CW_Endstop
+15	Connector, direct solder, 6 pins	2		X3_1_GNSS_Sensor, X3_2_BNO085_Sensor
+16	Wire, 0.25 mm², BK	0.5	m	W1_Intern, W2_Intern, W3_Intern, W4_Intern, W5_Intern
+17	Wire, 0.25 mm², BU	0.1	m	W3_Intern
+18	Wire, 0.25 mm², GN	0.1	m	W3_Intern
+19	Wire, 0.25 mm², RD	0.5	m	W1_Intern, W2_Intern, W3_Intern, W4_Intern, W5_Intern
+20	Wire, 0.25 mm², WH	0.2	m	W3_Intern, W4_Intern
+21	Wire, 0.25 mm², YE	0.1	m	W3_Intern

@@ -1,0 +1,230 @@
+metadata:
+
+  title: Sunchronizer D2 Wiring Plan 
+  description: Wiring plan for the Sunchronizer D2 electronics housing and its peripherals. This plan is for PCB Version 1.3.
+  version: 1.0
+  pn: SCZ-DUAL-1.3
+
+  authors:
+    Created:
+      name: F. Steppat
+      date: 2025-10-01
+    Approved:
+      name: F. Steppat
+      date: 2025-10-01
+
+  template:
+    name: din-6771
+    sheetsize: A3
+        
+connectors:
+  X1_Male:
+    notes: Connector for elevation axis motor control on the electronics housing.
+    type: SP13 2-Pin
+    subtype: male
+    pinlabels: [+12V, GND]
+  X2_Male:
+    notes: Connector for azimuth axis motor control on the electronics housing.
+    type: SP13 2-Pin
+    subtype: male
+    pinlabels: [+12V, GND]
+  X3_Male:
+    notes: Connector for Sensornest on the electronics housing.
+    type: SP13 6-Pin
+    subtype: male
+    pinlabels: [+5V, BNO085_UART_RX, BNO085_UART_TX, GNSS_UART_RX, GNSS_UART_TX, GND]
+  X4_Male:
+    notes: Connector for azimuth axis endstops on the electronics housing.
+    type: SP13 3-Pin
+    subtype: male
+    pinlabels: [GND, SIG_MAX_CCW, GND, SIG_MAX_CW]
+
+  X1_Female:
+    notes: Connector for elevation axis motor control on the motor cable.
+    type: SP13 2-Pin
+    subtype: female
+    pinlabels: [+12V, GND]
+  X2_Female:
+    notes: Connector for azimuth axis motor control on the motor cable.
+    type: SP13 2-Pin
+    subtype: female
+    pinlabels: [+12V, GND]
+  X3_Female:
+    notes: Connector for Sensornest on the sensornest cable.
+    type: SP13 6-Pin
+    subtype: female
+    pinlabels: [+5V, BNO085_UART_RX, BNO085_UART_TX, GNSS_UART_RX, GNSS_UART_TX, GND]
+  X4_Female:
+    notes: Connector for endstop housing on the endstop cable.
+    type: SP13 3-Pin
+    subtype: female
+    pinlabels: [GND, SIG_MAX_CCW, GND, SIG_MAX_CW]
+
+  X1_Intern:
+    notes: PCB connector for elevation axis motor control.
+    type: JST-XH-02
+    subtype: male
+    pinlabels: [+12V, GND]
+  X2_Intern:
+    notes: PCB connector for azimuth axis motor control.
+    type: JST-XH-02
+    subtype: male
+    pinlabels: [+12V, GND]
+  X3_Intern:
+    notes: PCB connector for Sensornest.
+    type: JST-XH-06
+    subtype: male
+    pinlabels: [+5V, BNO085_UART_RX, BNO085_UART_TX, GNSS_UART_RX, GNSS_UART_TX, GND]
+  X4_Intern:
+    notes: PCB connector for azimuth axis endstop cable.
+    type: JST-XH-04
+    subtype: male
+    pinlabels: [GND, SIG_MAX_CCW, GND, SIG_MAX_CW]
+
+  M1_Elevation_motor:
+    notes: Motor connector for elevation axis motor control.
+    type: direct solder
+    pinlabels: [+12V, GND]
+
+  M2_Azimuth_motor:
+    notes: Motor connector for azimuth axis motor control.
+    type: direct solder
+    pinlabels: [+12V, GND]
+
+  X3_1_0_GNSS_Sensor:
+    notes: Solder connection to JST-SH-04 connector.
+    type: direct solder
+    pinlabels: [+5V, GND, GNSS_UART_RX, GNSS_UART_TX]
+
+  X3_1_1_GNSS_Sensor:
+    notes: Connector for BN-220 GPS.
+    type: JST-SH-04
+    pinlabels: [+5V, GNSS_UART_RX, GNSS_UART_TX, GND]
+
+  X3_2_BNO085_Sensor:
+    notes: Sensor connector for BNO085.
+    type: direct solder
+    pinlabels: [+5V, GND, BNO085_UART_RX, BNO085_UART_TX]
+
+  X4_1_CCW_Endstop_Switch:
+    notes: Azimuth axis CCW endstop switch.
+    type: direct solder
+    hide_disconnected_pins: True
+    pinlabels: [NC, COM]
+
+  X4_2_CW_Endstop_Switch:
+    notes: Azimuth axis CW endstop switch.
+    type: direct solder
+    hide_disconnected_pins: True
+    pinlabels: [COM, NC]
+
+cables:
+  W1_Extern:
+    notes: Cable to connect the electronics housing to the elevation axis motor.
+    length: 1.5
+    gauge: 0.25 mm2
+    colors: [RD, BK]
+    color: BK
+    show_equiv: true
+  W2_Extern:
+    notes: Cable to connect the electronics housing to the azimuth axis motor.
+    length: 1.7
+    gauge: 0.25 mm2
+    colors: [RD, BK]
+    color: BK
+    show_equiv: true
+  W3_Extern:
+    notes: Cable to connect the electronics housing to the Sensornest.
+    length: 0.7
+    gauge: 0.25 mm2
+    colors: [WH, BN, YE, GN, PK, GY]
+    color: BK
+    show_equiv: true
+  W3_GNSS:
+    notes: Cable to connect the external cable to the GNSS sensor.
+    length: 0.1
+    gauge: 0.25 mm2
+    colors: [RD, GN, WH, BN]
+    show_equiv: true
+  W4_Extern:
+    notes: Cable to connect the electronics housing to the azimuth axis endstops.
+    gauge: 0.25 mm2
+    length: 1.85
+    colors: [WH, BN, YE, GN]
+    color: BK
+    show_equiv: true
+
+  W1_Intern:
+    notes: Cable to connect the PCB connector to the external connector of the elevation axis motor.
+    length: 0.15
+    gauge: 0.25 mm2
+    colors: [RD, BK]
+    show_equiv: true
+    category: bundle
+  W2_Intern:
+    notes: Cable to connect the PCB connector to the external connector of the azimuth axis motor.
+    length: 0.15
+    gauge: 0.25 mm2
+    colors: [RD, BK]
+    show_equiv: true 
+    category: bundle
+  W3_Intern:
+    notes: Cable to connect the PCB connector to the external connector of the Sensornest.
+    length: 0.15
+    gauge: 0.25 mm2
+    colors: [RD, BK, YE, GN, BU, WH]
+    show_equiv: true
+    category: bundle
+  W4_Intern:
+    notes: Cable to connect the PCB connector to the external connector of the azimuth axis endstops.
+    length: 0.15
+    gauge: 0.25 mm2
+    colors: [BK, RD, YE, GN]
+    show_equiv: true
+    category: bundle
+
+connections:
+  -
+    - X1_Intern: [1-2]
+    - W1_Intern: [1-2]
+    - X1_Male: [1-2]
+    - ==
+    - X1_Female: [1-2]
+    - W1_Extern: [1-2]
+    - M1_Elevation_motor: [1-2]
+  -
+    - X2_Intern: [1-2]
+    - W2_Intern: [1-2]
+    - X2_Male: [1-2]
+    - ==
+    - X2_Female: [1-2]
+    - W2_Extern: [1-2]
+    - M2_Azimuth_motor: [1-2]
+  -
+    - X3_Intern: [1-6]
+    - W3_Intern: [1-6]
+    - X3_Male: [1-6]
+    - ==
+    - X3_Female: [1-6]
+    - W3_Extern: [1-6]
+  -
+    - W3_Extern: [1,2,5,6]
+    - X3_1_0_GNSS_Sensor: [1,2,3,4]
+    - W3_GNSS: [1,4,2,3]
+    - X3_1_1_GNSS_Sensor: [1,4,2,3]
+  -
+    - W3_Extern: [1,2,3,4]
+    - X3_2_BNO085_Sensor: [1,2,3,4]
+  -
+    - X4_Intern: [1-4]
+    - W4_Intern: [1-4]
+    - X4_Male: [1-4]
+    - ==
+    - X4_Female: [1-4]
+    - W4_Extern: [1-4]
+  -
+    - W4_Extern: [1,2]
+    - X4_1_CCW_Endstop_Switch: [1,2]
+  -
+    - W4_Extern: [3,4]
+    - X4_2_CW_Endstop_Switch: [1,2]
