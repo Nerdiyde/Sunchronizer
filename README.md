@@ -27,7 +27,11 @@ The system uses a **linear actuator** and **geared motor** to continuously orien
 | Model | Capability | Best For |
 |-------|-----------|----------|
 | **S1** | Elevation angle tracking (single-axis) | Simpler installations, fixed azimuth |
+| **S2** | Elevation angle tracking (single-axis) | Compact 400W setups with fixed azimuth |
 | **D1** | Elevation + azimuth tracking (dual-axis) | Maximum efficiency, any orientation |
+| **D2** | Elevation + azimuth tracking (dual-axis) | Compact 400W setups with full tracking |
+
+I recommend using the newer S2 and D2 versions instead of S1 and D1.
 
 ---
 
@@ -77,7 +81,9 @@ The system uses a **linear actuator** and **geared motor** to continuously orien
 
 STL files and detailed build information available at:
 - **Sunchronizer S1** (single-axis): https://nerdiy.de/en/product-2/sunchronizer-s1-400w-solartracker-fuer-elevation-achse-3d-druckbar-stl-dateien/
+- **Sunchronizer S2** (single-axis, 400W module): https://www.printables.com/model/1574048-sunchronizer-s2-400w-module-solartracker-for-eleva
 - **Sunchronizer D1** (dual-axis): https://nerdiy.de/en/product-2/sunchronizer-d1-dual-axis-solartracker-fuer-azimut-und-elevation-achse-3d-druckbar-stl-dateien/
+- **Sunchronizer D2** (dual-axis, 400W module): https://www.printables.com/model/1574049-sunchronizer-d2-400w-module-solartracker-for-eleva
 
 ---
 
