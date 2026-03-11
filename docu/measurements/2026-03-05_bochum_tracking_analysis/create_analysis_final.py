@@ -336,6 +336,36 @@ plt.savefig(measurement_dir / 'graph_5_performance_area.png',
            dpi=150, bbox_inches='tight')
 plt.close()
 
+# ============ GRAPH 6: Outside temperature progression ============
+print("  - Graph 6: Outside temperature progression...")
+if 'temperature' in channels:
+    temp_sensor = channels['temperature']
+    graph_temp_data = df[df['entity_id'] == temp_sensor].copy().sort_values('last_changed')
+    graph_temp_data['state_numeric'] = pd.to_numeric(graph_temp_data['state'], errors='coerce')
+    graph_temp_data = graph_temp_data[graph_temp_data['state_numeric'].notna()].copy()
+
+    if len(graph_temp_data) > 0:
+        fig, ax = plt.subplots(figsize=(15, 5))
+        ax.plot(graph_temp_data['last_changed'], graph_temp_data['state_numeric'],
+                color='#FF8C42', linewidth=2.2, label='Outside Temperature')
+        ax.fill_between(graph_temp_data['last_changed'], graph_temp_data['state_numeric'],
+                        alpha=0.2, color='#FF8C42')
+
+        ax.set_xlabel('Time of Day (UTC)', fontsize=12)
+        ax.set_ylabel('Temperature (°C)', fontsize=12)
+        ax.set_title('Outside Temperature Progression\nBochum, Germany', fontsize=14, fontweight='bold')
+        ax.grid(True, alpha=0.3)
+        ax.legend(loc='upper left', fontsize=10, framealpha=0.95)
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+        ax.xaxis.set_major_locator(mdates.HourLocator(interval=1))
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.savefig(measurement_dir / 'graph_6_temperature_progression.png',
+                   dpi=150, bbox_inches='tight')
+        plt.close()
+else:
+    print("  - Graph 6 skipped: No temperature channel found")
+
 print("  ✓ All graphs created!")
 
 # ============================================================================
@@ -473,6 +503,9 @@ The moderate temperature (~15°C) during this early spring day provided ideal co
 
 ### Graph 5: Power Profile (Smoothed)
 ![Performance Area](graph_5_performance_area.png)
+
+### Graph 6: Outside Temperature Progression
+![Outside Temperature](graph_6_temperature_progression.png)
 
 ---
 
@@ -638,7 +671,7 @@ Based on this measurement:
 
 ---
 
-*Report generated: {datetime.now().strftime('%B %d, %Y at %H:%M:%S')}*  
+*Report generated: {datetime.now().strftime('%B %d, %Y')}*  
 *Location: Bochum, North Rhine-Westphalia, Germany*  
 *System: Sunchronizer Test Setup with HMS 1600-4T Monitoring*  
 *Temperature during test: {temp_stats['mean']:.1f}°C average*
@@ -658,5 +691,6 @@ print(f"  📊 graph_2_cumulative_yield.png")
 print(f"  📊 graph_3_comparison_bars.png")
 print(f"  📊 graph_4_advantage_analysis.png")
 print(f"  📊 graph_5_performance_area.png")
+print(f"  📊 graph_6_temperature_progression.png")
 print(f"\nAll files in directory:")
 print(f"  docu/measurements/")

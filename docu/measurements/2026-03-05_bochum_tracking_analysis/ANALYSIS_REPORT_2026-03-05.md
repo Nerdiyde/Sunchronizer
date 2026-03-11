@@ -116,6 +116,9 @@ The moderate temperature (~15°C) during this early spring day provided ideal co
 ### Graph 5: Power Profile (Smoothed)
 ![Performance Area](graph_5_performance_area.png)
 
+### Graph 6: Outside Temperature Progression
+![Outside Temperature](graph_6_temperature_progression.png)
+
 ---
 
 ## Detailed Analysis
@@ -280,7 +283,7 @@ Based on this measurement:
 
 ---
 
-*Report generated: March 05, 2026 at 20:56:49*  
+*Report generated: March 06, 2026*  
 *Location: Bochum, North Rhine-Westphalia, Germany*  
 *System: Sunchronizer Test Setup with HMS 1600-4T Monitoring*  
 *Temperature during test: 11.4°C average*

@@ -27,11 +27,7 @@ The system uses a **linear actuator** and **geared motor** to continuously orien
 | Model | Capability | Best For |
 |-------|-----------|----------|
 | **S1** | Elevation angle tracking (single-axis) | Simpler installations, fixed azimuth |
-| **S2** | Elevation angle tracking (single-axis) | Compact 400W setups with fixed azimuth |
 | **D1** | Elevation + azimuth tracking (dual-axis) | Maximum efficiency, any orientation |
-| **D2** | Elevation + azimuth tracking (dual-axis) | Compact 400W setups with full tracking |
-
-I recommend using the newer S2 and D2 versions instead of S1 and D1.
 
 ---
 
@@ -41,6 +37,9 @@ I recommend using the newer S2 and D2 versions instead of S1 and D1.
 
 - **[Firmware & Configuration](firmware/)** - Detailed firmware configuration guide and pre-built binaries
 - **[Firmware Documentation](firmware/README.md)** - Comprehensive ESPHome firmware documentation
+- **[Prototype Development History](docu/development_history/DEVELOPMENT_HISTORY.md)** - Photo gallery and timeline of mark1-mark4 plus PCB v1.3
+- **[Measurement Analysis Overview](docu/measurements/MEASUREMENT_OVERVIEW.md)** - Daily performance results with links to detailed analysis reports
+- **[FAQ](FAQ.md)** - Frequently asked questions about assembly, firmware, performance, and operation
 - **[Full Wiki](https://github.com/Nerdiyde/Sunchronizer/wiki)** - Complete project documentation
 - **[Material List](https://github.com/Nerdiyde/Sunchronizer/wiki/1.-Preperations)** - Components and BOM
 
@@ -49,6 +48,7 @@ I recommend using the newer S2 and D2 versions instead of S1 and D1.
 - **Want to flash immediately?** → See [Firmware Guide](firmware/README.md) for pre-compiled binaries
 - **Want to customize configuration?** → Review [firmware configuration guide](firmware/README.md)
 - **Need detailed setup instructions?** → Check [Wiki: Firmware Section](https://github.com/Nerdiyde/Sunchronizer/wiki/4.-Firmware)
+- **Want real measurement data and performance comparisons?** → Open [Measurement Analysis Overview](docu/measurements/MEASUREMENT_OVERVIEW.md)
 
 ---
 
@@ -81,9 +81,7 @@ I recommend using the newer S2 and D2 versions instead of S1 and D1.
 
 STL files and detailed build information available at:
 - **Sunchronizer S1** (single-axis): https://nerdiy.de/en/product-2/sunchronizer-s1-400w-solartracker-fuer-elevation-achse-3d-druckbar-stl-dateien/
-- **Sunchronizer S2** (single-axis, 400W module): https://www.printables.com/model/1574048-sunchronizer-s2-400w-module-solartracker-for-eleva
 - **Sunchronizer D1** (dual-axis): https://nerdiy.de/en/product-2/sunchronizer-d1-dual-axis-solartracker-fuer-azimut-und-elevation-achse-3d-druckbar-stl-dateien/
-- **Sunchronizer D2** (dual-axis, 400W module): https://www.printables.com/model/1574049-sunchronizer-d2-400w-module-solartracker-for-eleva
 
 ---
 
@@ -182,16 +180,34 @@ Sunchronizer/
 
 ## 📄 License
 
-### Content & Documentation
-Unless otherwise stated, all non-software content is licensed under:
+This project uses **three separate licenses** depending on the type of content:
+
+### 3D Print Files (STL)
+All STL files are licensed under:
+**[CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/)** (Attribution – Non-Commercial – No Derivatives)
+
+- ✅ Print for personal use
+- ✅ Share photos of your build with attribution
+- ❌ Sell the STL files
+- ❌ Sell printed parts or assembled trackers
+- ❌ Publish modified/remixed versions of the STL files
+
+### Documentation & Content
+All documentation, guides, diagrams, and written content are licensed under:
 **[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)** (Attribution – Non-Commercial – Share Alike)
 
-### Software & Code
-Unless otherwise stated, all software and code is licensed under:
+### Firmware & Software
+All firmware configuration files and software code are licensed under:
 **[GNU Affero General Public License v3.0](https://www.gnu.org/licenses/agpl-3.0.en.html)**
 
-- [Summary (TLDR)](https://tldrlegal.com/license/gnu-affero-general-public-license-v3-(agpl-3.0)#summary)
-- [Full Legal Text (German)](https://www.gnu.org/licenses/agpl-3.0.de.html)
+- ✅ Use, study, and modify freely
+- ✅ Commercial use allowed
+- ❌ Modifications must be published under AGPL v3.0
+
+> See [FAQ.md](FAQ.md) for a plain-language explanation of what you can and cannot do.
+
+- [AGPL Summary (TLDR)](https://tldrlegal.com/license/gnu-affero-general-public-license-v3-(agpl-3.0)#summary)
+- [AGPL Full Legal Text (German)](https://www.gnu.org/licenses/agpl-3.0.de.html)
 
 ---
 
