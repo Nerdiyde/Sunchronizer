@@ -42,6 +42,14 @@ jobs:
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           CURRENT_SHA: ${{ github.sha }}
         run: |
+          echo "Debug: repository root is $(pwd)"
+          echo "Debug: listing firmware/config"
+          if [ -d firmware/config ]; then
+            find firmware/config -maxdepth 4 -type f | sort
+          else
+            echo "firmware/config directory does not exist"
+          fi
+
           python - <<'PY'
           import json
           import os
@@ -87,11 +95,16 @@ jobs:
           seen = set()
           unique = []
           for item in sorted(configs, key=lambda x: x["config_file"]):
-              key = item["config_file"]
-              if key in seen:
-                  continue
-              seen.add(key)
-              unique.append(item)
+            key = item["config_file"]
+            if key in seen:
+              continue
+            seen.add(key)
+            unique.append(item)
+
+          if not unique:
+            print("ERROR: No buildable ESPHome config files found under firmware/config.")
+            print("ERROR: Expected at least one config like firmware/config/pcb_xx/*.yaml")
+            raise SystemExit(1)
 
           event_name = os.getenv("EVENT_NAME", "")
 
@@ -219,6 +232,14 @@ jobs:
     if: ${{ needs.discover.outputs.count == '0' }}
     runs-on: ubuntu-latest
     steps:
-      - name: Report and skip
+      - name: Manual run with zero configs (fail fast)
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          echo "workflow_dispatch found 0 buildable config files under firmware/config/."
+          echo "Check that the selected branch contains firmware/config/<pcb_xx>/*.yaml files."
+          exit 1
+
+      - name: Report and skip (non-manual events)
+        if: ${{ github.event_name != 'workflow_dispatch' }}
         run: |
           echo "No changed ESPHome config files found for this event. Nothing to build."
