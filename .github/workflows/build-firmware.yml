@@ -43,33 +43,45 @@ jobs:
           CURRENT_SHA: ${{ github.sha }}
         run: |
           python - <<'PY'
-          import glob
           import json
           import os
           import subprocess
           from pathlib import Path
 
+          config_root = Path("firmware") / "config"
           configs = []
-          for pattern in ("firmware/config/**/*.yaml", "firmware/config/**/*.yml"):
-              for raw in glob.glob(pattern, recursive=True):
-                  path = Path(raw)
-                  name = path.name.lower()
-                  # Skip secret/templates and non-firmware helper files.
-                  if name.startswith("secrets") or name.endswith(".example.yaml") or name.endswith(".example.yml"):
-                      continue
-                  rel = path.as_posix()
-                  rel_parts = rel.split("/")
-                  if len(rel_parts) < 4:
-                      continue
-                  pcb_folder = rel_parts[2]
-                  binary_name = path.stem
-                  configs.append(
-                      {
-                          "config_file": rel,
-                          "pcb_folder": pcb_folder,
-                          "binary_name": binary_name,
-                      }
-                  )
+          if config_root.exists():
+            for path in config_root.rglob("*"):
+              if not path.is_file():
+                continue
+              if path.suffix.lower() not in {".yaml", ".yml"}:
+                continue
+
+              name = path.name.lower()
+              # Skip secret/templates and non-firmware helper files.
+              if name.startswith("secrets") or name.endswith(".example.yaml") or name.endswith(".example.yml"):
+                continue
+
+              rel = path.as_posix()
+              try:
+                rel_to_config = path.relative_to(config_root)
+              except ValueError:
+                continue
+
+              # Expect at least: pcb_xx/<file>.yaml
+              rel_parts = rel_to_config.parts
+              if len(rel_parts) < 2:
+                continue
+
+              pcb_folder = rel_parts[0]
+              binary_name = path.stem
+              configs.append(
+                {
+                  "config_file": rel,
+                  "pcb_folder": pcb_folder,
+                  "binary_name": binary_name,
+                }
+              )
 
           # De-duplicate and keep stable order.
           seen = set()
@@ -117,6 +129,7 @@ jobs:
 
           changed_files = changed_files_for_event()
           if event_name == "workflow_dispatch":
+              # Manual run: always build everything discovered.
               selected = unique
           elif changed_files:
               selected = [item for item in unique if item["config_file"] in changed_files]
@@ -132,6 +145,7 @@ jobs:
 
           print(f"Discovered {len(unique)} firmware config(s) total.")
           print(f"Selected {len(selected)} firmware config(s) for this run.")
+          print(f"Event: {event_name}")
           for item in selected:
               print(f"- {item['config_file']} -> firmware/binaries/{item['pcb_folder']}/{item['binary_name']}.bin")
           PY
