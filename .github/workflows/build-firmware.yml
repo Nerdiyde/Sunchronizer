@@ -65,14 +65,20 @@ jobs:
             print("ERROR: firmware/config does not exist in checked out workspace")
             raise SystemExit(1)
 
-          # Discover YAMLs from git index to match exactly what Actions checked out.
-          list_cmd = ["git", "ls-files", "firmware/config/**/*.yaml", "firmware/config/**/*.yml"]
+          # Discover files from git index to match exactly what Actions checked out.
+          # Do not rely on git pathspec '**' semantics here; list all and filter in Python.
+          list_cmd = ["git", "ls-files"]
           result = subprocess.run(list_cmd, check=True, text=True, capture_output=True)
           tracked_files = [line.strip() for line in result.stdout.splitlines() if line.strip()]
 
           configs = []
           for rel in tracked_files:
             path = Path(rel)
+            rel_posix = rel.replace("\\", "/")
+            if not rel_posix.startswith("firmware/config/"):
+              continue
+            if path.suffix.lower() not in {".yaml", ".yml"}:
+              continue
             name = path.name.lower()
             # Skip secret/templates and non-firmware helper files.
             if name.startswith("secrets") or name.endswith(".example.yaml") or name.endswith(".example.yml"):
@@ -92,7 +98,7 @@ jobs:
             binary_name = path.stem
             configs.append(
               {
-                "config_file": rel.replace("\\", "/"),
+                "config_file": rel_posix,
                 "pcb_folder": pcb_folder,
                 "binary_name": binary_name,
               }
