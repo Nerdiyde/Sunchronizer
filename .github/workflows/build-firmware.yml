@@ -56,40 +56,47 @@ jobs:
           import subprocess
           from pathlib import Path
 
+          workspace = os.getenv("GITHUB_WORKSPACE", os.getcwd())
+          os.chdir(workspace)
+          print(f"Python debug: cwd={Path.cwd()}")
+
           config_root = Path("firmware") / "config"
+          if not config_root.exists():
+            print("ERROR: firmware/config does not exist in checked out workspace")
+            raise SystemExit(1)
+
+          # Discover YAMLs from git index to match exactly what Actions checked out.
+          list_cmd = ["git", "ls-files", "firmware/config/**/*.yaml", "firmware/config/**/*.yml"]
+          result = subprocess.run(list_cmd, check=True, text=True, capture_output=True)
+          tracked_files = [line.strip() for line in result.stdout.splitlines() if line.strip()]
+
           configs = []
-          if config_root.exists():
-            for path in config_root.rglob("*"):
-              if not path.is_file():
-                continue
-              if path.suffix.lower() not in {".yaml", ".yml"}:
-                continue
+          for rel in tracked_files:
+            path = Path(rel)
+            name = path.name.lower()
+            # Skip secret/templates and non-firmware helper files.
+            if name.startswith("secrets") or name.endswith(".example.yaml") or name.endswith(".example.yml"):
+              continue
 
-              name = path.name.lower()
-              # Skip secret/templates and non-firmware helper files.
-              if name.startswith("secrets") or name.endswith(".example.yaml") or name.endswith(".example.yml"):
-                continue
+            try:
+              rel_to_config = path.relative_to(config_root)
+            except ValueError:
+              continue
 
-              rel = path.as_posix()
-              try:
-                rel_to_config = path.relative_to(config_root)
-              except ValueError:
-                continue
+            # Expect at least: pcb_xx/<file>.yaml
+            rel_parts = rel_to_config.parts
+            if len(rel_parts) < 2:
+              continue
 
-              # Expect at least: pcb_xx/<file>.yaml
-              rel_parts = rel_to_config.parts
-              if len(rel_parts) < 2:
-                continue
-
-              pcb_folder = rel_parts[0]
-              binary_name = path.stem
-              configs.append(
-                {
-                  "config_file": rel,
-                  "pcb_folder": pcb_folder,
-                  "binary_name": binary_name,
-                }
-              )
+            pcb_folder = rel_parts[0]
+            binary_name = path.stem
+            configs.append(
+              {
+                "config_file": rel.replace("\\", "/"),
+                "pcb_folder": pcb_folder,
+                "binary_name": binary_name,
+              }
+            )
 
           # De-duplicate and keep stable order.
           seen = set()
