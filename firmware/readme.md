@@ -10,8 +10,9 @@ This directory contains the firmware configuration and pre-compiled binaries for
 firmware/
 ├── README.md                       # This file - Overview
 ├── binaries/                       # Pre-compiled firmware binaries (.bin files)
-│   ├── sunchronizer_firmware_pcb_v1.3.bin
-│   └── [other version binaries...]
+│   ├── pcb_v1.3/
+│   │   └── sunchronizer_firmware_pcb_v1.3.bin
+│   └── [other pcb_xx folders...]
 └── config/                         # ESPHome YAML configuration files
     └── pcb_v1.3/                   # Configuration for PCB v1.3
         ├── README.md               # Detailed configuration documentation
@@ -31,7 +32,7 @@ Contains **pre-compiled firmware binaries** ready to flash onto an ESP32-S3 micr
 2. **Flash to ESP32-S3**
    - Using esptool:
      ```bash
-     esptool.py write_flash 0x0 binaries/sunchronizer_firmware_pcb_v1.3.bin
+       esptool.py write_flash 0x0 binaries/pcb_v1.3/sunchronizer_firmware_pcb_v1.3.bin
      ```
    - Or using ESPHome web interface:
      ```
@@ -100,7 +101,7 @@ Each binary in the `binaries/` folder is compiled from the corresponding configu
 
 | Binary File | Config File | PCB Version |
 |------------|-------------|------------|
-| `sunchronizer_firmware_pcb_v1.3.bin` | `config/pcb_v1.3/sunchronizer_firmware_pcb_v1.3.yaml` | v1.3 |
+| `binaries/pcb_v1.3/sunchronizer_firmware_pcb_v1.3.bin` | `config/pcb_v1.3/sunchronizer_firmware_pcb_v1.3.yaml` | v1.3 |
 
 ## 🛠️ Rebuilding Binaries
 
@@ -127,7 +128,7 @@ esphome compile config/pcb_v1.3/sunchronizer_firmware_pcb_v1.3.yaml
 
 **Option 1: Use Pre-compiled Binary (Fastest)**
 ```bash
-esptool.py write_flash 0x0 binaries/sunchronizer_firmware_pcb_v1.3.bin
+esptool.py write_flash 0x0 binaries/pcb_v1.3/sunchronizer_firmware_pcb_v1.3.bin
 ```
 
 **Option 2: Compile from Configuration**

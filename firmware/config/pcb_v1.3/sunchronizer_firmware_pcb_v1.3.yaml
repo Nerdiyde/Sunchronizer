@@ -75,7 +75,6 @@
 # Any manual interaction (pyhsical/software button press) deactivates all automations.
 # The automations need to be acitvated manually after manual interaction is finished.
 
-
 substitutions:
 
   # Project related definitions
