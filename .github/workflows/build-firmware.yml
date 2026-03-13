@@ -70,6 +70,7 @@ jobs:
           list_cmd = ["git", "ls-files"]
           result = subprocess.run(list_cmd, check=True, text=True, capture_output=True)
           tracked_files = [line.strip() for line in result.stdout.splitlines() if line.strip()]
+          print(f"Python debug: git ls-files returned {len(tracked_files)} tracked files")
 
           configs = []
           for rel in tracked_files:
@@ -164,10 +165,11 @@ jobs:
               selected = unique
 
           matrix = {"include": selected}
-          out = Path("$GITHUB_OUTPUT")
+          out = Path(os.environ["GITHUB_OUTPUT"])
           with out.open("a", encoding="utf-8") as fh:
               fh.write(f"matrix={json.dumps(matrix)}\n")
               fh.write(f"count={len(selected)}\n")
+          print(f"Python debug: wrote outputs to {out}")
 
           print(f"Discovered {len(unique)} firmware config(s) total.")
           print(f"Selected {len(selected)} firmware config(s) for this run.")
@@ -179,7 +181,7 @@ jobs:
   build:
     name: Build ${{ matrix.config_file }}
     needs: discover
-    if: ${{ needs.discover.outputs.count != '0' }}
+    if: ${{ needs.discover.result == 'success' && needs.discover.outputs.count != '' && needs.discover.outputs.count != '0' }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -242,7 +244,7 @@ jobs:
   no-configs:
     name: No changed firmware config
     needs: discover
-    if: ${{ needs.discover.outputs.count == '0' }}
+    if: ${{ needs.discover.result == 'success' && needs.discover.outputs.count != '' && needs.discover.outputs.count == '0' }}
     runs-on: ubuntu-latest
     steps:
       - name: Manual run with zero configs (fail fast)
