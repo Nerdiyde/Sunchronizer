@@ -18,6 +18,12 @@ on:
       - "firmware/config/**/*.yml"
       - ".github/workflows/build-firmware.yml"
   workflow_dispatch:
+  release:
+    types:
+      - published
+
+permissions:
+  contents: write
 
 jobs:
   discover:
@@ -240,6 +246,13 @@ jobs:
           name: firmware-${{ matrix.pcb_folder }}-${{ matrix.binary_name }}
           path: firmware/binaries/${{ matrix.pcb_folder }}/${{ matrix.binary_name }}.bin
           retention-days: 30
+
+      - name: Upload release asset
+        if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
+        uses: softprops/action-gh-release@v2
+        with:
+          files: firmware/binaries/${{ matrix.pcb_folder }}/${{ matrix.binary_name }}.bin
+          fail_on_unmatched_files: true
 
   no-configs:
     name: No changed firmware config
