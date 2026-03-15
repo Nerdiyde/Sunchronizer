@@ -1,6 +1,10 @@
 # Sunchronizer Firmware Binaries
 
-This directory contains pre-compiled firmware binaries ready to flash onto the ESP32-S3 microcontroller.
+Firmware binaries are published as GitHub Release assets.
+
+- Latest release download page: [GitHub Releases (latest)](https://github.com/Nerdiyde/Sunchronizer/releases/latest)
+
+This folder may contain local/CI output files, but the release page is the canonical source for downloadable binaries.
 
 ## 📦 Available Binaries
 
@@ -10,11 +14,16 @@ This directory contains pre-compiled firmware binaries ready to flash onto the E
 
 ## 🚀 Quick Start - Flashing Instructions
 
+### Step 0: Download the Binary
+
+1. Open: [GitHub Releases (latest)](https://github.com/Nerdiyde/Sunchronizer/releases/latest)
+2. In **Assets**, download the `.bin` matching your PCB version
+
 ### Option 1: Using ESPHome Web Interface (Easiest)
 
-1. Visit: https://web.esphome.io/
+1. Visit: [ESPHome Web](https://web.esphome.io/)
 2. Click "Connect" and select your ESP32-S3 device
-3. Select the `.bin` file from this directory
+3. Select the downloaded `.bin` file
 4. Click "Install" and wait for completion
 
 ### Option 2: Using esptool (Command Line)
@@ -54,7 +63,7 @@ Replace `/dev/ttyUSB0` with your device's serial port:
 
 ## 🔄 Binary vs Configuration
 
-These binaries are **compiled from** the configuration files in `../config/`:
+Release binaries are **compiled from** the configuration files in `../config/`:
 
 - **Binary** → Pre-compiled, ready-to-flash `.bin` file
 - **Configuration** → YAML source files that can be customized and recompiled

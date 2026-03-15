@@ -1,8 +1,10 @@
 # 🌞 Sunchronizer
 
+[![Licensing](https://img.shields.io/badge/licensing-multi--license-blue.svg)](#-license) [![Firmware License](https://img.shields.io/badge/firmware-AGPL%20v3.0-3DA639.svg)](https://www.gnu.org/licenses/agpl-3.0.en.html) [![Release](https://img.shields.io/github/release/Nerdiyde/Sunchronizer.svg)](https://github.com/Nerdiyde/Sunchronizer/releases)
+
 **A 3D printable dual-axis solar tracker for maximizing photovoltaic energy yield**
 
-> Sunchronizer automatically tracks the sun's position throughout the day to keep your solar panels optimally aligned, increasing energy generation by up to 40% compared to fixed installations.
+> Sunchronizer automatically tracks the sun's position throughout the day to keep your solar panels optimally aligned, with measured gains of about [+12% vs. single-axis tracking and +144%](docu/measurements/MEASUREMENT_OVERVIEW.md)     vs. static east/west references.
 
 ![](https://github.com/Nerdiyde/Sunchronizer/blob/main/pictures/S1/GIFs/sunchronizer_timelapse_smaller_5mb.gif)
 
@@ -36,6 +38,7 @@ The system uses a **linear actuator** and **geared motor** to continuously orien
 ### Quick Links
 
 - **[Firmware & Configuration](firmware/)** - Detailed firmware configuration guide and pre-built binaries
+- **[Latest Firmware Release](https://github.com/Nerdiyde/Sunchronizer/releases/latest)** - Download current firmware binaries from release assets
 - **[Firmware Documentation](firmware/README.md)** - Comprehensive ESPHome firmware documentation
 - **[Prototype Development History](docu/development_history/DEVELOPMENT_HISTORY.md)** - Photo gallery and timeline of mark1-mark4 plus PCB v1.3
 - **[Measurement Analysis Overview](docu/measurements/MEASUREMENT_OVERVIEW.md)** - Daily performance results with links to detailed analysis reports
@@ -45,7 +48,7 @@ The system uses a **linear actuator** and **geared motor** to continuously orien
 
 ### For Different Needs
 
-- **Want to flash immediately?** → See [Firmware Guide](firmware/README.md) for pre-compiled binaries
+- **Want to flash immediately?** → Download binaries from [Latest Release Assets](https://github.com/Nerdiyde/Sunchronizer/releases/latest)
 - **Want to customize configuration?** → Review [firmware configuration guide](firmware/README.md)
 - **Need detailed setup instructions?** → Check [Wiki: Firmware Section](https://github.com/Nerdiyde/Sunchronizer/wiki/4.-Firmware)
 - **Want real measurement data and performance comparisons?** → Open [Measurement Analysis Overview](docu/measurements/MEASUREMENT_OVERVIEW.md)
@@ -110,7 +113,7 @@ The firmware depends on two custom ESPHome components:
 # Further Resources
 
 - **Full Documentation:** [GitHub Wiki](https://github.com/Nerdiyde/Sunchronizer/wiki)
-- **Open-Source Firmware:** Configuration and compiled binaries in the repository
+- **Open-Source Firmware:** Configuration in this repository, downloadable binaries via [GitHub Releases](https://github.com/Nerdiyde/Sunchronizer/releases)
 
 ---
 
@@ -148,8 +151,8 @@ Sunchronizer/
 ├── README.md                           # This file - Project overview
 ├── firmware/                           # Firmware documentation & configuration
 │   ├── README.md                       # Firmware guide & quick start
-│   ├── binaries/                       # Pre-compiled firmware binaries
-│   │   └── [binary files for different PCB versions]
+│   ├── binaries/                       # Optional local/CI output folder
+│   │   └── [latest downloadable binaries are attached to Releases]
 │   └── config/                         # ESPHome YAML configuration files
 │       ├── pcb_v1.3/                   # Configuration for PCB v1.3
 │       │   ├── README.md               # v1.3 configuration documentation

@@ -2,14 +2,17 @@
 
 ## Overview
 
-This directory contains the firmware configuration and pre-compiled binaries for the Sunchronizer dual-axis solar tracking system.
+This directory contains firmware configuration files and flashing documentation for the Sunchronizer dual-axis solar tracking system.
+
+Current pre-compiled binaries are published as assets in GitHub Releases:
+- **Latest release:** [GitHub Releases (latest)](https://github.com/Nerdiyde/Sunchronizer/releases/latest)
 
 ## 📁 Directory Structure
 
 ```
 firmware/
 ├── README.md                       # This file - Overview
-├── binaries/                       # Pre-compiled firmware binaries (.bin files)
+├── binaries/                       # Optional local/CI output folder
 │   ├── pcb_v1.3/
 │   │   └── sunchronizer_firmware_pcb_v1.3.bin
 │   └── [other pcb_xx folders...]
@@ -22,17 +25,21 @@ firmware/
 
 ## 📦 Binaries Folder
 
-Contains **pre-compiled firmware binaries** ready to flash onto an ESP32-S3 microcontroller. Each binary corresponds to a configuration file in the `config` folder.
+Download **pre-compiled firmware binaries** from release assets (recommended):
+- [GitHub Releases (latest)](https://github.com/Nerdiyde/Sunchronizer/releases/latest)
+
+The local `binaries/` folder is mainly used as CI/output storage and may not always contain the newest release asset.
 
 ### How to Use Binaries
 
 1. **Identify Your Version**
+   - Open the latest release and download the `.bin` file that matches your PCB version
    - Match the binary filename with your PCB version (e.g., `pcb_v1.3`)
 
 2. **Flash to ESP32-S3**
    - Using esptool:
      ```bash
-       esptool.py write_flash 0x0 binaries/pcb_v1.3/sunchronizer_firmware_pcb_v1.3.bin
+          esptool.py write_flash 0x0 sunchronizer_firmware_pcb_v1.3.bin
      ```
    - Or using ESPHome web interface:
      ```
@@ -76,7 +83,7 @@ Contains **ESPHome YAML configuration files** used to generate the binaries. The
 To verify a binary matches its configuration:
 
 1. Check filename consistency
-2. Review modification dates (binary should be newer than config if recently updated)
+2. Verify the release tag/version against your intended firmware version
 3. Verify checksums if provided
 
 ### How to Use Configuration Files
@@ -97,11 +104,11 @@ To verify a binary matches its configuration:
 
 ## 🔄 Binary-Config Relationship
 
-Each binary in the `binaries/` folder is compiled from the corresponding configuration in the `config/` folder:
+Each release binary is compiled from the corresponding configuration in the `config/` folder:
 
 | Binary File | Config File | PCB Version |
 |------------|-------------|------------|
-| `binaries/pcb_v1.3/sunchronizer_firmware_pcb_v1.3.bin` | `config/pcb_v1.3/sunchronizer_firmware_pcb_v1.3.yaml` | v1.3 |
+| `sunchronizer_firmware_pcb_v1.3.bin` (Release Asset) | `config/pcb_v1.3/sunchronizer_firmware_pcb_v1.3.yaml` | v1.3 |
 
 ## 🛠️ Rebuilding Binaries
 
@@ -128,8 +135,11 @@ esphome compile config/pcb_v1.3/sunchronizer_firmware_pcb_v1.3.yaml
 
 **Option 1: Use Pre-compiled Binary (Fastest)**
 ```bash
-esptool.py write_flash 0x0 binaries/pcb_v1.3/sunchronizer_firmware_pcb_v1.3.bin
+esptool.py write_flash 0x0 sunchronizer_firmware_pcb_v1.3.bin
 ```
+
+Download source for pre-compiled binaries:
+- [GitHub Releases (latest)](https://github.com/Nerdiyde/Sunchronizer/releases/latest)
 
 **Option 2: Compile from Configuration**
 ```bash

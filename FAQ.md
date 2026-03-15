@@ -162,13 +162,10 @@ Because both are mandatory and already built in, no separate external limit swit
 
 ### Q: Where are the binary files to flash the ESP?
 
-**A:** Pre-compiled firmware binaries are located in:
+**A:** Download pre-compiled firmware binaries from the project releases:
 
-```
-firmware/binaries/
-├── [pre-compiled .bin files for different PCB versions]
-└── [flashing instructions]
-```
+- **Latest release:** [GitHub Releases (latest)](https://github.com/Nerdiyde/Sunchronizer/releases/latest)
+- **All releases:** [GitHub Releases](https://github.com/Nerdiyde/Sunchronizer/releases)
 
 **Quick Start:**
 1. Download a binary matching your **PCB version** (v1.3, v1.4, etc.)
