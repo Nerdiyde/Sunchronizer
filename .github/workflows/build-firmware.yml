@@ -18,6 +18,11 @@ on:
       - "firmware/config/**/*.yml"
       - ".github/workflows/build-firmware.yml"
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Optional: existing release tag to upload firmware asset to (e.g. 2026.1.0)"
+        required: false
+        type: string
   release:
     types:
       - published
@@ -250,11 +255,13 @@ jobs:
           retention-days: 30
 
       - name: Upload release asset
-        if: ${{ github.event_name == 'release' }}
+        if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.event.inputs.release_tag != '') }}
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ github.event_name == 'release' && github.event.release.tag_name || github.event.inputs.release_tag }}
           files: firmware/binaries/${{ matrix.pcb_folder }}/${{ matrix.binary_name }}.bin
           fail_on_unmatched_files: true
+          overwrite_files: true
 
   no-configs:
     name: No changed firmware config
