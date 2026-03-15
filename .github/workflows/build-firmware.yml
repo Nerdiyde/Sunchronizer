@@ -21,6 +21,8 @@ on:
   release:
     types:
       - published
+      - released
+      - edited
 
 permissions:
   contents: write
@@ -248,7 +250,7 @@ jobs:
           retention-days: 30
 
       - name: Upload release asset
-        if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
+        if: ${{ github.event_name == 'release' }}
         uses: softprops/action-gh-release@v2
         with:
           files: firmware/binaries/${{ matrix.pcb_folder }}/${{ matrix.binary_name }}.bin
