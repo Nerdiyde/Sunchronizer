@@ -11,6 +11,8 @@
 	<img src="https://github.com/Nerdiyde/Sunchronizer/blob/main/pictures/D2/GIFs/Sunchronizer_03.03.2026-resize.gif" width="49%" />
 </p>
 
+<p align="center"><sub>Left GIF: Sx variants (S1/S2, single-axis) · Right GIF: Dx variants (D1/D2, dual-axis)</sub></p>
+
 ---
 
 ## 🎯 Introduction
