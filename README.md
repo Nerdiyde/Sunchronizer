@@ -6,7 +6,10 @@
 
 > Sunchronizer automatically tracks the sun's position throughout the day to keep your solar panels optimally aligned, with measured gains of about [+12% vs. single-axis tracking and +144%](docu/measurements/MEASUREMENT_OVERVIEW.md)     vs. static east/west references.
 
-![](https://github.com/Nerdiyde/Sunchronizer/blob/main/pictures/S1/GIFs/sunchronizer_timelapse_smaller_5mb.gif)
+<p align="center">
+	<img src="https://github.com/Nerdiyde/Sunchronizer/blob/main/pictures/S1/GIFs/sunchronizer_timelapse_smaller_5mb.gif" width="49%" />
+	<img src="https://github.com/Nerdiyde/Sunchronizer/blob/main/pictures/D2/GIFs/Sunchronizer_03.03.2026-resize.gif" width="49%" />
+</p>
 
 ---
 
@@ -28,8 +31,10 @@ The system uses a **linear actuator** and **geared motor** to continuously orien
 
 | Model | Capability | Best For |
 |-------|-----------|----------|
-| **S1** | Elevation angle tracking (single-axis) | Simpler installations, fixed azimuth |
-| **D1** | Elevation + azimuth tracking (dual-axis) | Maximum efficiency, any orientation |
+| **S1** | Elevation angle tracking (single-axis, 1st generation) | Simpler installations, fixed azimuth |
+| **S2** | Elevation angle tracking (single-axis, 2nd generation) | Refined single-axis builds with lower complexity |
+| **D1** | Elevation + azimuth tracking (dual-axis, 1st generation) | Full dual-axis tracking for flexible installations |
+| **D2** | Elevation + azimuth tracking (dual-axis, 2nd generation) | Maximum efficiency, most refined dual-axis variant |
 
 ---
 
@@ -85,8 +90,13 @@ The system uses a **linear actuator** and **geared motor** to continuously orien
 ## 📦 Available Products
 
 STL files and detailed build information available at:
-- **Sunchronizer S1** (single-axis): https://nerdiy.de/en/product-2/sunchronizer-s1-400w-solartracker-fuer-elevation-achse-3d-druckbar-stl-dateien/
-- **Sunchronizer D1** (dual-axis): https://nerdiy.de/en/product-2/sunchronizer-d1-dual-axis-solartracker-fuer-azimut-und-elevation-achse-3d-druckbar-stl-dateien/
+
+| Variant | NERDIY.DE | Printables |
+|---------|-----------|------------|
+| **Sunchronizer S1** (single-axis, 1st gen) | [NERDIY.DE](https://nerdiy.de/en/product-2/sunchronizer-s1-400w-solartracker-fuer-elevation-achse-3d-druckbar-stl-dateien/) | — |
+| **Sunchronizer S2** (single-axis, 2nd gen) | — | [Printables](https://www.printables.com/model/1574048-sunchronizer-s2-400w-module-solartracker-for-eleva) |
+| **Sunchronizer D1** (dual-axis, 1st gen) | [NERDIY.DE](https://nerdiy.de/en/product-2/sunchronizer-d1-dual-axis-solartracker-fuer-azimut-und-elevation-achse-3d-druckbar-stl-dateien/) | — |
+| **Sunchronizer D2** (dual-axis, 2nd gen) | — | [Printables](https://www.printables.com/model/1574049-sunchronizer-d2-400w-module-solartracker-for-eleva) |
 
 ---
 
@@ -131,7 +141,9 @@ Every coffee helps fund research, development, and documentation! ☕
 
 ## 📸 Gallery
 
-### Sunchronizer S1 (Single-Axis)
+<details>
+<summary><strong>Sunchronizer S1 (Single-Axis)</strong></summary>
+
 ![](https://github.com/Nerdiyde/Sunchronizer/blob/main/pictures/S1/mark1/anotations/11.png)
 
 ![](https://github.com/Nerdiyde/Sunchronizer/blob/main/pictures/S1/mark1/anotations/5.png)
@@ -140,9 +152,28 @@ Every coffee helps fund research, development, and documentation! ☕
 
 ![](https://github.com/Nerdiyde/Sunchronizer/blob/main/pictures/S1/technical_drawings/single_axis_lifter_V1.2_open_incl_panel_V1.0_1.jpg)
 
-### Sunchronizer D1 (Dual-Axis)
+</details>
 
-*Coming soon - Photos and technical drawings to be added*
+<details>
+<summary><strong>Sunchronizer D1 (Dual-Axis)</strong></summary>
+
+*Coming soon — photos and technical drawings to be added.*
+
+</details>
+
+<details>
+<summary><strong>Sunchronizer S2 (Single-Axis, 2nd gen)</strong></summary>
+
+*Coming soon — photos and technical drawings to be added.*
+
+</details>
+
+<details>
+<summary><strong>Sunchronizer D2 (Dual-Axis, 2nd gen)</strong></summary>
+
+*Coming soon — photos and technical drawings to be added.*
+
+</details>
 
 ---
 
@@ -237,20 +268,7 @@ Contributions are welcome! For bug reports, feature requests, or improvements:
 
 ## ❓ FAQ
 
-**Q: Can I use this without Home Assistant?**  
-A: Yes! The system can operate independently using GPS for position and time data.
-
-**Q: What's the difference between S1 and D1?**  
-A: S1 tracks elevation only (single-axis). D1 tracks both elevation and azimuth (dual-axis) for maximum efficiency.
-
-**Q: Can I modify the firmware?**  
-A: Absolutely! The configuration files are fully editable. See the [firmware guide](firmware/) for customization options.
-
-**Q: Where can I get the 3D models?**  
-A: STL files are available for purchase on the [NERDIY.DE Blog](https://nerdiy.de/).
-
-**Q: What if I have problems?**  
-A: Check the [Wiki](https://github.com/Nerdiyde/Sunchronizer/wiki) first, then open an [issue on GitHub](https://github.com/Nerdiyde/Sunchronizer/issues).
+For answers to common questions about assembly, firmware, hardware variants, GPS setup, and more, see the **[FAQ](FAQ.md)**.
 
 ---
 

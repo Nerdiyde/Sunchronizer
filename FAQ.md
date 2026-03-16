@@ -158,6 +158,15 @@ Because both are mandatory and already built in, no separate external limit swit
 
 ---
 
+### Q: Which motor do you recommend for the azimuth axis on the Sunchronizer D2?
+
+**A:** For the **Sunchronizer D2**, I recommend a **JGY-370 geared motor with 5 RPM** for the azimuth axis.
+
+Slower motors can also work, but then the parameter `azimuth_measurement_max_wait_time` must be adjusted in the firmware configuration, and the firmware must be compiled manually.
+
+
+---
+
 ## Firmware & Software
 
 ### Q: Where are the binary files to flash the ESP?
