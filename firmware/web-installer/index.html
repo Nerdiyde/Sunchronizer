@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sunchronizer Web Installer</title>
+    <style>
+      :root {
+        --bg: #1e1e1e;
+        --ink: #d4d4d4;
+        --muted: #9da5b4;
+        --accent: #2f7d4e;
+        --card: #252526;
+        --border: #3c3c3c;
+        --status-bg: #2d2d30;
+        --status-border: #454545;
+        --error-bg: #4b2424;
+        --error-border: #7d3f3f;
+        --error-ink: #f2cccc;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Segoe UI", "Trebuchet MS", sans-serif;
+        color: var(--ink);
+        background: var(--bg);
+      }
+
+      main {
+        max-width: 780px;
+        margin: 28px auto;
+        padding: 0 16px 24px;
+      }
+
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 18px;
+        box-shadow: 0 10px 24px #00000066;
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        line-height: 1.2;
+        font-size: clamp(1.4rem, 4vw, 2rem);
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      .status {
+        margin: 12px 0;
+        padding: 10px 12px;
+        border-radius: 10px;
+        background: var(--status-bg);
+        border: 1px solid var(--status-border);
+        font-size: 0.95rem;
+      }
+
+      .status.error {
+        background: var(--error-bg);
+        border-color: var(--error-border);
+        color: var(--error-ink);
+      }
+
+      .controls {
+        display: grid;
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      label {
+        font-weight: 600;
+      }
+
+      select,
+      a.button {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        font-size: 0.98rem;
+      }
+
+      a.button {
+        display: inline-block;
+        text-align: center;
+        text-decoration: none;
+        color: white;
+        background: var(--accent);
+      }
+
+      .install-btn {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid #3a8a5a;
+        font-size: 0.98rem;
+        font-weight: 600;
+        color: #f4fff8;
+        background: var(--accent);
+        cursor: pointer;
+      }
+
+      .install-btn:hover {
+        background: #337f52;
+      }
+
+      .actions {
+        margin-top: 14px;
+        display: grid;
+        gap: 10px;
+      }
+
+      .small {
+        font-size: 0.9rem;
+      }
+
+      ul {
+        margin: 10px 0 0 16px;
+        padding: 0;
+      }
+
+      code {
+        background: #1f1f1f;
+        border: 1px solid #3d3d3d;
+        border-radius: 6px;
+        padding: 1px 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="card">
+        <h1>Sunchronizer Web Installer</h1>
+        <p class="muted">
+          Flash the latest release firmware directly from a Chromium-based browser
+          (Chrome, Edge, Brave, Opera).
+        </p>
+
+        <div id="status" class="status">Loading latest release data...</div>
+
+        <div class="controls">
+          <label for="binSelect">Firmware Binary</label>
+          <select id="binSelect" disabled>
+            <option>Loading...</option>
+          </select>
+        </div>
+
+        <div class="actions">
+          <esp-web-install-button id="installButton" style="display: none">
+            <button slot="activate" class="install-btn">Install Selected Firmware</button>
+          </esp-web-install-button>
+          <a id="releaseLink" class="button" target="_blank" rel="noopener noreferrer" href="https://github.com/Nerdiyde/Sunchronizer/releases/latest">
+            Open Latest Release Assets
+          </a>
+        </div>
+
+        <p class="small muted" style="margin-top: 14px">
+          Note: Web serial requires a secure context. Use <code>https://</code>
+          hosting (for example GitHub Pages) or <code>http://localhost</code>.
+        </p>
+
+        <ul class="small muted">
+          <li>Board: ESP32-S3 XIAO</li>
+          <li>Expected flash offset: <code>0x0</code></li>
+          <li>If browser flashing fails, use <code>esptool.py</code> as fallback.</li>
+        </ul>
+      </section>
+    </main>
+
+    <script type="module" src="https://cdn.jsdelivr.net/npm/esp-web-tools@9/dist/web/install-button.js?module"></script>
+    <script>
+      const API_URL = "https://api.github.com/repos/Nerdiyde/Sunchronizer/releases/latest";
+      const statusEl = document.getElementById("status");
+      const selectEl = document.getElementById("binSelect");
+      const installButton = document.getElementById("installButton");
+      const releaseLink = document.getElementById("releaseLink");
+
+      function setStatus(message, isError = false) {
+        statusEl.textContent = message;
+        statusEl.className = isError ? "status error" : "status";
+      }
+
+      function createManifestUrl(assetUrl, versionTag) {
+        const manifest = {
+          name: "Sunchronizer Firmware",
+          version: versionTag,
+          home_assistant_domain: "esphome",
+          new_install_improv_wait_time: 20,
+          builds: [
+            {
+              chipFamily: "ESP32-S3",
+              parts: [
+                {
+                  path: assetUrl,
+                  offset: 0
+                }
+              ]
+            }
+          ]
+        };
+
+        const blob = new Blob([JSON.stringify(manifest)], { type: "application/json" });
+        return URL.createObjectURL(blob);
+      }
+
+      async function loadLatestRelease() {
+        try {
+          const response = await fetch(API_URL, {
+            headers: {
+              Accept: "application/vnd.github+json"
+            }
+          });
+
+          if (!response.ok) {
+            throw new Error(`GitHub API error ${response.status}`);
+          }
+
+          const release = await response.json();
+          const assets = (release.assets || []).filter((asset) =>
+            asset.name && asset.name.toLowerCase().endsWith(".bin")
+          );
+
+          releaseLink.href = release.html_url || releaseLink.href;
+
+          if (assets.length === 0) {
+            setStatus(
+              "No .bin assets found in the latest release. Upload firmware assets first.",
+              true
+            );
+            selectEl.disabled = true;
+            selectEl.innerHTML = "<option>No binaries available</option>";
+            return;
+          }
+
+          selectEl.innerHTML = "";
+          for (const asset of assets) {
+            const option = document.createElement("option");
+            option.value = asset.browser_download_url;
+            option.textContent = asset.name;
+            selectEl.appendChild(option);
+          }
+
+          selectEl.disabled = false;
+          installButton.style.display = "inline-block";
+
+          const initialManifestUrl = createManifestUrl(
+            selectEl.value,
+            release.tag_name || "latest"
+          );
+          installButton.setAttribute("manifest", initialManifestUrl);
+
+          selectEl.addEventListener("change", () => {
+            const manifestUrl = createManifestUrl(
+              selectEl.value,
+              release.tag_name || "latest"
+            );
+            installButton.setAttribute("manifest", manifestUrl);
+          });
+
+          setStatus(
+            `Loaded latest release: ${release.tag_name || "latest"}. Select binary and click Install.`
+          );
+        } catch (error) {
+          console.error(error);
+          setStatus(
+            "Could not load latest release metadata from GitHub. Check internet or API limits.",
+            true
+          );
+          selectEl.disabled = true;
+          selectEl.innerHTML = "<option>Load failed</option>";
+        }
+      }
+
+      loadLatestRelease();
+    </script>
+  </body>
+</html>

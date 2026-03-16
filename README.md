@@ -38,6 +38,8 @@ The system uses a **linear actuator** and **geared motor** to continuously orien
 ### Quick Links
 
 - **[Firmware & Configuration](firmware/)** - Detailed firmware configuration guide and pre-built binaries
+- **[Web Installer](firmware/web-installer/index.html)** - Flash the latest release directly from a Chromium browser
+- **[Public Web Installer](https://nerdiyde.github.io/Sunchronizer/)** - Browser-based installer hosted on GitHub Pages
 - **[Latest Firmware Release](https://github.com/Nerdiyde/Sunchronizer/releases/latest)** - Download current firmware binaries from release assets
 - **[Firmware Documentation](firmware/README.md)** - Comprehensive ESPHome firmware documentation
 - **[Prototype Development History](docu/development_history/DEVELOPMENT_HISTORY.md)** - Photo gallery and timeline of mark1-mark4 plus PCB v1.3
@@ -48,7 +50,7 @@ The system uses a **linear actuator** and **geared motor** to continuously orien
 
 ### For Different Needs
 
-- **Want to flash immediately?** → Download binaries from [Latest Release Assets](https://github.com/Nerdiyde/Sunchronizer/releases/latest)
+- **Want to flash immediately?** → Use the [Web Installer](firmware/web-installer/index.html) or download from [Latest Release Assets](https://github.com/Nerdiyde/Sunchronizer/releases/latest)
 - **Want to customize configuration?** → Review [firmware configuration guide](firmware/README.md)
 - **Need detailed setup instructions?** → Check [Wiki: Firmware Section](https://github.com/Nerdiyde/Sunchronizer/wiki/4.-Firmware)
 - **Want real measurement data and performance comparisons?** → Open [Measurement Analysis Overview](docu/measurements/MEASUREMENT_OVERVIEW.md)

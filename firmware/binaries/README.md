@@ -3,8 +3,8 @@
 Firmware binaries are published as GitHub Release assets.
 
 - Latest release download page: [GitHub Releases (latest)](https://github.com/Nerdiyde/Sunchronizer/releases/latest)
-
-This folder may contain local/CI output files, but the release page is the canonical source for downloadable binaries.
+- Browser installer page: [Web Installer](../web-installer/index.html)
+- Hosted browser installer: [GitHub Pages](https://nerdiyde.github.io/Sunchronizer/)
 
 ## 📦 Available Binaries
 
@@ -13,6 +13,12 @@ This folder may contain local/CI output files, but the release page is the canon
 | `sunchronizer_firmware_pcb_v1.3.bin` | v1.3 | Firmware for PCB v1.3 | ✅ Tested & Stable |
 
 ## 🚀 Quick Start - Flashing Instructions
+
+### Option 0: Browser-based Install (Direct from Latest Release)
+
+1. Open: [Web Installer](../web-installer/index.html)
+2. Use a Chromium-based browser (Chrome, Edge, Brave, Opera)
+3. Select the detected `.bin` from the latest release and click Install
 
 ### Step 0: Download the Binary
 
