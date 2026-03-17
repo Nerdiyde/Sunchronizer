@@ -33,10 +33,71 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
+      - name: Build web installer site artifact
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import pathlib
+          import shutil
+          import urllib.request
+
+          repo = os.environ["GITHUB_REPOSITORY"]
+          api_url = f"https://api.github.com/repos/{repo}/releases/latest"
+
+          req = urllib.request.Request(
+              api_url,
+              headers={
+                  "Accept": "application/vnd.github+json",
+                  "User-Agent": "sunchronizer-web-installer-workflow",
+              },
+          )
+
+          with urllib.request.urlopen(req) as response:
+              release = json.load(response)
+
+          site_dir = pathlib.Path("site")
+          source_dir = pathlib.Path("firmware/web-installer")
+
+          shutil.rmtree(site_dir, ignore_errors=True)
+          site_dir.mkdir(parents=True, exist_ok=True)
+
+          # Copy installer frontend files.
+          for source_file in source_dir.rglob("*"):
+              if source_file.is_file():
+                  target_file = site_dir / source_file.relative_to(source_dir)
+                  target_file.parent.mkdir(parents=True, exist_ok=True)
+                  shutil.copy2(source_file, target_file)
+
+          binaries_dir = site_dir / "binaries"
+          binaries_dir.mkdir(parents=True, exist_ok=True)
+
+          binaries = []
+          for asset in release.get("assets", []):
+              name = asset.get("name", "")
+              if name.lower().endswith(".bin"):
+                  binaries.append(name)
+                  target = binaries_dir / name
+                  print(f"Downloading {name}...")
+                  urllib.request.urlretrieve(asset["browser_download_url"], target)
+
+          metadata = {
+              "tag": release.get("tag_name"),
+              "release_url": release.get("html_url"),
+              "binaries": binaries,
+          }
+          (site_dir / "release-metadata.json").write_text(
+              json.dumps(metadata, indent=2),
+              encoding="utf-8",
+          )
+          PY
+
       - name: Upload web installer artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          path: firmware/web-installer
+          path: site
 
       - name: Deploy
         id: deployment

@@ -242,7 +242,11 @@
           selectEl.innerHTML = "";
           for (const asset of assets) {
             const option = document.createElement("option");
-            option.value = asset.browser_download_url;
+            // Release assets are mirrored to GitHub Pages to avoid cross-origin fetch issues.
+            option.value = new URL(
+              `binaries/${encodeURIComponent(asset.name)}`,
+              window.location.href
+            ).href;
             option.textContent = asset.name;
             selectEl.appendChild(option);
           }
@@ -265,7 +269,7 @@
           });
 
           setStatus(
-            `Loaded latest release: ${release.tag_name || "latest"}. Select binary and click Install.`
+            `Loaded latest release: ${release.tag_name || "latest"}. Select a mirrored binary and click Install.`
           );
         } catch (error) {
           console.error(error);

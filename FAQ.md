@@ -164,6 +164,13 @@ Because both are mandatory and already built in, no separate external limit swit
 
 Slower motors can also work, but then the parameter `azimuth_measurement_max_wait_time` must be adjusted in the firmware configuration, and the firmware must be compiled manually.
 
+---
+
+### Q: Which rotation direction is CW / CCW?
+
+**A:** The diagram below shows the defined clockwise (CW) and counter-clockwise (CCW) directions for the azimuth axis:
+
+![CW/CCW rotation direction overview](docu/diagrams/Sunchronizer_rotation_direction_overview.png)
 
 ---
 
