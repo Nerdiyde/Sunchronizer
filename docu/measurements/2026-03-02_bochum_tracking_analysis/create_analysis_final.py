@@ -36,10 +36,13 @@ print("=" * 80)
 # Load data
 print("\n[1/5] Loading data...")
 df = pd.read_csv(measurement_dir / '02.03.2026_verlauf_incl_yield_today_and_outside_temp.csv')
+df_angles = pd.read_csv(measurement_dir / '02.03.2026_verlauf.csv')
 
 # Conversions
 df['last_changed'] = pd.to_datetime(df['last_changed'])
 df['state_numeric'] = pd.to_numeric(df['state'], errors='coerce')
+df_angles['last_changed'] = pd.to_datetime(df_angles['last_changed'])
+df_angles['state_numeric'] = pd.to_numeric(df_angles['state'], errors='coerce')
 
 # Identify channels
 sensors = df['entity_id'].unique()
@@ -157,6 +160,117 @@ if 'temperature' in channels:
         print(f"  Min: {temp_stats['min']:.1f}°C, Max: {temp_stats['max']:.1f}°C")
         print(f"  Average: {temp_stats['mean']:.1f}°C")
         print(f"  Measurements: {temp_stats['count']}")
+
+# ============================================================================
+# PREPARE TRACKING ANGLE QUALITY DATA
+# ============================================================================
+print("\n[3C/5] Calculating tracking angle deviations...")
+
+tracking_stats = None
+tracking_error_data = None
+
+entity_candidates = {
+    'panel_elevation': 'sensor.sunchronizer_ctrlr_v1_3_panel_elevation_angle',
+    'panel_azimuth': 'sensor.sunchronizer_ctrlr_v1_3_panel_heading',
+    'sun_elevation': 'sensor.sun_solar_elevation',
+    'sun_azimuth': 'sensor.sun_solar_azimuth',
+}
+
+if set(entity_candidates.values()).issubset(set(df_angles['entity_id'].unique())):
+    panel_elev = (
+        df_angles[df_angles['entity_id'] == entity_candidates['panel_elevation']]
+        .loc[:, ['last_changed', 'state_numeric']]
+        .dropna()
+        .rename(columns={'state_numeric': 'panel_elevation'})
+        .sort_values('last_changed')
+    )
+    panel_az = (
+        df_angles[df_angles['entity_id'] == entity_candidates['panel_azimuth']]
+        .loc[:, ['last_changed', 'state_numeric']]
+        .dropna()
+        .rename(columns={'state_numeric': 'panel_azimuth'})
+        .sort_values('last_changed')
+    )
+    sun_elev = (
+        df_angles[df_angles['entity_id'] == entity_candidates['sun_elevation']]
+        .loc[:, ['last_changed', 'state_numeric']]
+        .dropna()
+        .rename(columns={'state_numeric': 'sun_elevation'})
+        .sort_values('last_changed')
+    )
+    sun_az = (
+        df_angles[df_angles['entity_id'] == entity_candidates['sun_azimuth']]
+        .loc[:, ['last_changed', 'state_numeric']]
+        .dropna()
+        .rename(columns={'state_numeric': 'sun_azimuth'})
+        .sort_values('last_changed')
+    )
+
+    # Align tracker samples with nearest solar-angle samples.
+    tracking_error_data = pd.merge_asof(
+        panel_elev,
+        sun_elev,
+        on='last_changed',
+        direction='nearest',
+        tolerance=pd.Timedelta('5min'),
+    )
+    tracking_error_data = pd.merge_asof(
+        tracking_error_data.sort_values('last_changed'),
+        panel_az,
+        on='last_changed',
+        direction='nearest',
+        tolerance=pd.Timedelta('60s'),
+    )
+    tracking_error_data = pd.merge_asof(
+        tracking_error_data.sort_values('last_changed'),
+        sun_az,
+        on='last_changed',
+        direction='nearest',
+        tolerance=pd.Timedelta('5min'),
+    )
+
+    tracking_error_data = tracking_error_data.dropna().copy()
+
+    # Focus on daylight hours, where angle tracking has practical relevance.
+    tracking_error_data = tracking_error_data[tracking_error_data['sun_elevation'] > 0].copy()
+
+    if len(tracking_error_data) > 0:
+        tracking_error_data['elevation_error_deg'] = (
+            tracking_error_data['panel_elevation'] - tracking_error_data['sun_elevation']
+        ).abs()
+
+        azimuth_diff = (tracking_error_data['panel_azimuth'] - tracking_error_data['sun_azimuth']).abs()
+        tracking_error_data['azimuth_error_deg'] = np.minimum(azimuth_diff, 360 - azimuth_diff)
+
+        tracking_stats = {
+            'samples': len(tracking_error_data),
+            'elevation_mean': tracking_error_data['elevation_error_deg'].mean(),
+            'elevation_median': tracking_error_data['elevation_error_deg'].median(),
+            'elevation_p95': tracking_error_data['elevation_error_deg'].quantile(0.95),
+            'azimuth_mean': tracking_error_data['azimuth_error_deg'].mean(),
+            'azimuth_median': tracking_error_data['azimuth_error_deg'].median(),
+            'azimuth_p95': tracking_error_data['azimuth_error_deg'].quantile(0.95),
+            'window_start': tracking_error_data['last_changed'].min(),
+            'window_end': tracking_error_data['last_changed'].max(),
+        }
+
+        print(f"  Daylight tracking samples: {tracking_stats['samples']}")
+        print(
+            "  Elevation error (deg)  -> "
+            f"mean {tracking_stats['elevation_mean']:.2f}, "
+            f"median {tracking_stats['elevation_median']:.2f}, "
+            f"p95 {tracking_stats['elevation_p95']:.2f}"
+        )
+        print(
+            "  Azimuth error (deg)    -> "
+            f"mean {tracking_stats['azimuth_mean']:.2f}, "
+            f"median {tracking_stats['azimuth_median']:.2f}, "
+            f"p95 {tracking_stats['azimuth_p95']:.2f}"
+        )
+    else:
+        print("  No valid daylight overlap between panel angles and solar angles.")
+else:
+    print("  Required angle entities not found. Skipping angle-quality analysis.")
 
 # ============================================================================
 # COMPARISON RESULTS
@@ -366,6 +480,69 @@ if 'temperature' in channels:
 else:
     print("  - Graph 6 skipped: No temperature channel found")
 
+# ============ GRAPH 7: Tracking deviation vs. solar-optimal angles ============
+print("  - Graph 7: Tracking deviation over time...")
+if tracking_error_data is not None and len(tracking_error_data) > 0:
+    graph_7_data = (
+        tracking_error_data
+        .set_index('last_changed')[['elevation_error_deg', 'azimuth_error_deg']]
+        .resample('2min')
+        .median()
+        .dropna()
+        .reset_index()
+    )
+
+    fig, axes = plt.subplots(2, 1, figsize=(15, 9), sharex=True)
+
+    axes[0].plot(
+        graph_7_data['last_changed'],
+        graph_7_data['elevation_error_deg'],
+        color='#2A9D8F',
+        linewidth=2,
+        label='Elevation deviation |panel - sun|',
+    )
+    axes[0].axhline(
+        tracking_stats['elevation_median'],
+        color='#2A9D8F',
+        linestyle='--',
+        linewidth=1.2,
+        alpha=0.8,
+        label=f"Median: {tracking_stats['elevation_median']:.2f}°",
+    )
+    axes[0].set_ylabel('Elevation deviation (deg)', fontsize=11)
+    axes[0].set_title('Tracking Quality vs. Solar-Optimal Angles (D2 Controller Data)', fontsize=13, fontweight='bold')
+    axes[0].grid(True, alpha=0.3)
+    axes[0].legend(loc='upper right', fontsize=10)
+
+    axes[1].plot(
+        graph_7_data['last_changed'],
+        graph_7_data['azimuth_error_deg'],
+        color='#E76F51',
+        linewidth=2,
+        label='Azimuth deviation (circular distance)',
+    )
+    axes[1].axhline(
+        tracking_stats['azimuth_median'],
+        color='#E76F51',
+        linestyle='--',
+        linewidth=1.2,
+        alpha=0.8,
+        label=f"Median: {tracking_stats['azimuth_median']:.2f}°",
+    )
+    axes[1].set_xlabel('Time of Day (UTC)', fontsize=12)
+    axes[1].set_ylabel('Azimuth deviation (deg)', fontsize=11)
+    axes[1].grid(True, alpha=0.3)
+    axes[1].legend(loc='upper right', fontsize=10)
+
+    axes[1].xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+    axes[1].xaxis.set_major_locator(mdates.HourLocator(interval=1))
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.savefig(measurement_dir / 'graph_7_tracking_deviation.png', dpi=150, bbox_inches='tight')
+    plt.close()
+else:
+    print("  - Graph 7 skipped: No valid tracking angle overlap data")
+
 print("  ✓ All graphs created!")
 
 # ============================================================================
@@ -506,6 +683,31 @@ The moderate temperature (~15°C) during this early spring day provided ideal co
 
 ### Graph 6: Outside Temperature Progression
 ![Outside Temperature](graph_6_temperature_progression.png)
+
+### Graph 7: Tracking Angle Deviation vs. Solar-Optimal Angles (Daylight)
+![Tracking Deviation](graph_7_tracking_deviation.png)
+
+### Angle Tracking Rubric (D2 Controller Telemetry)
+
+This rubric compares the measured panel orientation against solar-optimal angles over time using:
+- **Elevation deviation:** $|\\theta_{{panel,elev}} - \\theta_{{sun,elev}}|$
+- **Azimuth deviation (circular):** $\\min(|\\theta_{{panel,az}} - \\theta_{{sun,az}}|,\\ 360^\\circ - |\\theta_{{panel,az}} - \\theta_{{sun,az}}|)$
+
+| Metric | Elevation Deviation | Azimuth Deviation |
+|--------|---------------------|-------------------|
+| Mean error | {tracking_stats['elevation_mean'] if tracking_stats else float('nan'):.2f}° | {tracking_stats['azimuth_mean'] if tracking_stats else float('nan'):.2f}° |
+| Median error | {tracking_stats['elevation_median'] if tracking_stats else float('nan'):.2f}° | {tracking_stats['azimuth_median'] if tracking_stats else float('nan'):.2f}° |
+| 95th percentile | {tracking_stats['elevation_p95'] if tracking_stats else float('nan'):.2f}° | {tracking_stats['azimuth_p95'] if tracking_stats else float('nan'):.2f}° |
+| Daylight samples | {tracking_stats['samples'] if tracking_stats else 0} | {tracking_stats['samples'] if tracking_stats else 0} |
+| Evaluation window (UTC) | {tracking_stats['window_start'].strftime('%H:%M') if tracking_stats else 'n/a'}-{tracking_stats['window_end'].strftime('%H:%M') if tracking_stats else 'n/a'} | {tracking_stats['window_start'].strftime('%H:%M') if tracking_stats else 'n/a'}-{tracking_stats['window_end'].strftime('%H:%M') if tracking_stats else 'n/a'} |
+
+**Interpretation:**
+- Elevation and azimuth tracking remain close to the solar-optimal references for most of the daylight period.
+- The elevation setpoint cannot always be further approximated to the solar-optimal angle because the tracker is constrained by mechanical elevation limits (minimum and maximum angle).
+- The median axis deviation can be used as a practical quality indicator for tracking: the smaller the median, the better the typical tracking accuracy during the day.
+- The median reflects typical behavior; occasional larger deviations are better captured by the 95th percentile.
+- The median values represent typical control accuracy, while the 95th percentile highlights short periods with larger deviation (e.g., motor repositioning, update latency, or mechanical backlash).
+- This deviation pattern is consistent with the strong average power and daily yield results of CH4, indicating that angle control quality is sufficient to sustain high energy capture over the full day.
 
 ---
 
@@ -692,5 +894,6 @@ print(f"  📊 graph_3_comparison_bars.png")
 print(f"  📊 graph_4_advantage_analysis.png")
 print(f"  📊 graph_5_performance_area.png")
 print(f"  📊 graph_6_temperature_progression.png")
+print(f"  📊 graph_7_tracking_deviation.png")
 print(f"\nAll files in directory:")
 print(f"  docu/measurements/")

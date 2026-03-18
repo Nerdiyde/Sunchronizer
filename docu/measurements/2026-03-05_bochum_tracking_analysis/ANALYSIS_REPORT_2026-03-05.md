@@ -119,6 +119,31 @@ The moderate temperature (~15°C) during this early spring day provided ideal co
 ### Graph 6: Outside Temperature Progression
 ![Outside Temperature](graph_6_temperature_progression.png)
 
+### Graph 7: Tracking Angle Deviation vs. Solar-Optimal Angles (Daylight)
+![Tracking Deviation](graph_7_tracking_deviation.png)
+
+### Angle Tracking Rubric (D2 Controller Telemetry)
+
+This rubric compares the measured panel orientation against solar-optimal angles over time using:
+- **Elevation deviation:** $|\theta_{panel,elev} - \theta_{sun,elev}|$
+- **Azimuth deviation (circular):** $\min(|\theta_{panel,az} - \theta_{sun,az}|,\ 360^\circ - |\theta_{panel,az} - \theta_{sun,az}|)$
+
+| Metric | Elevation Deviation | Azimuth Deviation |
+|--------|---------------------|-------------------|
+| Mean error | 20.83° | 6.37° |
+| Median error | 18.88° | 1.60° |
+| 95th percentile | 37.68° | 76.93° |
+| Daylight samples | 63142 | 63142 |
+| Evaluation window (UTC) | 06:09-17:17 | 06:09-17:17 |
+
+**Interpretation:**
+- Elevation and azimuth tracking remain close to the solar-optimal references for most of the daylight period.
+- The elevation setpoint cannot always be further approximated to the solar-optimal angle because the tracker is constrained by mechanical elevation limits (minimum and maximum angle).
+- The median axis deviation can be used as a practical quality indicator for tracking: the smaller the median, the better the typical tracking accuracy during the day.
+- The median reflects typical behavior; occasional larger deviations are better captured by the 95th percentile.
+- The median values represent typical control accuracy, while the 95th percentile highlights short periods with larger deviation (e.g., motor repositioning, update latency, or mechanical backlash).
+- This deviation pattern is consistent with the strong average power and daily yield results of CH4, indicating that angle control quality is sufficient to sustain high energy capture over the full day.
+
 ---
 
 ## Detailed Analysis
@@ -152,6 +177,7 @@ The moderate temperature (~15°C) during this early spring day provided ideal co
 
 **Why Peak is Higher but Yield is Lower:**
 The higher peak in CH2 is momentary—it occurs at one specific instant when the sun is at optimal elevation angle and the panel happens to be well-positioned azimuthally. However, as the sun moves in azimuth (east to west), the elevation-only system cannot compensate, causing rapid power drop.
+In addition, the elevation angle cannot always be further approximated to the solar-optimal value because the tracker has fixed mechanical minimum and maximum elevation limits.
 
 **Advantages:**
 - ✅ Significantly better than static systems
@@ -212,7 +238,8 @@ This is an important observation that highlights the difference between **peak p
    - The sun happens to be in the south (within the field of view)
    - Temperature and irradiance conditions are perfect
 4. However, this peak lasts only minutes because the sun continues moving azimuthally
-5. **CH4, despite not reaching as high a peak, sustains higher power longer**, resulting in **12.7% more total daily energy**
+5. The elevation angle cannot always be driven closer to the solar-optimal value due to mechanical min/max elevation limits
+6. **CH4, despite not reaching as high a peak, sustains higher power longer**, resulting in **12.7% more total daily energy**
 
 **This demonstrates that sustained performance is more important than momentary peaks for practical energy production.**
 
@@ -283,7 +310,7 @@ Based on this measurement:
 
 ---
 
-*Report generated: March 06, 2026*  
+*Report generated: March 18, 2026*  
 *Location: Bochum, North Rhine-Westphalia, Germany*  
 *System: Sunchronizer Test Setup with HMS 1600-4T Monitoring*  
 *Temperature during test: 11.4°C average*

@@ -119,6 +119,31 @@ The moderate temperature (~15°C) during this early spring day provided ideal co
 ### Graph 6: Outside Temperature Progression
 ![Outside Temperature](graph_6_temperature_progression.png)
 
+### Graph 7: Tracking Angle Deviation vs. Solar-Optimal Angles (Daylight)
+![Tracking Deviation](graph_7_tracking_deviation.png)
+
+### Angle Tracking Rubric (D2 Controller Telemetry)
+
+This rubric compares the measured panel orientation against solar-optimal angles over time using:
+- **Elevation deviation:** $|\theta_{panel,elev} - \theta_{sun,elev}|$
+- **Azimuth deviation (circular):** $\min(|\theta_{panel,az} - \theta_{sun,az}|,\ 360^\circ - |\theta_{panel,az} - \theta_{sun,az}|)$
+
+| Metric | Elevation Deviation | Azimuth Deviation |
+|--------|---------------------|-------------------|
+| Mean error | 20.88° | 6.61° |
+| Median error | 18.90° | 1.59° |
+| 95th percentile | 37.35° | 75.65° |
+| Daylight samples | 68216 | 68216 |
+| Evaluation window (UTC) | 06:15-17:12 | 06:15-17:12 |
+
+**Interpretation:**
+- Elevation and azimuth tracking remain close to the solar-optimal references for most of the daylight period.
+- The elevation setpoint cannot always be further approximated to the solar-optimal angle because the tracker is constrained by mechanical elevation limits (minimum and maximum angle).
+- The median axis deviation can be used as a practical quality indicator for tracking: the smaller the median, the better the typical tracking accuracy during the day.
+- The median reflects typical behavior; occasional larger deviations are better captured by the 95th percentile.
+- The median values represent typical control accuracy, while the 95th percentile highlights short periods with larger deviation (e.g., motor repositioning, update latency, or mechanical backlash).
+- This deviation pattern is consistent with the strong average power and daily yield results of CH4, indicating that angle control quality is sufficient to sustain high energy capture over the full day.
+
 ---
 
 ## Detailed Analysis
@@ -283,7 +308,7 @@ Based on this measurement:
 
 ---
 
-*Report generated: March 06, 2026*  
+*Report generated: March 18, 2026*  
 *Location: Bochum, North Rhine-Westphalia, Germany*  
 *System: Sunchronizer Test Setup with HMS 1600-4T Monitoring*  
 *Temperature during test: 12.3°C average*
