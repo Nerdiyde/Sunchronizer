@@ -45,7 +45,7 @@ The file is organized into the following main sections:
 5. **Automation & Scripting** - Tracking logic, error handling
 6. **Web Interface** - User interface with sorting groups
 7. **Button & Switch Controls** - Control elements
-8. **External Components** - Custom ESPHome components
+8. **External Components** - ESPHome external components fetched from GitHub
 
 ## 🔧 Customization for Your Projects
 
@@ -63,6 +63,23 @@ Before using this configuration, please adjust the following areas:
 - Standby positions
 - Motor blockage thresholds
 - LED brightness for day/night
+
+## Secrets Configuration (secrets.yaml)
+
+The firmware uses a local `secrets.yaml` file for sensitive values.
+
+Required for normal operation:
+- `wifi_ssid`: Your 2.4 GHz WiFi network name (SSID)
+- `wifi_password`: The password for the SSID above
+
+Optional (only needed when corresponding features are enabled):
+- `api_key`: ESPHome API encryption key (Home Assistant API encryption)
+- `ota_password`: Password protection for OTA updates
+
+Security recommendation:
+- Keep real credentials only in your local `secrets.yaml`
+- Do not commit real secrets to GitHub
+- Keep placeholder/empty values in repository copies
 
 ## 🌐 Web Interface
 

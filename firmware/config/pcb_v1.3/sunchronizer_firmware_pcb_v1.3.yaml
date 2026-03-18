@@ -6,7 +6,7 @@
 #    \_/\_/    \_/\_/    \_/\_/(_)|_| \_| \___||_|   \__,_||_| \__, |(_)\__,_| \___|
 #                                                               __/ |
 #                                                              |___/
-#     Infos on https://www.Nerdiy.de/
+#
 #
 #     This program is free software: you can redistribute it and/or modify
 #     it under the terms of the GNU General Public License as published by
@@ -22,6 +22,74 @@
 #     along with this program.  If not, see <http://www.gnu.org/licenses/>.#
 #     You can find additional infos about the licensing here: https://nerdiy.de/en/lizenz/
 #
+#     Infos on https://www.Nerdiy.de/
+#
+# ╔══════════════════════════════════════════════════════════════════════════════════════════════╗
+# ║                        SEEED XIAO ESP32-S3 - GPIO Pin Mapping                                ║
+# ║                            Sunchronizer Controller PCB v1.3                                  ║
+# ╚══════════════════════════════════════════════════════════════════════════════════════════════╝
+#
+#        ┌──────────────────────────────────────────────────────────┐
+#        │   ●                 XIAO ESP32-S3                    ●   │
+#        │   │                                                  │   │
+#        │   ▼                                                  ▼   │
+#        │  5V                                              BAT/3V7 │
+#        │  GND ────────────────[ GND ]────────────────────────GND  │
+#        │                                                          │
+#        │  GPIO1  ──────[ Not Used ]                      GPIO10 ──┼──[ Not Used ]
+#        │  GPIO2  ──────[ Not Used ]                      GPIO9  ──┼──[ WS2812 RGB LED Strip ]
+#        │  GPIO3  ──────[ BN-220 GNSS → RX ]              GPIO8  ──┼──[ BNO085 IMU → TX ]
+#        │  GPIO4  ──────[ BN-220 GNSS → TX ]              GPIO7  ──┼──[ BNO085 IMU → RX ]
+#        │  GPIO5  ──────[ I2C → SDA ]─────────┐           GPIO6  ──┼──[ I2C → SCL ]──────┐
+#        │  GPIO43 ──────[ Not Used ]          │           GPIO44 ──┼──[ Not Used ]       │
+#        │  GPIO44 ──────[ Not Used ]          │           GPIO21 ──┼──[ MCU Status LED ] │
+#        │                                     │                    │                     │
+#        └─────────────────────────────────────┼────────────────────┼─────────────────────┘
+#                                              │                    │
+#                                              │                    │
+#     ┌────────────────────────────────────────┴────────────────────┴──────────────────────────┐
+#     │                            I2C Bus (GPIO5=SDA, GPIO6=SCL)                              │
+#     └────────────────────────────────────────────────────────────────────────────────────────┘
+#              │                 │                 │                │                │
+#              ▼                 ▼                 ▼                ▼                ▼
+#     ┌────────────────┐┌────────────────┐┌──────────────┐┌────────────────┐┌─────────────────┐
+#     │   INA219 #1    ││   INA219 #2    ││   DS3231     ││   SSD1306      ││   MCP23017      │
+#     │  (0x40)        ││  (0x41)        ││   RTC        ││   OLED Display ││   GPIO Expander │
+#     │                ││                ││  (0x68)      ││   (0x3C)       ││   (0x20)        │
+#     │ Elevation      ││ Azimuth        ││              ││   128x64       ││                 │
+#     │ Motor Current  ││ Motor Current  ││ Time Source  ││                ││  16x GPIO Pins  │
+#     │ & Voltage      ││ & Voltage      ││ & Temp       ││                ││                 │
+#     └────────────────┘└────────────────┘└──────────────┘└────────────────┘└─────────────────┘
+#                                                                                     │
+#                                          ┌──────────────────────────────────────────┘
+#                                          │
+#                    ┌─────────────────────┴───────────────────────┐
+#                    │       MCP23017 GPIO Expander Functions      │
+#                    ├─────────────────────────────────────────────┤
+#                    │  GPIO0  → Button Down/CCW (Physical)        │
+#                    │  GPIO1  → Button Up/CW (Physical)           │
+#                    │  GPIO6  → Azimuth Endstop Max CCW Position  │
+#                    │  GPIO7  → Azimuth Endstop Max CW Position   │
+#                    │  GPIO8  → Elevation Motor Direction (+)     │
+#                    │  GPIO9  → Elevation Motor Direction (-)     │
+#                    │  GPIO10 → Azimuth Motor Direction CCW (-)   │
+#                    │  GPIO11 → Azimuth Motor Direction CW (+)    │
+#                    └─────────────────────────────────────────────┘
+#
+# ╔══════════════════════════════════════════════════════════════════════════════════════════════╗
+# ║                                  Signal Flow Summary                                         ║
+# ╠══════════════════════════════════════════════════════════════════════════════════════════════╣
+# ║  UART1: GPIO3/4   → BN-220 GNSS Receiver (9600 baud)                                         ║
+# ║  UART2: GPIO7/8   → BNO085 9-DOF IMU (115200 baud, RVC mode)                                 ║
+# ║  I2C:   GPIO5/6   → INA219 (2x), DS3231 RTC, SSD1306 OLED, MCP23017 GPIO Expander            ║
+# ║  GPIO:   GPIO9     → WS2812B RGB LED Strip (External Status Indicator)                       ║
+# ║  GPIO:  GPIO21    → Internal MCU Status LED                                                  ║
+# ║                                                                                              ║
+# ║  Power Supply: 12V/3A Input → 5V Step-Down → ESP32-S3 + Peripherals                          ║
+# ║  Motor Control: TA6568 H-Bridge (controlled via MCP23017)                                    ║
+# ╚══════════════════════════════════════════════════════════════════════════════════════════════╝
+#
+
 
 # === Infos ===
 
@@ -48,6 +116,18 @@
 # Movement priority:
 # The rotation and lifting motors must not run in parallel to not increase the overall supply current to >3A (which is the limit of the power supply).
 # Lifting and lowering has a higher priority than any rotational movements. So if both is planned, the lowering/lifting is finished first.
+
+# Movement tracking:
+# The firmware tracks movement timestamps and durations for diagnostic and monitoring purposes:
+#  - Movement start timestamp: Recorded in milliseconds since boot when a movement begins (int64_t type for long-term stability)
+#  - Movement duration: Calculated when movement completes, either by reaching target angle or manual stop
+#  - Time since last movement: Continuously updated to monitor system activity
+# Available as sensors for both axes (azimuth and elevation):
+#  - "Panel [axis] movement start (ms)" - Raw millisecond timestamp
+#  - "Panel [axis] movement start time" - Formatted date/time string
+#  - "Panel [axis] last movement duration" - Duration of most recent movement in seconds
+#  - "Panel [axis] time since last movement" - Elapsed time since last movement ended
+# Sensors update immediately when movement state changes and periodically during operation.
 
 # Safety features:
 # All weather data retrieval is currently based on an active API connection to openweathermaps.org.
@@ -78,20 +158,20 @@
 substitutions:
 
   # Project related definitions
-  firmware_version: "2026.1.0"                  # Semantic versioning format (YYYY.MM.patch) - Example: 2025.11.0
+  firmware_version: "2026.3.0"                  # Semantic versioning format (YYYY.MM.patch) - Example: 2025.11.0
   project_name: "Nerdiy.Sunchronizer"           # Unique project identifier used for HomeAssistant integration
   fiendly_name: "Sunchronizer_CTRLR_V1.3"       # Human-readable device name displayed in UI - Example: Sunchronizer_CTRLR_V1.3
   name: "sunchronizer-ctrlr-v1-3"               # Hostname for mDNS discovery and MQTT - Example: sunchronizer-ctrlr-v1-3
   add_mac_to_name: False                        # When true, appends MAC address to device name to avoid naming conflicts
-  minimum_esphome_version: "2026.1.0"           # Minimum required ESPHome version for this firmware - Example: 2025.11.0
+  minimum_esphome_version: "2025.12.7"           # Minimum required ESPHome version for this firmware - Example: 2025.11.0
   cpu_frequency: "240MHz"                       # ESP32 CPU clock frequency - Supported: 80MHz, 160MHz, 240MHz
   made_for_pcb_version: 1.3                     # Firmware-PCB version compatibility - Example: 1.3
 
   # security relevant definitions
   # See https://esphome.io/guides/security_best_practices/ for additional information
-  #ota_password: !secret ota_password            # uncomment to activate password protection for OTA
-  #api_key: !secret api_key                      # uncomment to activate API access
-  http_request_ssl_verification: "false"
+  ota_password: !secret ota_password            # Sourced from secrets.yaml. Used when OTA password protection is enabled below.
+  api_key: !secret api_key                      # Sourced from secrets.yaml. Used when API encryption is enabled below.
+  http_request_ssl_verification: "false"        # Whether to verify SSL certificates for HTTP requests (e.g., when fetching OWM data) - Example: "false" (Set to "true" in production for security, but may cause issues with self-signed certs or certain network configurations)
 
   gpio:
     # GNSS communication GPIOs
@@ -152,10 +232,11 @@ substitutions:
   internet_connection_test_interval: "300s"     # How often to test internet connectivity - Example: "300s" (5 minutes)
   owm_data_expiration_time: "360"               # OWM data max age in seconds before considered old - Example: "360" (6 minutes)
   owm_data_expiration_shutdown_time: "720"      # OWM data max age in seconds before safety shutdown (stand by mode) - Example: "720" (12 minutes)
-  panel_movement_plausible_check_delay: "2000"  # Delay in ms before checking if panel movement is plausible - Example: "2000" (2 seconds)
+  panel_movement_plausible_check_delay: "5000"  # Delay in ms before checking if panel movement is plausible - Example: "2000" (2 seconds)
   azimuth_motor_direction_change_threshold: "1.0"  # Minimum heading change in degrees to detect azimuth motor direction - Example: "1.0" (1 degree)
   elevation_motor_direction_detection_tolerance: "2.0"  # Tolerance in degrees for elevation motor direction detection (accounts for sensor accuracy) - Example: "1.0" (±1°)
   azimuth_motor_direction_detection_tolerance: "2.0"  # Tolerance in degrees for azimuth motor direction detection (accounts for compass drift) - Example: "2.0" (±2°)
+  azimuth_motor_wrong_direction_required_consecutive: "3"  # Consecutive wrong-direction samples required to flag the error
   elevation_target_angle_timeout: "120"         # Maximum time in seconds to reach elevation target angle before timeout error - Example: "300" (5 minutes)
   azimuth_target_angle_timeout: "230"           # Maximum time in seconds to reach azimuth target angle before timeout error - Example: "300" (5 minutes)
   mcu_led_blink_interval: "1s"                  # Blink interval for MCU LED - Example: "1s"
@@ -196,7 +277,7 @@ substitutions:
     status_text_normal: "Normal"                  # Default status text when system is operating normally - Example: "Normal"
     initial_owm_key_value: "abcdefghijkl"         # Placeholder OWM API key - Must be replaced with valid key for weather data
     ccw_endstop_azimuth_pointing_direction: "77.0"   # Azimuth angle when base is pointing South and CCW endstop is reached - Example: "77.0"
-    stand_by_mode_elevation_trigger_angle: 5      # Sun elevation angle threshold in degrees for stand by mode activation - Example: 5
+    stand_by_mode_elevation_trigger_angle: 3      # Sun elevation angle threshold in degrees for stand by mode activation - Example: 3
     elevation_motor_blocked_current_threshold: "3.0"   # Motor blocked detection threshold in A - Example: "3.0" (3A)
     azimuth_motor_blocked_current_threshold: "2.5"     # Motor blocked detection threshold in A - Example: "2.5" (2.5A)
     led_internal_brightness_day: 70.0             # Internal LED brightness (0-100%) during daytime - Example: 70.0
@@ -220,8 +301,7 @@ substitutions:
 
   # Magnetic calibration periodic check settings
   magnetic_calibration_periodic_check_enabled: "true"    # Enable/disable periodic magnetic calibration check - Example: "true"
-  magnetic_calibration_periodic_check_interval_minutes: 60   # Interval in minutes for periodic magnetic calibration check - Example: 60 (1 hour)
-  magnetic_calibration_periodic_check_interval_seconds: 3600   # Interval in seconds for periodic magnetic calibration check - auto-calculated: 60 * 60 = 3600
+  magnetic_calibration_periodic_check_interval_seconds: 300   # Interval in seconds for periodic magnetic calibration check
 
   # LED colors (used for the status leds)
   led_color_red: [1.0, 0.0, 0.0]                # RGB color for error/fault status indication - Red
@@ -253,16 +333,22 @@ substitutions:
   motor_azimuth_nominal_supply_voltage: "12"             # Nominal motor supply voltage in V - Example: "12"
   motor_azimuth_supply_voltage_tolerance: "3"            # Maximum allowed voltage deviation in V (±) - Example: "3"
   
-  motor_connection_error_check_delay: "5000"    # Delay in ms before motor connection error check to allow current to rise - Example: "2000" (2s)
+  motor_connection_error_check_delay: "3000"    # Delay in ms before motor connection error check to allow current to rise - Example: "2000" (2s)
   motor_high_current_check_delay: "5000"        # Delay in ms before motor blocked check to allow current rise and overcome initial movement - Example: "5000" (5s)
+  motor_overcurrent_consecutive_detections_required: "5"  # Number of consecutive overcurrent detections required before triggering fault - Example: "3" (prevents false positives from temporary current spikes)
+  elevation_motor_wrong_direction_required_consecutive: "3"  # Number of consecutive wrong direction detections required for elevation motor - Example: "3"
+  motor_missing_angle_change_consecutive_detections_required: "3"  # Number of consecutive missing angle change detections required before triggering fault - Example: "3" (prevents false positives from IMU/compass measurement noise)
 
 
   # panel movement fault detection
   panel_block_detection_elevation_opening_angle_change_minimum: "-1.5" # Minimum angle change in degrees for elevation opening (negative value, smaller = less sensitive) - Example: "-1.5"
   panel_block_detection_elevation_closing_angle_change_minimum: "0.5"  # Minimum angle change in degrees for elevation closing (smaller = less sensitive) - Example: "0.5"
 
-  panel_block_detection_azimuth_cw_angle_change_minimum: "-1.5" # Minimum angle change in degrees for clockwise azimuth movement (negative value, smaller = less sensitive) - Example: "-1.5"
-  panel_block_detection_azimuth_ccw_angle_change_minimum: "1.5"  # Minimum angle change in degrees for counter-clockwise azimuth movement (smaller = less sensitive) - Example: "1.5"
+  panel_block_detection_azimuth_cw_angle_change_minimum: "-1.0" # Minimum angle change in degrees for clockwise azimuth movement (negative value, smaller = less sensitive) - Example: "-1.5"
+  panel_block_detection_azimuth_ccw_angle_change_minimum: "1.0"  # Minimum angle change in degrees for counter-clockwise azimuth movement (smaller = less sensitive) - Example: "1.5"
+
+  panel_compass_heading_max_rate_deg_per_s: "5.0"  # Max plausible heading change rate to reject spikes
+  panel_compass_heading_max_jump_deg: "5.0"        # Hard cap for single-sample heading jump
 
   # Stand by mode settings
   stand_by_mode_elevtation_trigger_angle_tolerance: "2"      # Tolerance in degrees for elevation angle to consider panel in standby/park position - Example: "2"
@@ -274,6 +360,8 @@ substitutions:
   status_text_messages:
     owm_api_key_not_entered: "OWM API Key is not entered. Auto OWM data retrieval deactivated. Enter a valid OWM API key to use this feature."
     owm_api_key_not_valid: "OWM API Key is not valid. Auto OWM data retrieval deactivated. Enter a valid OWM API key to use this feature."
+    owm_data_is_old: "OWM data is old. Weather data should be refreshed soon."
+    owm_data_is_expired: "OWM data is expired. Stand by mode may be activated for safety. Check internet connection and OWM API."
     internet_test_url_not_reachable: "Test URL not reachable. Internet connection might not be available."
     elevation_motor_sensor_not_ready: "Elevation Motor current sensor not ready. Check correct I2C address and solder jumper settings."
     motor_voltage_not_valid: "Error: Motor voltage is not valid."
@@ -285,6 +373,8 @@ substitutions:
     elevation_target_calculation_deactivated: "Auto elevation target angle calculation is deactivated. Activate \"Auto calculate elevation angle\" to fix this."
     elevation_control_deactivated: "Elevation angle control is deactivated. Activate \"Auto control elevation angle\" to fix this."
     elevation_boot_activation_deactivated: "Elevation angle control auto activation is deactivated. Activate \"Auto control elevation angle activation at boot\" to fix this."
+    elevation_lowered_stand_by_mode: "Panel lowered to stand-by position due to active stand-by mode."
+    elevation_lowered_cloudy_mode: "Panel lowered to horizontal position (0°) due to active cloudy mode."
     elevation_motor_wrong_direction: "ERROR: Elevation motor rotates in wrong direction! Motor direction is inverted. Enable \"Invert elevation motor direction\" to fix this."
     elevation_target_angle_timeout: "ERROR: Elevation target angle not reached within configured timeout! Check motor and mechanics or increase timeout value."
     magnetic_declination_calibration_active: "Magnetic declination calibration active..."
@@ -296,6 +386,7 @@ substitutions:
     azimuth_target_calculation_deactivated: "Auto azimuth target angle calculation is deactivated. Activate \"Auto calculate azimuth angle\" to fix this."
     azimuth_control_deactivated: "Azimuth angle control is deactivated. Activate \"Auto control azimuth angle\" to fix this."
     azimuth_boot_activation_deactivated: "Azimuth angle control auto activation is deactivated. Activate \"Auto control azimuth angle activation at boot\" to fix this."
+    azimuth_rotated_stand_by_mode: "Panel rotated to stand-by azimuth angle due to active stand-by mode."
     azimuth_motor_wrong_direction: "ERROR: Azimuth motor rotates in wrong direction! Motor direction is inverted. Enable \"Invert azimuth motor direction\" to fix this."
     azimuth_target_angle_timeout: "ERROR: Azimuth target angle not reached within configured timeout! Check motor and mechanics or increase timeout value."
     motor_blocked_high_current: "Motor blocked state detected(high current). Movement stopped & automatic controls deactivated."
@@ -304,7 +395,7 @@ substitutions:
     motor_blocked_angle_cw_not_changing: "Motor blocked state detected(angle CW not changing). Movement stopped."
     motor_blocked_angle_ccw_not_changing: "Motor blocked state detected(angle CCW not changing). Movement stopped."
     motor_blocked_angle_up_not_changing: "Motor blocked state detected while lifting (angle up not changing). Movement stopped."
-    motor_blocked_angle_down_not_changing: "Motor blocked state detected while lifting (angle down not changing). Movement stopped."
+    motor_blocked_angle_down_not_changing: "Motor blocked state detected while lowering (angle down not changing). Movement stopped."
     gnss_not_ready: "GNSS not ready."
     gnss_signal_quality_poor: "The GNSS signal quality is poor. Try to improve reception conditions."
     imu_not_ready: "IMU not ready."
@@ -339,9 +430,9 @@ substitutions:
       auto_motor_direction_detection_on_off: 4        # Motor wrong direction detection enable/disable
       auto_elevation_target_angle_timeout_detection_on_off: 5  # Elevation target angle timeout detection enable/disable
       auto_azimuth_target_angle_timeout_detection_on_off: 6    # Azimuth target angle timeout detection enable/disable
-      magnetic_calibration_periodic_check_enabled: 7        # Periodic magnetic declination calibration check enable/disable
-      auto_stand_by_mode_estimation: 8                      # Auto stand by mode estimation enable/disable
-      auto_cloudy_mode_control: 9                           # Auto cloudy mode control enable/disable
+      auto_stand_by_mode_estimation: 7                      # Auto stand by mode estimation enable/disable
+      auto_cloudy_mode_control: 8                           # Auto cloudy mode control enable/disable
+      auto_cloudy_mode_elevation_control: 9                # Auto cloudy mode elevation control enable/disable
       auto_stand_by_mode_via_sun_elevation_control: 10      # Auto stand by mode by sun elevation enable/disable
       auto_wind_protection_control: 11                      # Auto wind protection control enable/disable
       auto_owm_data_retrieval: 12                           # Auto OWM data retrieval enable/disable
@@ -501,19 +592,21 @@ substitutions:
       factory_reset_button: 2
       delete_wifi_credentials: 3
       logger_select: 4
-      cpu_frequency_id: 5
-      uptime_id: 6
-      device_info_id: 7
-      reset_reason_id: 8
-      esphome_project_version_text_short: 9
-      sunchronizer_firmware_version_text_detailed: 10
-      version_id: 11
-      heap_free_psram_id: 12
-      free_psram_percent: 13
-      heap_free_id: 14
-      free_heap_percent: 15
-      heap_max_block_id: 16
-      heap_loop_time_id: 17
+      homeassistant_api_connected: 5
+      cpu_frequency_id: 6
+      uptime_id: 7
+      device_info_id: 8
+      reset_reason_id: 9
+      esphome_project_version_text_short: 10
+      sunchronizer_firmware_version_text_detailed: 11
+      version_id: 12
+      heap_free_psram_id: 13
+      free_psram_percent: 14
+      heap_free_id: 15
+      free_heap_percent: 16
+      heap_max_block_id: 17
+      heap_loop_time_id: 18
+      last_movement_command_text: 19
 
     # IMU accelerometer and magnetic heading grouping
     imu_sensor_status:
@@ -530,7 +623,12 @@ substitutions:
       magnetic_declination: 11
       save_current_magnetic_declination: 12
       invert_panel_pitch_angle_switch: 13
-      magnetic_calibration_periodic_check_interval_minutes: 14
+      magnetic_calibration_periodic_check_enabled: 14
+      magnetic_calibration_periodic_check_interval_seconds: 15
+      azimuth_angle_change_value: 16
+      elevation_angle_change_value: 17
+      azimuth_angle_change_value_absolute: 18
+      elevation_angle_change_value_absolute: 19
       perform_magnetic_declination_calibration_button: 25
       
     # Elevation axis motor control and status grouping
@@ -559,6 +657,11 @@ substitutions:
       elevation_motor_direction_inverted: 22
       elevation_axis_mode_activated: 23
       start_elev_angle_measurement: 24
+      panel_elev_target_angle_delta: 25
+      panel_elevation_last_movement_duration: 26
+      panel_elevation_time_since_last_movement: 27
+      panel_elevation_moving_start_date_ms: 28
+      panel_elevation_moving_start_date_formatted: 29
       
     # Azimuth axis motor control and status grouping
     azimuth_axis:
@@ -585,6 +688,11 @@ substitutions:
       auto_set_panel_azimuth_target_to_sun_azimuth: 21
       azimuth_motor_direction_inverted: 23
       get_owm_data: 24
+      panel_azimuth_target_angle_delta: 25
+      panel_azimuth_last_movement_duration: 26
+      panel_azimuth_time_since_last_movement: 27
+      panel_azimuth_moving_start_date_ms: 28
+      panel_azimuth_moving_start_date_formatted: 29
       
     # Display LED and screen settings grouping
     display_status:
@@ -610,13 +718,23 @@ substitutions:
       stand_by_mode_trigger_high_winds: 11
       stand_by_mode_trigger_expired_owm_data: 12
       stand_by_mode_trigger_sun_elevation: 13
+      stand_by_mode_trigger_azimuth_fault: 14
 
 # =============================================================================================================================
 
 external_components:
   - source:
-      type: local
-      path: my_components
+      type: git
+      url: https://github.com/Nerdiyde/DS3231-RTC-component-for-ESPHome.git
+      ref: v2026.3.0
+      path: components
+    components: [ ds3231 ]
+  - source:
+      type: git
+      url: https://github.com/Nerdiyde/BNO085-RVC-component-for-ESPHome.git
+      ref: v2026.3.0
+      path: components
+    components: [ bno085_rvc ]
 
 esphome:
   name: ${name}
@@ -696,13 +814,15 @@ logger:
 
 # Enable Home Assistant API
 api:
+  id: api_id
   reboot_timeout: ${api_reboot_timeout}
+  max_send_queue: 12
   #encryption:                                             # uncomment to activate API encryption
   #  key: ${api_key}                                       # uncomment to activate API encryption
 
 ota:
   - platform: esphome
-    password: "${ota_password}"    # uncomment to activate password protection for OTA    
+    #password: "${ota_password}"    # uncomment to activate password protection for OTA    
     on_begin:
       then:
         - lambda: |-
@@ -712,8 +832,8 @@ ota:
 
 wifi:
   id: wifi_pyh_id
-  #ssid: !secret wifi_ssid
-  #password: !secret wifi_password
+  # ssid: !secret wifi_ssid          # Uncomment to set WiFi SSID via secrets.yaml
+  # password: !secret wifi_password  # Uncomment to set WiFi password via secrets.yaml
   output_power: 20dB
   power_save_mode: none
   use_psram: true
@@ -800,11 +920,11 @@ interval:
 
   - interval: ${owm_data_retrieval_check_period}
     then:
-      # do a periodic weather data retrieval (if activated and stand by mode is not active)
+      # do a periodic weather data retrieval
       # - as soon as the current cloud coverage value is updated it also checks if the cloudy mode needs to be enabled or disabled.
       # - as soon as the current wind speed and gusts value is updated it also checks if the stand by mode needs to be enabled or disabled.
       - lambda: |-
-          if (id(auto_owm_data_retrieval).state && !id(stand_by_mode_active).state)
+          if (id(auto_owm_data_retrieval).state)
           {
             id(perform_openweathermap_data_retrieval_if_owm_data_is_old).execute();
           }
@@ -957,6 +1077,83 @@ text_sensor:
     web_server:
       sorting_group_id: sorting_group_system
       sorting_weight: ${sorting_groups.system.timezone}
+
+  - platform: template
+    name: "Last movement command"
+    id: last_movement_command_text
+    icon: "mdi:history"
+    update_interval: never
+    lambda: |-
+      return {"None"};
+    web_server:
+      sorting_group_id: sorting_group_system
+      sorting_weight: ${sorting_groups.system.last_movement_command_text}
+
+  - platform: template
+    name: "Panel elevation movement start time"
+    id: panel_elevation_moving_start_date_formatted
+    icon: "mdi:clock-start"
+    update_interval: 1s
+    disabled_by_default: true
+    web_server:
+      sorting_group_id: sorting_group_elevation_axis
+      sorting_weight: ${sorting_groups.elevation_axis.panel_elevation_moving_start_date_formatted}
+    lambda: |-
+      if (id(panel_elevation_moving_start_date) <= 0)
+      {
+        return {"Not moving"};
+      }
+      // Calculate absolute time from boot-relative timestamp
+      time_t now = id(ds3231_time).now().timestamp;
+      uint32_t uptime_sec = esp_timer_get_time() / 1000000;
+      time_t boot_time = now - uptime_sec;
+      time_t start_time = boot_time + (id(panel_elevation_moving_start_date) / 1000);
+      
+      // Extract milliseconds
+      int milliseconds = (int)(id(panel_elevation_moving_start_date)) % 1000;
+      
+      struct tm timeinfo;
+      localtime_r(&start_time, &timeinfo);
+      char buf[24];
+      strftime(buf, sizeof(buf), "%d.%m.%Y %H:%M:%S", &timeinfo);
+      
+      // Append milliseconds
+      char result[28];
+      snprintf(result, sizeof(result), "%s.%03d", buf, milliseconds);
+      return {result};
+
+  - platform: template
+    name: "Panel azimuth movement start time"
+    id: panel_azimuth_moving_start_date_formatted
+    icon: "mdi:clock-start"
+    update_interval: 1s
+    disabled_by_default: false
+    web_server:
+      sorting_group_id: sorting_group_azimuth_axis
+      sorting_weight: ${sorting_groups.azimuth_axis.panel_azimuth_moving_start_date_formatted}
+    lambda: |-
+      if (id(panel_azimuth_moving_start_date) <= 0)
+      {
+        return {"Not moving"};
+      }
+      // Calculate absolute time from boot-relative timestamp
+      time_t now = id(ds3231_time).now().timestamp;
+      uint32_t uptime_sec = esp_timer_get_time() / 1000000;
+      time_t boot_time = now - uptime_sec;
+      time_t start_time = boot_time + (id(panel_azimuth_moving_start_date) / 1000);
+      
+      // Extract milliseconds
+      int milliseconds = (int)(id(panel_azimuth_moving_start_date)) % 1000;
+      
+      struct tm timeinfo;
+      localtime_r(&start_time, &timeinfo);
+      char buf[24];
+      strftime(buf, sizeof(buf), "%d.%m.%Y %H:%M:%S", &timeinfo);
+      
+      // Append milliseconds
+      char result[28];
+      snprintf(result, sizeof(result), "%s.%03d", buf, milliseconds);
+      return {result};
 
 # Error sensors
 
@@ -1123,8 +1320,11 @@ text_sensor:
     web_server:
       sorting_group_id: sorting_group_system
       sorting_weight: ${sorting_groups.system.sunchronizer_firmware_version_text_detailed}
-    lambda: |-
+    lambda: |-    
       return { ESPHOME_PROJECT_VERSION " " + App.get_compilation_time() };
+      //char time_str[26];
+      //App.get_build_time_string(time_str);
+      //return { ESPHOME_PROJECT_VERSION " " + std::string(time_str) };
 
   - platform: template
     name: "PCB Version"
@@ -1389,7 +1589,8 @@ text_sensor:
       float pitch = id(panel_pitch).state;
       float heading = id(panel_compass_heading).state;
 
-      if (isnan(pitch) || isnan(heading)) {
+      if (isnan(pitch) || isnan(heading)) 
+      {
         return {"Unknown"};
       }
 
@@ -1871,6 +2072,23 @@ switch:
             ESP_LOGE("Switches", "\"Auto cloudy mode On|Off\" enabled."); 
             id(perform_automatic_cloudy_mode_control_estimation).execute();
 
+  # If this is activated the panel will be lowered to 0° when cloudy mode is active
+  - platform: template
+    name: "Auto cloudy mode elevation control"
+    id: auto_cloudy_mode_elevation_control
+    icon: "mdi:cloud-arrow-down"
+    optimistic: True
+    restore_mode: RESTORE_DEFAULT_ON
+    web_server:
+      sorting_group_id: sorting_group_safety_features_and_automations
+      sorting_weight: ${sorting_groups.safety_features_and_automations.auto_cloudy_mode_elevation_control}
+    on_turn_off:
+      - lambda: |-       
+            ESP_LOGE("Switches", "\"Auto cloudy mode elevation control\" disabled. Panel will not be lowered when cloudy mode is active.");  
+    on_turn_on:
+      - lambda: |-       
+            ESP_LOGE("Switches", "\"Auto cloudy mode elevation control\" enabled. Panel will be lowered to 0° when cloudy mode is active.");
+
   # If this is activated the stand by mode is automatically acitvated as soon as the sun elevation angle is below the trigger angle
   - platform: template
     name: "Auto stand by mode by sun elevation"
@@ -1948,8 +2166,8 @@ switch:
     optimistic: True
     restore_mode: RESTORE_DEFAULT_ON
     web_server:
-      sorting_group_id: sorting_group_safety_features_and_automations
-      sorting_weight: ${sorting_groups.safety_features_and_automations.magnetic_calibration_periodic_check_enabled}
+      sorting_group_id: sorting_group_imu_sensor_status
+      sorting_weight: ${sorting_groups.imu_sensor_status.magnetic_calibration_periodic_check_enabled}
     on_turn_off:
       - lambda: |-       
             ESP_LOGE("Switches", "\"Periodic magnetic calibration check enabled\" disabled.");  
@@ -2360,8 +2578,8 @@ number:
     name: "Stand by mode elevation trigger angle"
     id: stand_by_mode_elevation_trigger_angle
     icon: "mdi:sleep"
-    max_value: 100
-    min_value: 10
+    max_value: 45
+    min_value: 3
     step: 1
     initial_value: ${initial_value.stand_by_mode_elevation_trigger_angle}
     unit_of_measurement: "°"
@@ -2460,12 +2678,12 @@ number:
 
   - platform: template
     name: "Periodic magnetic calibration interval"
-    id: magnetic_calibration_periodic_check_interval_minutes
+    id: magnetic_calibration_periodic_check_interval_seconds
     icon: "mdi:magnet"
-    max_value: 1440
+    max_value: 3600
     min_value: 1
     step: 1
-    initial_value: ${magnetic_calibration_periodic_check_interval_minutes}
+    initial_value: ${magnetic_calibration_periodic_check_interval_seconds}
     unit_of_measurement: "min"
     optimistic: true
     restore_value: true
@@ -2473,7 +2691,7 @@ number:
     mode: box
     web_server:
       sorting_group_id: sorting_group_imu_sensor_status
-      sorting_weight: ${sorting_groups.imu_sensor_status.magnetic_calibration_periodic_check_interval_minutes}
+      sorting_weight: ${sorting_groups.imu_sensor_status.magnetic_calibration_periodic_check_interval_seconds}
     on_value:
       then:
       - lambda: |-
@@ -2995,7 +3213,7 @@ sensor:
     update_interval: 10ms
 
     pitch:
-      name: "IMU Pitch (Tilt Nose down/Nose up)"
+      name: "IMU Pitch (Tilt Nose down|Nose up)"
       id: panel_imu_pitch
       unit_of_measurement: "°"
       accuracy_decimals: 1
@@ -3010,7 +3228,7 @@ sensor:
         sorting_weight: ${sorting_groups.imu_sensor_status.panel_imu_pitch}
 
     roll:
-      name: "IMU Roll (Tilt Left/Right)"
+      name: "IMU Roll (Tilt Left|Right)"
       id: panel_imu_roll
       unit_of_measurement: "°"
       accuracy_decimals: 1
@@ -3076,7 +3294,7 @@ sensor:
         sorting_weight: ${sorting_groups.imu_sensor_status.accel_panel_z}
 
   - platform: template
-    name: "Panel Pitch (Tilt Nose down/Nose up)"
+    name: "Panel Pitch (Tilt Nose down|Nose up)"
     id: panel_pitch
     icon: "mdi:incline"
     unit_of_measurement: "°"
@@ -3087,6 +3305,50 @@ sensor:
       sorting_weight: ${sorting_groups.imu_sensor_status.panel_pitch}
     lambda: |-
       return id(invert_panel_pitch_angle_switch).state ? -id(panel_imu_pitch).state : id(panel_imu_pitch).state;
+
+  - platform: template
+    name: "Azimuth angle change value"
+    id: azimuth_angle_change_value
+    unit_of_measurement: "°"
+    accuracy_decimals: 2
+    update_interval: never
+    web_server:
+      sorting_group_id: sorting_group_imu_sensor_status
+      sorting_weight: ${sorting_groups.imu_sensor_status.azimuth_angle_change_value}
+
+  - platform: template
+    name: "Elevation angle change value"
+    id: elevation_angle_change_value
+    unit_of_measurement: "°"
+    accuracy_decimals: 2
+    update_interval: never
+    web_server:
+      sorting_group_id: sorting_group_imu_sensor_status
+      sorting_weight: ${sorting_groups.imu_sensor_status.elevation_angle_change_value}
+
+  - platform: template
+    name: "Azimuth angle change absolute value"
+    id: azimuth_angle_change_value_absolute
+    unit_of_measurement: "°"
+    accuracy_decimals: 2
+    update_interval: 200ms
+    web_server:
+      sorting_group_id: sorting_group_imu_sensor_status
+      sorting_weight: ${sorting_groups.imu_sensor_status.azimuth_angle_change_value_absolute}
+    lambda: |-
+      return fabs(id(azimuth_angle_change_value).state);
+
+  - platform: template
+    name: "Elevation angle change absolute value"
+    id: elevation_angle_change_value_absolute
+    unit_of_measurement: "°"
+    accuracy_decimals: 2
+    update_interval: 200ms
+    web_server:
+      sorting_group_id: sorting_group_imu_sensor_status
+      sorting_weight: ${sorting_groups.imu_sensor_status.elevation_angle_change_value_absolute}
+    lambda: |-
+      return fabs(id(elevation_angle_change_value).state);
 
   - platform: template
     name: "Panel elevation angle"
@@ -3100,6 +3362,69 @@ sensor:
     web_server:
       sorting_group_id: sorting_group_elevation_axis
       sorting_weight: ${sorting_groups.elevation_axis.panel_elevation_angle_sensor}
+
+  - platform: template
+    name: "Panel elevation target angle delta"
+    id: panel_elev_target_angle_delta
+    unit_of_measurement: "°"
+    accuracy_decimals: 2
+    update_interval: 1s
+    web_server:
+      sorting_group_id: sorting_group_elevation_axis
+      sorting_weight: ${sorting_groups.elevation_axis.panel_elev_target_angle_delta}
+    lambda: |-
+      return id(panel_elev_target_angle).state - id(panel_elevation_angle_sensor).state;
+
+  - platform: template
+    name: "Panel elevation last movement duration"
+    id: panel_elevation_last_movement_duration
+    unit_of_measurement: "s"
+    accuracy_decimals: 1
+    update_interval: 1s
+    web_server:
+      sorting_group_id: sorting_group_elevation_axis
+      sorting_weight: ${sorting_groups.elevation_axis.panel_elevation_last_movement_duration}
+    lambda: |-
+      if (id(global_elevation_last_movement_duration_ms) <= 0)
+      {
+        return NAN;
+      }
+      return id(global_elevation_last_movement_duration_ms) / 1000.0;
+
+  - platform: template
+    name: "Panel elevation time since last movement"
+    id: panel_elevation_time_since_last_movement
+    unit_of_measurement: "s"
+    accuracy_decimals: 1
+    update_interval: 1s
+    web_server:
+      sorting_group_id: sorting_group_elevation_axis
+      sorting_weight: ${sorting_groups.elevation_axis.panel_elevation_time_since_last_movement}
+    lambda: |-
+      if (id(global_elevation_last_movement_end_timestamp_ms) <= 0)
+      {
+        return NAN;
+      }
+      int64_t now_ms = esp_timer_get_time() / 1000;
+      return (now_ms - id(global_elevation_last_movement_end_timestamp_ms)) / 1000.0;
+
+  - platform: template
+    name: "Panel elevation movement start (ms)"
+    id: panel_elevation_moving_start_date_ms_sensor
+    unit_of_measurement: "ms"
+    accuracy_decimals: 0
+    update_interval: 1s
+    icon: "mdi:clock-start"
+    disabled_by_default: true
+    web_server:
+      sorting_group_id: sorting_group_elevation_axis
+      sorting_weight: ${sorting_groups.elevation_axis.panel_elevation_moving_start_date_ms}
+    lambda: |-
+      if (id(panel_elevation_moving_start_date) < 0)
+      {
+        return NAN;
+      }
+      return id(panel_elevation_moving_start_date);
 
   - platform: ina219
     address: ${i2c_address.ina219_elevation_motor}
@@ -3195,11 +3520,16 @@ sensor:
     icon: "mdi:angle-acute"
     unit_of_measurement: "°"
     accuracy_decimals: 1
-    update_interval: 500ms
+    update_interval: 100ms
     disabled_by_default: false
     web_server:
       sorting_group_id: sorting_group_azimuth_axis
       sorting_weight: 4
+    filters:
+      - sliding_window_moving_average:
+          send_first_at: 5
+          window_size: 5
+          send_every: 5
     lambda: |-
       if (!isnan(id(panel_imu_yaw).state)) 
       {
@@ -3209,8 +3539,68 @@ sensor:
         {
           yaw = yaw + ${compass_to_panel_heading_inversion_degree};
         }
+        // Normalize heading into [0, 360) so comparisons stay consistent and
+        // wrap-around logic works reliably for spikes and delta checks.
+        float heading = yaw;
+        while (heading >= 360.0f)
+        {
+          heading -= 360.0f;
+        }
+        while (heading < 0.0f)
+        {
+          heading += 360.0f;
+        }
 
-        return (yaw < 0) ? yaw + 360.0 : yaw;
+        static float last_heading = NAN;
+
+        // Keep the last accepted heading and timestamp to detect implausible jumps.
+        // These static values persist across lambda calls (ESPHome runs this often).
+
+        static int64_t last_update_ms = 0;
+        const int64_t now_ms = esp_timer_get_time() / 1000;
+
+        if (!isnan(last_heading) && last_update_ms > 0)
+        {
+          const float dt_s = (now_ms - last_update_ms) / 1000.0f;
+
+          // Compute time delta in seconds to turn a rate limit into a max delta.
+
+          if (dt_s > 0.0f)
+          {
+            float delta = heading - last_heading;
+
+            // Use shortest signed delta in [-180, 180] to handle wrap-around.
+
+            while (delta > 180.0f)
+            {
+              delta -= 360.0f;
+            }
+            while (delta < -180.0f)
+            {
+              delta += 360.0f;
+            }
+
+            const float max_delta_rate = float(${panel_compass_heading_max_rate_deg_per_s}) * dt_s;
+
+            // Reject spikes: cap by a time-based rate limit and an absolute jump limit.
+            // The larger of the two limits is used, so a single slow update does not
+            // over-tighten the filter while still catching extreme one-sample spikes.
+            
+            const float max_delta = (max_delta_rate > float(${panel_compass_heading_max_jump_deg})) ? max_delta_rate : float(${panel_compass_heading_max_jump_deg});
+
+            if (fabs(delta) > max_delta)
+            {
+              // Spike detected: keep last valid heading to avoid false direction errors.
+
+              return last_heading;
+            }
+          }
+        }
+
+        // Heading is plausible: accept and persist for the next delta check.
+        last_heading = heading;
+        last_update_ms = now_ms;
+        return heading;
       } else 
       {
         return NAN;
@@ -3227,6 +3617,71 @@ sensor:
             call.set_value(angle);
             call.perform();
           }
+
+  - platform: template
+    name: "Panel azimuth target angle delta"
+    id: panel_azimuth_target_angle_delta
+    unit_of_measurement: "°"
+    accuracy_decimals: 2
+    update_interval: 1s
+    web_server:
+      sorting_group_id: sorting_group_azimuth_axis
+      sorting_weight: ${sorting_groups.azimuth_axis.panel_azimuth_target_angle_delta}
+    lambda: |-
+      return id(panel_azimuth_target_angle).state - id(panel_compass_heading).state;
+
+  - platform: template
+    name: "Panel azimuth last movement duration"
+    id: panel_azimuth_last_movement_duration
+    unit_of_measurement: "s"
+    accuracy_decimals: 1
+    update_interval: 1s
+    web_server:
+      sorting_group_id: sorting_group_azimuth_axis
+      sorting_weight: ${sorting_groups.azimuth_axis.panel_azimuth_last_movement_duration}
+    lambda: |-
+      if (id(global_azimuth_last_movement_duration_ms) <= 0)
+      {
+        return NAN;
+      }
+      return id(global_azimuth_last_movement_duration_ms) / 1000.0;
+
+  - platform: template
+    name: "Panel azimuth time since last movement"
+    id: panel_azimuth_time_since_last_movement
+    unit_of_measurement: "s"
+    accuracy_decimals: 1
+    update_interval: 1s
+    web_server:
+      sorting_group_id: sorting_group_azimuth_axis
+      sorting_weight: ${sorting_groups.azimuth_axis.panel_azimuth_time_since_last_movement}
+    lambda: |-
+      if (id(global_azimuth_last_movement_end_timestamp_ms) <= 0)
+      {
+        return NAN;
+      }
+      int64_t now_ms = esp_timer_get_time() / 1000;
+      return (now_ms - id(global_azimuth_last_movement_end_timestamp_ms)) / 1000.0;
+
+  - platform: template
+    name: "Panel azimuth movement start (ms)"
+    id: panel_azimuth_moving_start_date_ms_sensor
+    unit_of_measurement: "ms"
+    accuracy_decimals: 0
+    update_interval: 1s
+    icon: "mdi:clock-start"
+    disabled_by_default: false
+    web_server:
+      sorting_group_id: sorting_group_azimuth_axis
+      sorting_weight: ${sorting_groups.azimuth_axis.panel_azimuth_moving_start_date_ms}
+    lambda: |-
+      // Debug: zeige immer den Wert der Variable, auch wenn 0
+      ESP_LOGD("panel_azimuth_sensor", "Raw value: %lld", id(panel_azimuth_moving_start_date));
+      if (id(panel_azimuth_moving_start_date) < 0)
+      {
+        return NAN;
+      }
+      return id(panel_azimuth_moving_start_date);
 
 ### Weather settings below this line
 
@@ -3806,6 +4261,18 @@ binary_sensor:
         - script.execute: perform_publish_states_to_status_text_sensors
 
   - platform: template
+    name: "HomeAssistant API connected"
+    id: homeassistant_api_connected
+    icon: "mdi:api"
+    entity_category: "diagnostic"
+    device_class: "connectivity"
+    web_server:
+      sorting_group_id: sorting_group_system
+      sorting_weight: ${sorting_groups.system.homeassistant_api_connected}
+    lambda: |-
+      return id(api_id).is_connected(true);
+
+  - platform: template
     name: "OWM API Key entered"
     id: owm_api_key_entered
     icon: "mdi:check-circle"
@@ -3819,7 +4286,6 @@ binary_sensor:
     on_state: 
       then:
         - script.execute: perform_publish_states_to_status_text_sensors
-        - switch.turn_off: auto_owm_data_retrieval
 
   - platform: template
     name: "OWM API Key validated"
@@ -3832,9 +4298,11 @@ binary_sensor:
       sorting_weight: ${sorting_groups.weather_settings.owm_api_key_valid}
     lambda: |-
       return id(global_owm_api_key_valid);
-    on_state: 
+    on_state:
       then:
         - script.execute: perform_publish_states_to_status_text_sensors
+    on_release:
+      then:
         - switch.turn_off: auto_owm_data_retrieval
 
   - platform: template
@@ -3847,7 +4315,7 @@ binary_sensor:
       sorting_group_id: sorting_group_gnss_sensor_status
       sorting_weight: ${sorting_groups.gnss_sensor_status.gnss_position_valid}
     lambda: |-
-      return (id(gnss_satelites).state >= ${gnss_min_required_sat_count} and id(gnss_hdop).state <= ${gnss_min_required_gnss_hdop});
+      return (id(gnss_satelites).state >= int(${gnss_min_required_sat_count}) and id(gnss_hdop).state <= int(${gnss_min_required_gnss_hdop}));
 
   - platform: template
     name: "Sun elevation angle below stand by mode threshold"
@@ -3876,12 +4344,12 @@ binary_sensor:
       // Hysteresis logic: activate at threshold, deactivate at lower threshold
       if (!isnan(id(cloud_coverage_current).state))
       {
-        if (!id(global_cloudy_mode_hysteresis_active) && id(cloud_coverage_current).state >= ${weather_hysteresis.cloudy_mode_activation_threshold})
+        if (!id(global_cloudy_mode_hysteresis_active) && id(cloud_coverage_current).state >= float(${weather_hysteresis.cloudy_mode_activation_threshold}))
         {
           id(global_cloudy_mode_hysteresis_active) = true;
           return true;
         }
-        else if (id(global_cloudy_mode_hysteresis_active) && id(cloud_coverage_current).state < ${weather_hysteresis.cloudy_mode_deactivation_threshold})
+        else if (id(global_cloudy_mode_hysteresis_active) && id(cloud_coverage_current).state < float(${weather_hysteresis.cloudy_mode_deactivation_threshold}))
         {
           id(global_cloudy_mode_hysteresis_active) = false;
           return false;
@@ -3903,12 +4371,12 @@ binary_sensor:
       // Hysteresis logic: activate at threshold, deactivate at lower threshold
       if (!isnan(id(wind_speed_current).state))
       {
-        if (!id(global_wind_speed_hysteresis_active) && id(wind_speed_current).state >= ${weather_hysteresis.wind_speed_activation_threshold})
+        if (!id(global_wind_speed_hysteresis_active) && id(wind_speed_current).state >= float(${weather_hysteresis.wind_speed_activation_threshold}))  
         {
           id(global_wind_speed_hysteresis_active) = true;
           return true;
         }
-        else if (id(global_wind_speed_hysteresis_active) && id(wind_speed_current).state < ${weather_hysteresis.wind_speed_deactivation_threshold})
+        else if (id(global_wind_speed_hysteresis_active) && id(wind_speed_current).state < float(${weather_hysteresis.wind_speed_deactivation_threshold}))
         {
           id(global_wind_speed_hysteresis_active) = false;
           return false;
@@ -3930,12 +4398,12 @@ binary_sensor:
       // Hysteresis logic: activate at threshold, deactivate at lower threshold
       if (!isnan(id(wind_gusts_current).state))
       {
-        if (!id(global_wind_gusts_hysteresis_active) && id(wind_gusts_current).state >= ${weather_hysteresis.wind_gusts_activation_threshold})
+        if (!id(global_wind_gusts_hysteresis_active) && id(wind_gusts_current).state >= float(${weather_hysteresis.wind_gusts_activation_threshold}))
         {
           id(global_wind_gusts_hysteresis_active) = true;
           return true;
         }
-        else if (id(global_wind_gusts_hysteresis_active) && id(wind_gusts_current).state < ${weather_hysteresis.wind_gusts_deactivation_threshold})
+        else if (id(global_wind_gusts_hysteresis_active) && id(wind_gusts_current).state < float(${weather_hysteresis.wind_gusts_deactivation_threshold}))
         {
           id(global_wind_gusts_hysteresis_active) = false;
           return false;
@@ -3948,25 +4416,31 @@ binary_sensor:
     name: "OWM data is old"
     id: owm_data_is_old
     icon: "mdi:clock-alert"
-    disabled_by_default: true
+    disabled_by_default: false
     entity_category: "diagnostic"
     web_server:
       sorting_group_id: sorting_group_weather_settings
       sorting_weight: ${sorting_groups.weather_settings.owm_data_is_old}
     lambda: |-
       return ((id(global_owm_last_data_retrieval_success) + ${owm_data_expiration_time} ) <= id(ds3231_time).now().timestamp);
+    on_state: 
+      then:
+        - script.execute: perform_publish_states_to_status_text_sensors
 
   - platform: template
     name: "OWM data is expired"
     id: owm_data_is_expired
     icon: "mdi:clock-remove"
-    disabled_by_default: true
+    disabled_by_default: false
     entity_category: "diagnostic"
     web_server:
       sorting_group_id: sorting_group_weather_settings
       sorting_weight: ${sorting_groups.weather_settings.owm_data_is_expired}
     lambda: |-
       return ((id(global_owm_last_data_retrieval_success) + ${owm_data_expiration_shutdown_time} ) <= id(ds3231_time).now().timestamp);
+    on_state: 
+      then:
+        - script.execute: perform_publish_states_to_status_text_sensors
 
 ### Elevation Motor sensors
 
@@ -4004,7 +4478,7 @@ binary_sensor:
       sorting_group_id: sorting_group_elevation_motor_status
       sorting_weight: ${sorting_groups.motor_status.elevation_motor_is_running_binary_sensor}
     lambda: |-
-      return (id(motor_elevation_supply_current).state >= ${motor_elevation_min_current_active});
+      return (id(motor_elevation_supply_current).state >= float(${motor_elevation_min_current_active}));
 
   - platform: template
     name: "Elevation Motor is in idle state"
@@ -4016,7 +4490,7 @@ binary_sensor:
       sorting_group_id: sorting_group_elevation_motor_status
       sorting_weight: ${sorting_groups.motor_status.elevation_motor_is_idle}
     lambda: |-
-      return (id(motor_elevation_supply_current).state <= ${motor_elevation_max_current_at_idle});
+      return (id(motor_elevation_supply_current).state <= float(${motor_elevation_max_current_at_idle}));
 
 ### Stand by mode triggers
 
@@ -4049,6 +4523,26 @@ binary_sensor:
       sorting_weight: ${sorting_groups.standby_mode.stand_by_mode_trigger_high_winds}
     lambda: |-
       return (id(owm_wind_gusts_above_threshold).state || id(owm_wind_speed_above_threshold).state) && !id(owm_data_is_expired).state && id(owm_api_key_valid).state;
+
+  - platform: template
+    name: "Standby mode trigger azimuth fault"
+    id: stand_by_mode_trigger_azimuth_fault
+    icon: "mdi:sleep"
+    web_server:
+      sorting_group_id: sorting_group_standby_mode
+      sorting_weight: ${sorting_groups.standby_mode.stand_by_mode_trigger_azimuth_fault}
+    lambda: |-
+      return id(global_azimuth_motor_blocked_high_current_fault_detected)
+        || id(global_azimuth_motor_not_connected_fault_detected)
+        || id(global_azimuth_motor_blocked_missing_angle_change_cw_fault_detected)
+        || id(global_azimuth_motor_blocked_missing_angle_change_ccw_fault_detected)
+        || id(global_azimuth_motor_wrong_direction_detected)
+        || id(global_azimuth_target_angle_timeout_detected)
+        || id(global_azimuth_angle_calculation_fault_detected);
+    on_press:
+      - script.execute: perform_stand_by_mode_activation_check
+    on_release:
+      - script.execute: perform_stand_by_mode_activation_check
 
 
 ### Elevation movement sensors
@@ -4204,7 +4698,7 @@ binary_sensor:
     name: "Azimuth Motor voltage is valid"
     id: azimuth_motor_voltage_is_valid
     icon: "mdi:check-circle-outline"
-    disabled_by_default: true
+    disabled_by_default: false
     entity_category: "diagnostic"
     web_server:
       sorting_group_id: sorting_group_azimuth_motor_status
@@ -4222,7 +4716,7 @@ binary_sensor:
       sorting_group_id: sorting_group_azimuth_motor_status
       sorting_weight: ${sorting_groups.motor_status.azimuth_motor_is_running_binary_sensor}
     lambda: |-
-      return (id(motor_azimuth_supply_current).state >= ${motor_azimuth_min_current_active});
+      return (id(motor_azimuth_supply_current).state >= float(${motor_azimuth_min_current_active}));
 
   - platform: template
     name: "Azimuth Motor is in idle state"
@@ -4234,7 +4728,7 @@ binary_sensor:
       sorting_group_id: sorting_group_azimuth_motor_status
       sorting_weight: ${sorting_groups.motor_status.azimuth_motor_is_idle}
     lambda: |-
-      return (id(motor_azimuth_supply_current).state <= ${motor_azimuth_max_current_at_idle});
+      return (id(motor_azimuth_supply_current).state <= float(${motor_azimuth_max_current_at_idle}));
 
 ### Azimuth movement sensors
       
@@ -4396,7 +4890,7 @@ binary_sensor:
 
   # Any action on the control buttons deactivates all automations. These need to be reactivated manually. Caution: Activation of the stand_by_mode or cloudy_mode also activates the automations
   - platform: gpio
-    name: "Button Up/CW"
+    name: "Button Up|CW"
     id: button_up_cw_physical
     icon: "mdi:arrow-expand-up"
     disabled_by_default: false
@@ -4439,7 +4933,7 @@ binary_sensor:
 
   # Any action on the control buttons deactivates all automations. These need to be reactivated manually. Caution: Activation of the stand_by_mode or cloudy_mode also activates the automations
   - platform: gpio
-    name: "Button Down/CCW"
+    name: "Button Down|CCW"
     id: button_down_ccw_physical
     icon: "mdi:arrow-expand-down"
     disabled_by_default: false
@@ -4507,14 +5001,34 @@ globals:
     initial_value: '0.0'
 
   - id: panel_azimuth_moving_start_date  # used to save the date when a panel movement on the azimuth axis is initiated
-    type: uint32_t
+    type: int64_t
+    restore_value: no
+    initial_value: '0'
+
+  - id: global_azimuth_last_movement_end_timestamp_ms
+    type: int64_t
+    restore_value: no
+    initial_value: '0'
+
+  - id: global_azimuth_last_movement_duration_ms
+    type: int64_t
     restore_value: no
     initial_value: '0'
 
   - id: panel_elevation_moving_start_date  # used to save the date when a panel movement on the elevation axis is initiated
-    type: uint32_t
+    type: int64_t
     restore_value: no
     initial_value: '0' 
+
+  - id: global_elevation_last_movement_end_timestamp_ms
+    type: int64_t
+    restore_value: no
+    initial_value: '0'
+
+  - id: global_elevation_last_movement_duration_ms
+    type: int64_t
+    restore_value: no
+    initial_value: '0'
 
   - id: panel_elevation_target_reached_handled  # helper variable to ensure target reached success block is only executed once per movement session
     type: bool
@@ -4621,6 +5135,18 @@ globals:
     restore_value: no
     initial_value: 'false'
 
+  - id: global_azimuth_motor_overcurrent_detection_counter
+    type: int
+    restore_value: no
+    initial_value: '0'
+    # Counter for consecutive overcurrent detections on azimuth motor
+
+  - id: global_azimuth_motor_blocked_high_current_detected_value
+    type: float
+    restore_value: no
+    initial_value: '0.0'
+    # Stores the actual current value that triggered the overcurrent fault
+
   - id: global_azimuth_motor_not_connected_fault_detected
     type: bool
     restore_value: no
@@ -4640,6 +5166,18 @@ globals:
     type: bool
     restore_value: no
     initial_value: 'false'
+
+  - id: global_elevation_motor_overcurrent_detection_counter
+    type: int
+    restore_value: no
+    initial_value: '0'
+    # Counter for consecutive overcurrent detections on elevation motor
+
+  - id: global_elevation_motor_blocked_high_current_detected_value
+    type: float
+    restore_value: no
+    initial_value: '0.0'
+    # Stores the actual current value that triggered the overcurrent fault
 
   - id: global_elevation_motor_not_connected_fault_detected
     type: bool
@@ -4715,6 +5253,42 @@ globals:
     restore_value: no
     initial_value: 'false'
     # Flag set when azimuth motor rotates in opposite direction than expected (inverted)
+
+  - id: global_azimuth_motor_wrong_direction_consecutive_count
+    type: int
+    restore_value: no
+    initial_value: '0'
+    # Counts consecutive wrong-direction samples for azimuth motor
+
+  - id: global_elevation_motor_wrong_direction_consecutive_count
+    type: int
+    restore_value: no
+    initial_value: '0'
+    # Counts consecutive wrong-direction samples for elevation motor
+
+  - id: global_elevation_blocked_lift_detection_counter
+    type: int
+    restore_value: no
+    initial_value: '0'
+    # Counter for consecutive missing angle change detections during elevation lift
+
+  - id: global_elevation_blocked_lower_detection_counter
+    type: int
+    restore_value: no
+    initial_value: '0'
+    # Counter for consecutive missing angle change detections during elevation lower
+
+  - id: global_azimuth_blocked_cw_detection_counter
+    type: int
+    restore_value: no
+    initial_value: '0'
+    # Counter for consecutive missing angle change detections during azimuth CW rotation
+
+  - id: global_azimuth_blocked_ccw_detection_counter
+    type: int
+    restore_value: no
+    initial_value: '0'
+    # Counter for consecutive missing angle change detections during azimuth CCW rotation
 
   - id: global_elevation_target_angle_timeout_start_timestamp
     type: int64_t
@@ -4833,6 +5407,72 @@ globals:
     restore_value: no
     initial_value: '0'
     # Timestamp when magnetic declination calibration fault was detected
+
+  - id: global_magnetic_declination_calibration_fault_reason
+    type: std::string
+    restore_value: no
+    initial_value: '""'
+    # Detailed reason why magnetic declination calibration failed
+
+  - id: global_elevation_motor_blocked_high_current_fault_reason
+    type: std::string
+    restore_value: no
+    initial_value: '""'
+    # Detailed reason why elevation motor blocked (high current) fault was detected
+
+  - id: global_elevation_motor_not_connected_fault_reason
+    type: std::string
+    restore_value: no
+    initial_value: '""'
+    # Detailed reason why elevation motor connection fault was detected
+
+  - id: global_elevation_motor_blocked_missing_angle_change_while_lift_fault_reason
+    type: std::string
+    restore_value: no
+    initial_value: '""'
+    # Detailed reason why elevation motor blocked (missing angle change during lift) fault was detected
+
+  - id: global_elevation_motor_blocked_missing_angle_change_while_lowering_fault_reason
+    type: std::string
+    restore_value: no
+    initial_value: '""'
+    # Detailed reason why elevation motor blocked (missing angle change during lower) fault was detected
+
+  - id: global_azimuth_motor_blocked_high_current_fault_reason
+    type: std::string
+    restore_value: no
+    initial_value: '""'
+    # Detailed reason why azimuth motor blocked (high current) fault was detected
+
+  - id: global_azimuth_motor_not_connected_fault_reason
+    type: std::string
+    restore_value: no
+    initial_value: '""'
+    # Detailed reason why azimuth motor connection fault was detected
+
+  - id: global_azimuth_motor_blocked_missing_angle_change_cw_fault_reason
+    type: std::string
+    restore_value: no
+    initial_value: '""'
+    # Detailed reason why azimuth motor blocked (missing angle change during CW) fault was detected
+
+  - id: global_azimuth_motor_blocked_missing_angle_change_ccw_fault_reason
+    type: std::string
+    restore_value: no
+    initial_value: '""'
+    # Detailed reason why azimuth motor blocked (missing angle change during CCW) fault was detected
+
+  - id: global_elevation_angle_calculation_fault_reason
+    type: std::string
+    restore_value: no
+    initial_value: '""'
+    # Detailed reason why elevation angle calculation fault was detected
+
+  - id: global_azimuth_angle_calculation_fault_reason
+    type: std::string
+    restore_value: no
+    initial_value: '""'
+    # Detailed reason why azimuth angle calculation fault was detected
    
 script:
 
@@ -4959,6 +5599,15 @@ script:
           } else if (!id(global_owm_api_key_valid))
           {
             id(owm_status_text).publish_state("OWM API Key is not valid. Auto OWM data retrieval deactivated. Enter a valid OWM API key to use this feature.");         
+          } else if (id(owm_data_is_expired).state)
+          {
+            id(owm_status_text).publish_state("OWM data is expired. Stand by mode may be activated for safety. Check internet connection and OWM API.");         
+          } else if (id(owm_data_is_old).state)
+          {
+            id(owm_status_text).publish_state("OWM data is old. Weather data should be refreshed soon.");         
+          } else
+          {
+            id(owm_status_text).publish_state("Normal");      
           }
 
 
@@ -5040,6 +5689,10 @@ script:
           } else if (id(global_elevation_angle_calculation_fault_detected))
           {
             std::string message = "Elevation angle measurement. Check the motor and mechanics.";
+            if (!id(global_elevation_angle_calculation_fault_reason).empty())
+            {
+              message += " - Reason: " + id(global_elevation_angle_calculation_fault_reason);
+            }
             std::string ts_str = format_german_time(id(global_elevation_angle_calculation_fault_timestamp));
             if (!ts_str.empty()) message += " (Detected: " + ts_str + ")";
             id(elevation_axis_status_text).publish_state(message);
@@ -5055,6 +5708,12 @@ script:
           } else if (!id(auto_control_elevation_angle_activation_at_boot).state)
           {
             id(elevation_axis_status_text).publish_state("Elevation angle control auto activation is deactivated. Activate \"Auto control elevation angle activation at boot\" to fix this.");         
+          } else if (id(stand_by_mode_active).state)
+          {
+            id(elevation_axis_status_text).publish_state("Panel lowered to stand-by position due to active stand-by mode.");         
+          } else if (id(cloudy_mode_active).state && id(auto_cloudy_mode_elevation_control).state)
+          {
+            id(elevation_axis_status_text).publish_state("Panel lowered to horizontal position (0°) due to active cloudy mode.");         
           } else
           {
             id(elevation_axis_status_text).publish_state("Normal");      
@@ -5093,6 +5752,10 @@ script:
           } else if (id(global_azimuth_angle_calculation_fault_detected))
           {
             std::string message = "Azimuth angle measurement failed. Check the motor and mechanics.";
+            if (!id(global_azimuth_angle_calculation_fault_reason).empty())
+            {
+              message += " - Reason: " + id(global_azimuth_angle_calculation_fault_reason);
+            }
             std::string ts_str = format_german_time(id(global_azimuth_angle_calculation_fault_timestamp));
             if (!ts_str.empty()) message += " (Detected: " + ts_str + ")";
             id(azimuth_axis_status_text).publish_state(message);         
@@ -5114,6 +5777,9 @@ script:
           } else if (!id(auto_control_azimuth_angle_activation_at_boot).state)
           {
             id(azimuth_axis_status_text).publish_state("Azimuth angle control auto activation is deactivated. Activate \"Auto control azimuth angle activation at boot\" to fix this.");         
+          } else if (id(stand_by_mode_active).state)
+          {
+            id(azimuth_axis_status_text).publish_state("Panel rotated to stand-by azimuth angle due to active stand-by mode.");         
           } else 
           {
             id(azimuth_axis_status_text).publish_state("Normal");      
@@ -5134,24 +5800,40 @@ script:
           } else if (id(global_azimuth_motor_blocked_high_current_fault_detected))
           {
             std::string message = "${status_text_messages.motor_blocked_high_current}";
+            if (!id(global_azimuth_motor_blocked_high_current_fault_reason).empty())
+            {
+              message += " - Reason: " + id(global_azimuth_motor_blocked_high_current_fault_reason);
+            }
             std::string ts_str = format_german_time(id(global_azimuth_motor_blocked_high_current_timestamp));
             if (!ts_str.empty()) message += " (Detected: " + ts_str + ")";
             id(azimuth_motor_status_text).publish_state(message);         
           } else if (id(global_azimuth_motor_not_connected_fault_detected))
           {
             std::string message = "${status_text_messages.motor_connection_error_rotation}";
+            if (!id(global_azimuth_motor_not_connected_fault_reason).empty())
+            {
+              message += " - Reason: " + id(global_azimuth_motor_not_connected_fault_reason);
+            }
             std::string ts_str = format_german_time(id(global_azimuth_motor_not_connected_timestamp));
             if (!ts_str.empty()) message += " (Detected: " + ts_str + ")";
             id(azimuth_motor_status_text).publish_state(message);         
           } else if (id(global_azimuth_motor_blocked_missing_angle_change_cw_fault_detected))
           {
             std::string message = "${status_text_messages.motor_blocked_angle_cw_not_changing}";
+            if (!id(global_azimuth_motor_blocked_missing_angle_change_cw_fault_reason).empty())
+            {
+              message += " - Reason: " + id(global_azimuth_motor_blocked_missing_angle_change_cw_fault_reason);
+            }
             std::string ts_str = format_german_time(id(global_azimuth_motor_blocked_missing_angle_cw_timestamp));
             if (!ts_str.empty()) message += " (Detected: " + ts_str + ")";
             id(azimuth_motor_status_text).publish_state(message);         
           } else if (id(global_azimuth_motor_blocked_missing_angle_change_ccw_fault_detected))
           {
             std::string message = "${status_text_messages.motor_blocked_angle_ccw_not_changing}";
+            if (!id(global_azimuth_motor_blocked_missing_angle_change_ccw_fault_reason).empty())
+            {
+              message += " - Reason: " + id(global_azimuth_motor_blocked_missing_angle_change_ccw_fault_reason);
+            }
             std::string ts_str = format_german_time(id(global_azimuth_motor_blocked_missing_angle_ccw_timestamp));
             if (!ts_str.empty()) message += " (Detected: " + ts_str + ")";
             id(azimuth_motor_status_text).publish_state(message);     
@@ -5171,24 +5853,40 @@ script:
           } else if (id(global_elevation_motor_blocked_high_current_fault_detected))
           {
             std::string message = "${status_text_messages.motor_blocked_high_current}";
+            if (!id(global_elevation_motor_blocked_high_current_fault_reason).empty())
+            {
+              message += " - Reason: " + id(global_elevation_motor_blocked_high_current_fault_reason);
+            }
             std::string ts_str = format_german_time(id(global_elevation_motor_blocked_high_current_timestamp));
             if (!ts_str.empty()) message += " (Detected: " + ts_str + ")";
             id(elevation_motor_status_text).publish_state(message);         
           } else if (id(global_elevation_motor_not_connected_fault_detected))
           {
             std::string message = "${status_text_messages.motor_connection_error_elevation}";
+            if (!id(global_elevation_motor_not_connected_fault_reason).empty())
+            {
+              message += " - Reason: " + id(global_elevation_motor_not_connected_fault_reason);
+            }
             std::string ts_str = format_german_time(id(global_elevation_motor_not_connected_timestamp));
             if (!ts_str.empty()) message += " (Detected: " + ts_str + ")";
             id(elevation_motor_status_text).publish_state(message);         
           } else if (id(global_elevation_motor_blocked_missing_angle_change_while_lift_fault_detected))
           {
             std::string message = "${status_text_messages.motor_blocked_angle_up_not_changing}";
+            if (!id(global_elevation_motor_blocked_missing_angle_change_while_lift_fault_reason).empty())
+            {
+              message += " - Reason: " + id(global_elevation_motor_blocked_missing_angle_change_while_lift_fault_reason);
+            }
             std::string ts_str = format_german_time(id(global_elevation_motor_blocked_missing_angle_lift_timestamp));
             if (!ts_str.empty()) message += " (Detected: " + ts_str + ")";
             id(elevation_motor_status_text).publish_state(message);         
           } else if (id(global_elevation_motor_blocked_missing_angle_change_while_lowering_fault_detected))
           {
             std::string message = "${status_text_messages.motor_blocked_angle_down_not_changing}";
+            if (!id(global_elevation_motor_blocked_missing_angle_change_while_lowering_fault_reason).empty())
+            {
+              message += " - Reason: " + id(global_elevation_motor_blocked_missing_angle_change_while_lowering_fault_reason);
+            }
             std::string ts_str = format_german_time(id(global_elevation_motor_blocked_missing_angle_lower_timestamp));
             if (!ts_str.empty()) message += " (Detected: " + ts_str + ")";
             id(elevation_motor_status_text).publish_state(message);         
@@ -5219,7 +5917,12 @@ script:
             id(imu_status_text).publish_state("${status_text_messages.imu_not_ready}");         
           } else if (id(global_magnetic_declination_calibration_fault_detected))
           {
-            id(imu_status_text).publish_state("Magnetic declination calibration failed.");         
+            std::string fault_message = "Magnetic declination calibration failed";
+            if (!id(global_magnetic_declination_calibration_fault_reason).empty())
+            {
+              fault_message += ": " + id(global_magnetic_declination_calibration_fault_reason);
+            }
+            id(imu_status_text).publish_state(fault_message.c_str());         
           } else if (id(magnetic_declination_calibration_active).state)
           {
             id(imu_status_text).publish_state("Magnetic declination calibration active...");         
@@ -5335,9 +6038,11 @@ script:
           bool reason_wind_control_active = id(auto_wind_protection_control).state;
           bool reason_wind = id(stand_by_mode_trigger_high_winds).state;
 
+          bool reason_azimuth_fault = id(stand_by_mode_trigger_azimuth_fault).state;
+
           if (id(auto_stand_by_mode_estimation).state)
           {
-            if ((reason_sun_control_active && reason_sun) or (reason_expired_control_active && reason_expired) or (reason_wind_control_active && reason_wind)) 
+            if ((reason_sun_control_active && reason_sun) or (reason_expired_control_active && reason_expired) or (reason_wind_control_active && reason_wind) or reason_azimuth_fault)
             {
               if(!id(stand_by_mode_active).state)
               {
@@ -5354,6 +6059,11 @@ script:
                 if (reason_wind) 
                 {
                   ESP_LOGE("Stand by mode control", "Wind speed/gusts above threshold. Enabling Switch: \"Stand By Mode Active\".");
+                }
+
+                if (reason_azimuth_fault)
+                {
+                  ESP_LOGE("Stand by mode control", "Azimuth fault detected. Enabling Switch: \"Stand By Mode Active\".");
                 }
 
                 id(stand_by_mode_active).turn_on();
@@ -5393,7 +6103,7 @@ script:
             id(panel_imu).update();
             id(panel_elevation_angle_sensor).update();
 
-            if (id(panel_within_elev_target_angle_range_binary_sensor).state)
+            if (id(panel_within_elev_target_angle_range_binary_sensor).state or id(magnetic_declination_calibration_active).state)
             {
               if (id(panel_lifting_planned).state or id(panel_lowering_planned).state)
               {
@@ -5552,6 +6262,7 @@ script:
                 // anounce that the automatic measurement is running
                 id(global_perform_automatic_elev_angle_boundaries_measurement_running) = true;
                 id(global_elevation_angle_calculation_fault_detected) = false;
+                id(global_elevation_angle_calculation_fault_reason) = "";
 
                 ESP_LOGE("Elevation angle measurement:", "Preparing evelation angle measrurement. \"Auto angle adjustment mode\" is deactivated...");
 
@@ -5676,9 +6387,11 @@ script:
                             then:
                               - lambda: |-
                                   ESP_LOGE("Elevation angle measurement:", "Measurement failed (during lifting) due to external abort. Check the motor and mechanics.");
+                                  id(global_elevation_angle_calculation_fault_reason) = "Elevation angle measurement aborted during lifting phase - measurement stopped by external action.";
                             else:
                               - lambda: |-
                                   ESP_LOGE("Elevation angle measurement:", "Measurement failed due to timeout (during lifting). Check the motor and mechanics.");
+                                  id(global_elevation_angle_calculation_fault_reason) = "Elevation angle measurement timeout during lifting phase - motor did not complete motion within time limit.";
                 else:
                   # Handle failure during lowering
                   - lambda: |-
@@ -5690,9 +6403,11 @@ script:
                       then:
                         - lambda: |-
                             ESP_LOGE("Elevation angle measurement:", "Measurement failed (during lowering) due to external abort. Check the motor and mechanics.");
+                            id(global_elevation_angle_calculation_fault_reason) = "Elevation angle measurement aborted during lowering phase - measurement stopped by external action.";
                       else:
                         - lambda: |-
                             ESP_LOGE("Elevation angle measurement:", "Measurement failed due to timeout (during lowering). Check the motor and mechanics.");
+                            id(global_elevation_angle_calculation_fault_reason) = "Elevation angle measurement timeout during lowering phase - motor did not complete motion within time limit.";
 
             - lambda: |-
                 // anounce that the automatic measurement is finished
@@ -5717,6 +6432,7 @@ script:
                 // anounce that the automatic measurement is running
                 id(global_perform_automatic_azimuth_angle_boundaries_measurement_running) = true;
                 id(global_azimuth_angle_calculation_fault_detected) = false;
+                id(global_azimuth_angle_calculation_fault_reason) = "";
 
                 // Increase boundary values to avoid sw motor endstop before physical endstop of linear actuator motor is reached
                 auto call = id(panel_azimuth_angle_max).make_call();
@@ -5829,8 +6545,8 @@ script:
                             
                             // Validate endstop distance is approximately 225° (±x%)
                             // Expected distance: 225°, Tolerance: 5% = ±11.25°
-                            float expected_distance = ${azimuth_endstop_distance_target};
-                            float tolerance_percent = ${azimuth_endstop_distance_tolerance_percent};
+                            float expected_distance = float(${azimuth_endstop_distance_target});
+                            float tolerance_percent = float(${azimuth_endstop_distance_tolerance_percent});
                             float tolerance_degrees = (expected_distance * tolerance_percent) / 100.0;
                             
                             float actual_distance = abs(azimuth_cw_angle - azimuth_ccw_angle);
@@ -5867,6 +6583,7 @@ script:
                               // Distance is INVALID - reject the measurement
                               id(global_azimuth_angle_calculation_fault_detected) = true;
                               id(global_azimuth_angle_calculation_fault_timestamp) = id(ds3231_time).now().timestamp;
+                              id(global_azimuth_angle_calculation_fault_reason) = "Azimuth endstop distance validation failed - mechanical misalignment detected. Check motor and axis alignment.";
                               
                               ESP_LOGE("Azimuth angle measurement:", "VALIDATION FAILED!");
                               ESP_LOGE("Azimuth angle measurement:", "Endstop distance out of tolerance!");
@@ -5885,9 +6602,11 @@ script:
                             then:
                               - lambda: |-
                                   ESP_LOGE("Azimuth angle measurement:", "Measurement failed (during  CCW rotation) due to external abort. Check the motor and mechanics.");
+                                  id(global_azimuth_angle_calculation_fault_reason) = "Azimuth angle measurement aborted during CCW rotation - measurement stopped by external action.";
                             else:
                               - lambda: |-
                                   ESP_LOGE("Azimuth angle measurement:", "Measurement failed (during CCW rotation) due to timeout. Check the motor and mechanics.");
+                                  id(global_azimuth_angle_calculation_fault_reason) = "Azimuth angle measurement timeout during CCW rotation - motor did not reach endstop within time limit.";
                 else:
                   # Handle failure during CW rotation
                   - lambda: |-
@@ -5899,9 +6618,11 @@ script:
                       then:
                         - lambda: |-
                             ESP_LOGE("Azimuth angle measurement:", "Measurement failed (during  CW rotation) due to external abort. Check the motor and mechanics.");
+                            id(global_azimuth_angle_calculation_fault_reason) = "Azimuth angle measurement aborted during CW rotation - measurement stopped by external action.";
                       else:
                         - lambda: |-
                             ESP_LOGE("Azimuth angle measurement:", "Measurement failed (during CW rotation) due to timeout. Check the motor and mechanics.");
+                            id(global_azimuth_angle_calculation_fault_reason) = "Azimuth angle measurement timeout during CW rotation - motor did not reach endstop within time limit.";
             - lambda: |-
                 // anounce that the automatic measurement is finished
                 id(global_perform_automatic_azimuth_angle_boundaries_measurement_running) = false;
@@ -5946,11 +6667,11 @@ script:
                 }
 
 
-            } else if (id(cloudy_mode_active).state)
+            } else if (id(cloudy_mode_active).state && id(auto_cloudy_mode_elevation_control).state)
             {
-                // in case of cloudy mode is active we want to put the panel as parallel to the ground as possible to maximize energy yield
-                tmp_panel_elev_target_value = ${cloudy_mode_elevation_target_angle};
-                ESP_LOGE("Elevation angle calculation:", "Cloudy mode active. Lets put the panel as parallel to the ground as possible.");
+                // in case of cloudy mode is active and elevation control is enabled we want to put the panel as parallel to the ground as possible to maximize energy yield
+                tmp_panel_elev_target_value = float(${cloudy_mode_elevation_target_angle}) < id(panel_elevation_angle_min).state ? id(panel_elevation_angle_min).state : float(${cloudy_mode_elevation_target_angle});
+                ESP_LOGE("Elevation angle calculation:", "Cloudy mode active and elevation control enabled. Lets put the panel as parallel to the ground as possible.");
             } else
             {
               if (id(auto_set_panel_elev_target_to_sun_elev).state)
@@ -6111,7 +6832,7 @@ script:
                   // Check if enough time has passed since last periodic check
                   time_t now = id(ds3231_time).now().timestamp;
                   time_t last_check = id(global_last_periodic_magnetic_calibration_check);
-                  long interval_seconds = ${magnetic_calibration_periodic_check_interval_minutes} * 60;
+                  long interval_seconds = float(${magnetic_calibration_periodic_check_interval_seconds});
                   return (now - last_check) >= interval_seconds;
           then:
             - lambda: |-
@@ -6137,14 +6858,11 @@ script:
           condition:
             binary_sensor.is_on: imu_sensor_ready
           then:
-            #- if: 
-            #    condition:
-            #      binary_sensor.is_off: azimuth_endstop_max_ccw_pos
-            #    then:
             - lambda: |-    
                 // anounce that the calibration is running
                 id(global_magnetic_declination_calibration_running) = true;
                 id(global_magnetic_declination_calibration_fault_detected) = false;
+                id(global_magnetic_declination_calibration_fault_reason) = "";
 
                 // Now rotate the panel CCW(left) until the physical endstop is triggered.
                 id(start_panel_rotation_counterclockwise).execute();
@@ -6192,6 +6910,7 @@ script:
                             ESP_LOGE("Magnetic declination calibration:", "Calibration failed (during CCW rotation) due to endstop not reached. Check the motor and mechanics.");
                             id(global_magnetic_declination_calibration_fault_detected) = true;
                             id(global_magnetic_declination_calibration_fault_timestamp) = id(ds3231_time).now().timestamp;
+                            id(global_magnetic_declination_calibration_fault_reason) = "CCW endstop not reached during rotation. Check motor mechanics.";
                 else:
                   - lambda: |-
                       id(global_magnetic_declination_calibration_fault_detected) = true;
@@ -6202,9 +6921,11 @@ script:
                       then:
                         - lambda: |-
                             ESP_LOGE("Magnetic declination calibration:", "Calibration failed (during CCW rotation) due to external abort. Check the motor and mechanics.");
+                            id(global_magnetic_declination_calibration_fault_reason) = "Calibration aborted by external action (user stopped measurement).";
                       else:
                         - lambda: |-
                             ESP_LOGE("Magnetic declination calibration:", "Calibration failed (during CCW rotation) due to timeout. Check the motor and mechanics.");
+                            id(global_magnetic_declination_calibration_fault_reason) = "Calibration timeout - motor did not reach endstop within maximum time limit.";
 
             - lambda: |-    
                 // anounce that the calibration is finished
@@ -6212,6 +6933,9 @@ script:
           else:
             - lambda: |-
                 ESP_LOGE("Magnetic declination calibration:", "IMU not ready. Calibration aborted.");
+                id(global_magnetic_declination_calibration_fault_detected) = true;
+                id(global_magnetic_declination_calibration_fault_timestamp) = id(ds3231_time).now().timestamp;
+                id(global_magnetic_declination_calibration_fault_reason) = "IMU not ready - cannot perform calibration without compass heading data.";
 
   # this script calculates and saves the magnetic declination
   - id: perform_save_current_magnetic_declination
@@ -6226,14 +6950,15 @@ script:
                 {
                   ESP_LOGE("Magnetic declination calculation:", "CCW Endstop is triggered. Calculating...");
 
-                  auto call = id(magnetic_declination).make_call();
-                  call.set_value(0.0);
-                  call.perform();
+                  //auto call = id(magnetic_declination).make_call();
+                  //call.set_value(0.0);
+                  //call.perform();
 
-                  id(magnetic_declination).update();
-                  id(panel_compass_heading).update();
+                  //id(magnetic_declination).update();
+                  //id(panel_compass_heading).update();
 
-                  float new_value = float(${initial_value.ccw_endstop_azimuth_pointing_direction}) - id(panel_compass_heading).state;
+                  // we use the raw yaw value of the IMU for the declination calculation because this is the value that is directly affected by magnetic declination. The compass heading value is already compensated for magnetic declination and would therefore not be suitable for calculating the declination itself.
+                  float new_value = float(${initial_value.ccw_endstop_azimuth_pointing_direction}) - id(panel_imu_yaw).state;                    
                   new_value = (new_value < -180) ? new_value + 360.0 : new_value;
 
                   auto call2 = id(magnetic_declination).make_call();
@@ -6264,29 +6989,83 @@ script:
             // check if elevation motor current is abnormal high and stop movement if needed
 
             if (id(elevation_motor_voltage_is_valid).state
-                && id(elevation_motor_is_blocked_binary_sensor).state
-                && ((esp_timer_get_time() / 1000) - id(panel_elevation_moving_start_date)) >= ${motor_high_current_check_delay})
+                && ((esp_timer_get_time() / 1000) - id(panel_elevation_moving_start_date)) >= int(${motor_high_current_check_delay}))
             {
-              // Motor blocked state detected(high current). Movement stopped & automatic controls deactivated.
-
-              id(stop_panel_elevation_movement).execute();
-              id(perform_deactivate_all_automatic_axis_controls).execute();  
-              id(global_elevation_motor_blocked_high_current_fault_detected) = true;
-              id(global_elevation_motor_blocked_high_current_timestamp) = id(ds3231_time).now().timestamp;
+              if (id(elevation_motor_is_blocked_binary_sensor).state)
+              {
+                // Overcurrent detected - increment counter
+                id(global_elevation_motor_overcurrent_detection_counter)++;
+                
+                // Check if we have enough consecutive detections to trigger fault
+                if (id(global_elevation_motor_overcurrent_detection_counter) >= int(${motor_overcurrent_consecutive_detections_required}))
+                {
+                  // Motor blocked state detected (high current). Movement stopped & automatic controls deactivated.
+                  
+                  float detected_current = id(motor_elevation_supply_current).state;
+                  float threshold_current = id(elevation_motor_blocked_current_threshold).state;
+                  
+                  id(stop_panel_elevation_movement).execute();
+                  id(perform_deactivate_all_automatic_axis_controls).execute();  
+                  id(global_elevation_motor_blocked_high_current_fault_detected) = true;
+                  id(global_elevation_motor_blocked_high_current_detected_value) = detected_current;
+                  id(global_elevation_motor_blocked_high_current_timestamp) = id(ds3231_time).now().timestamp;
+                  
+                  char buffer[200];
+                  snprintf(buffer, sizeof(buffer), 
+                    "Elevation motor current exceeds blocked threshold - mechanical resistance detected. Current: %.2fA (Threshold: %.2fA)", 
+                    detected_current, threshold_current);
+                  id(global_elevation_motor_blocked_high_current_fault_reason) = std::string(buffer);
+                  
+                  // Reset counter after fault is triggered
+                  id(global_elevation_motor_overcurrent_detection_counter) = 0;
+                }
+              }
+              else
+              {
+                // No overcurrent - reset counter
+                id(global_elevation_motor_overcurrent_detection_counter) = 0;
+              }
             }
 
             // check if azimuth motor current is abnormal high and stop movement if needed
 
             if (id(azimuth_motor_voltage_is_valid).state
-                && id(azimuth_motor_is_blocked_binary_sensor).state
-                && ((esp_timer_get_time() / 1000) - id(panel_azimuth_moving_start_date)) >= ${motor_high_current_check_delay})
+                && ((esp_timer_get_time() / 1000) - id(panel_azimuth_moving_start_date)) >= int(${motor_high_current_check_delay}))
             {
-              // Motor blocked state detected(high current). Movement stopped & automatic controls deactivated. 
-
-              id(stop_panel_rotation_movement).execute();    
-              id(perform_deactivate_all_automatic_axis_controls).execute();
-              id(global_azimuth_motor_blocked_high_current_fault_detected) = true;
-              id(global_azimuth_motor_blocked_high_current_timestamp) = id(ds3231_time).now().timestamp;
+              if (id(azimuth_motor_is_blocked_binary_sensor).state)
+              {
+                // Overcurrent detected - increment counter
+                id(global_azimuth_motor_overcurrent_detection_counter)++;
+                
+                // Check if we have enough consecutive detections to trigger fault
+                if (id(global_azimuth_motor_overcurrent_detection_counter) >= int(${motor_overcurrent_consecutive_detections_required}))
+                {
+                  // Motor blocked state detected (high current). Movement stopped & automatic controls deactivated.
+                  
+                  float detected_current = id(motor_azimuth_supply_current).state;
+                  float threshold_current = id(azimuth_motor_blocked_current_threshold).state;
+                  
+                  id(stop_panel_rotation_movement).execute();    
+                  id(perform_deactivate_all_automatic_axis_controls).execute();
+                  id(global_azimuth_motor_blocked_high_current_fault_detected) = true;
+                  id(global_azimuth_motor_blocked_high_current_detected_value) = detected_current;
+                  id(global_azimuth_motor_blocked_high_current_timestamp) = id(ds3231_time).now().timestamp;
+                  
+                  char buffer[200];
+                  snprintf(buffer, sizeof(buffer), 
+                    "Azimuth motor current exceeds blocked threshold - mechanical resistance detected. Current: %.2fA (Threshold: %.2fA)", 
+                    detected_current, threshold_current);
+                  id(global_azimuth_motor_blocked_high_current_fault_reason) = std::string(buffer);
+                  
+                  // Reset counter after fault is triggered
+                  id(global_azimuth_motor_overcurrent_detection_counter) = 0;
+                }
+              }
+              else
+              {
+                // No overcurrent - reset counter
+                id(global_azimuth_motor_overcurrent_detection_counter) = 0;
+              }
             }
 
           }
@@ -6306,12 +7085,14 @@ script:
                 and !id(bottom_virtual_endstop_binary_sensor).state
                 and (id(panel_lifting_planned).state or id(panel_lowering_planned).state)
                 and id(elevation_motor_is_idle).state
-                and ((esp_timer_get_time() / 1000) - id(panel_elevation_moving_start_date)) >= ${motor_connection_error_check_delay})
+                and id(panel_elevation_moving_start_date) > 0  // only perform check if there was a start of movement (start date set) to avoid false positives during startup or when motor was not started properly
+                and ((esp_timer_get_time() / 1000) - id(panel_elevation_moving_start_date)) >= int(${motor_connection_error_check_delay}))
             { 
               // Motor connection error detected (low current). Elevation movement stopped & automatic controls deactivated. Check wiring!
 
               id(global_elevation_motor_not_connected_fault_detected) = true;
               id(global_elevation_motor_not_connected_timestamp) = id(ds3231_time).now().timestamp;
+              id(global_elevation_motor_not_connected_fault_reason) = "Elevation motor current remains too low during movement - possible connection issue or motor failure.";
             }
 
             // check if motor current is to low while motor should be active
@@ -6319,13 +7100,15 @@ script:
             if (id(azimuth_motor_voltage_is_valid).state
                 and (id(panel_rotation_in_cw_planned).state or id(panel_rotation_in_ccw_planned).state)
                 and id(azimuth_motor_is_idle).state
-                //and id(elevation_motor_is_idle).state   // because elevation motor has higher priority we also check if elevation motor is idle to avoid false positives during elevation movements
-                and ((esp_timer_get_time() / 1000.0) - id(panel_azimuth_moving_start_date)) >= ${motor_connection_error_check_delay})
+                and id(elevation_motor_is_idle).state   // because elevation motor has higher priority we also check if elevation motor is idle to avoid false positives during elevation movements
+                and id(panel_azimuth_moving_start_date) > 0  // only perform check if there was a start of movement (start date set) to avoid false positives during startup or when motor was not started properly
+                and ((esp_timer_get_time() / 1000) - id(panel_azimuth_moving_start_date)) >= int(${motor_connection_error_check_delay}))
             { 
               // Motor connection error detected (low current). Rotation movement stopped & automatic controls deactivated. Check wiring!
 
               id(global_azimuth_motor_not_connected_fault_detected) = true;
               id(global_azimuth_motor_not_connected_timestamp) = id(ds3231_time).now().timestamp;
+              id(global_azimuth_motor_not_connected_fault_reason) = "Azimuth motor current remains too low during movement - possible connection issue or motor failure.";
             }
           }
 
@@ -6342,139 +7125,264 @@ script:
             // === DETECT WRONG ELEVATION MOTOR DIRECTION ===
             if (!id(global_elevation_motor_wrong_direction_detected))
             {
-              float elevation_tolerance = ${elevation_motor_direction_detection_tolerance};
+              float elevation_tolerance = float(${elevation_motor_direction_detection_tolerance});
+              const int required_consecutive = int(${elevation_motor_wrong_direction_required_consecutive});
               
-              if (id(panel_lifting_active).state and 
-                  (id(panel_elevation_angle_sensor).state <= (id(global_elevation_motor_start_angle) - elevation_tolerance)))
+              if (id(panel_lifting_active).state)
               {
-                // Motor is set to lift but angle is significantly decreasing (beyond tolerance) - WRONG DIRECTION!
-                id(global_elevation_motor_wrong_direction_detected) = true;
-                id(global_elevation_motor_wrong_direction_timestamp) = id(ds3231_time).now().timestamp;
-                id(stop_panel_elevation_movement).execute();
-
-                ESP_LOGE("Motor direction check:", "ELEVATION MOTOR WRONG DIRECTION: Lifting commanded but angle %.2f decreased beyond tolerance (start: %.2f, tolerance: ±%.1f°)", 
-                          id(panel_elevation_angle_sensor).state, id(global_elevation_motor_start_angle), elevation_tolerance);
-
-              } else if (id(panel_lowering_active).state and 
-                          (id(panel_elevation_angle_sensor).state >= (id(global_elevation_motor_start_angle) + elevation_tolerance)))
+                // For lifting, angle should increase (considering tolerance)
+                if (id(panel_elevation_angle_sensor).state <= (id(global_elevation_motor_start_angle) - elevation_tolerance))
+                {
+                  // Angle is significantly decreasing (beyond tolerance) - increment counter
+                  id(global_elevation_motor_wrong_direction_consecutive_count)++;
+                  if (id(global_elevation_motor_wrong_direction_consecutive_count) >= required_consecutive)
+                  {
+                    // Motor is set to lift but angle decreased across multiple samples - WRONG DIRECTION!
+                    id(global_elevation_motor_wrong_direction_detected) = true;
+                    id(global_elevation_motor_wrong_direction_timestamp) = id(ds3231_time).now().timestamp;
+                    id(stop_panel_elevation_movement).execute();
+                    ESP_LOGE("Motor direction check:", "ELEVATION MOTOR WRONG DIRECTION: Lifting commanded but angle %.2f decreased beyond tolerance (start: %.2f, tolerance: ±%.1f°)", 
+                              id(panel_elevation_angle_sensor).state, id(global_elevation_motor_start_angle), elevation_tolerance);
+                  }
+                }
+                else
+                {
+                  // Angle is within expectations - reset counter
+                  id(global_elevation_motor_wrong_direction_consecutive_count) = 0;
+                }
+              } 
+              else if (id(panel_lowering_active).state)
               {
-                // Motor is set to lower but angle is significantly increasing (beyond tolerance) - WRONG DIRECTION!
-                id(global_elevation_motor_wrong_direction_detected) = true;
-                id(global_elevation_motor_wrong_direction_timestamp) = id(ds3231_time).now().timestamp;
-                id(stop_panel_elevation_movement).execute();
-
-                ESP_LOGE("Motor direction check:", "ELEVATION MOTOR WRONG DIRECTION: Lowering commanded but angle %.2f increased beyond tolerance (start: %.2f, tolerance: ±%.1f°)", 
-                          id(panel_elevation_angle_sensor).state, id(global_elevation_motor_start_angle), elevation_tolerance);
+                // For lowering, angle should decrease (considering tolerance)
+                if (id(panel_elevation_angle_sensor).state >= (id(global_elevation_motor_start_angle) + elevation_tolerance))
+                {
+                  // Angle is significantly increasing (beyond tolerance) - increment counter
+                  id(global_elevation_motor_wrong_direction_consecutive_count)++;
+                  if (id(global_elevation_motor_wrong_direction_consecutive_count) >= required_consecutive)
+                  {
+                    // Motor is set to lower but angle increased across multiple samples - WRONG DIRECTION!
+                    id(global_elevation_motor_wrong_direction_detected) = true;
+                    id(global_elevation_motor_wrong_direction_timestamp) = id(ds3231_time).now().timestamp;
+                    id(stop_panel_elevation_movement).execute();
+                    ESP_LOGE("Motor direction check:", "ELEVATION MOTOR WRONG DIRECTION: Lowering commanded but angle %.2f increased beyond tolerance (start: %.2f, tolerance: ±%.1f°)", 
+                              id(panel_elevation_angle_sensor).state, id(global_elevation_motor_start_angle), elevation_tolerance);
+                  }
+                }
+                else
+                {
+                  // Angle is within expectations - reset counter
+                  id(global_elevation_motor_wrong_direction_consecutive_count) = 0;
+                }
               }
             }
           }
 
           if (id(auto_panel_block_detection_by_angle_on_off).state)
           {
-            if (((esp_timer_get_time() / 1000) - id(panel_elevation_moving_start_date)) >= ${panel_movement_plausible_check_delay})
-            {
-              id(panel_imu).update();
-              id(panel_elevation_angle_sensor).update();  
+            id(panel_imu).update();
+            id(panel_compass_heading).update();
+            id(panel_elevation_angle_sensor).update(); 
+
+            if (((esp_timer_get_time() / 1000) - id(panel_elevation_moving_start_date)) >= int(${panel_movement_plausible_check_delay}))
+            { 
 
               // ===== Check elevation axis =====
 
               float elevation_angle_change = id(panel_elevation_angle_sensor).state - id(panel_elevation_angle_sensor_old_state);
+              id(elevation_angle_change_value).publish_state(elevation_angle_change);
 
-              if(id(panel_lifting_active).state and 
-                  (elevation_angle_change < ${panel_block_detection_elevation_opening_angle_change_minimum}))
+              if(id(panel_lifting_active).state)
               {
-                // Motor blocked state detected(angle up not changing). Movement stopped.
-                
-                id(stop_panel_elevation_movement).execute();
-                id(auto_control_elevation_angle).turn_off();
+                if (elevation_angle_change < float(${panel_block_detection_elevation_opening_angle_change_minimum}))
+                {
+                  // Angle change below minimum - increment counter
+                  id(global_elevation_blocked_lift_detection_counter)++;
+                  
+                  if (id(global_elevation_blocked_lift_detection_counter) >= int(${motor_missing_angle_change_consecutive_detections_required}))
+                  {
+                    // Motor blocked state detected (angle up not changing). Movement stopped.
+                    
+                    id(stop_panel_elevation_movement).execute();
+                    id(auto_control_elevation_angle).turn_off();
 
-                id(global_elevation_motor_blocked_missing_angle_change_while_lift_fault_detected) = true;
-                id(global_elevation_motor_blocked_missing_angle_lift_timestamp) = id(ds3231_time).now().timestamp;
+                    id(global_elevation_motor_blocked_missing_angle_change_while_lift_fault_detected) = true;
+                    id(global_elevation_motor_blocked_missing_angle_lift_timestamp) = id(ds3231_time).now().timestamp;
+                    id(global_elevation_motor_blocked_missing_angle_change_while_lift_fault_reason) = "Elevation angle change below minimum threshold while lifting - possible mechanical blockage or mechanical resistance.";
 
-                ESP_LOGE("Panel movement plausible check:", "Panel elevation angle change is only %.2f. Movement is stopped", elevation_angle_change);
-
-              } else if(id(panel_lowering_active).state and
-                  (elevation_angle_change > ${panel_block_detection_elevation_closing_angle_change_minimum}))
+                    ESP_LOGE("Panel movement plausible check:", "Panel elevation angle change is only %.2f. Movement is stopped", elevation_angle_change);
+                    
+                    id(global_elevation_blocked_lift_detection_counter) = 0;
+                  }
+                }
+                else
+                {
+                  // Angle change sufficient - reset counter
+                  id(global_elevation_blocked_lift_detection_counter) = 0;
+                }
+              } 
+              else if(id(panel_lowering_active).state)
               {
-                // Motor blocked state detected(angle down not changing). Movement stopped.
+                if (elevation_angle_change > float(${panel_block_detection_elevation_closing_angle_change_minimum}))
+                {
+                  // Angle change below minimum - increment counter
+                  id(global_elevation_blocked_lower_detection_counter)++;
+                  
+                  if (id(global_elevation_blocked_lower_detection_counter) >= int(${motor_missing_angle_change_consecutive_detections_required}))
+                  {
+                    // Motor blocked state detected (angle down not changing). Movement stopped.
 
-                id(stop_panel_elevation_movement).execute();
-                id(auto_control_elevation_angle).turn_off();
+                    id(stop_panel_elevation_movement).execute();
+                    id(auto_control_elevation_angle).turn_off();
 
-                id(global_elevation_motor_blocked_missing_angle_change_while_lowering_fault_detected) = true;
-                id(global_elevation_motor_blocked_missing_angle_lower_timestamp) = id(ds3231_time).now().timestamp;
+                    id(global_elevation_motor_blocked_missing_angle_change_while_lowering_fault_detected) = true;
+                    id(global_elevation_motor_blocked_missing_angle_lower_timestamp) = id(ds3231_time).now().timestamp;
+                    id(global_elevation_motor_blocked_missing_angle_change_while_lowering_fault_reason) = "Elevation angle change below minimum threshold while lowering - possible mechanical blockage or mechanical resistance.";
 
-                ESP_LOGE("Panel movement plausible check:", "Panel elevation angle change is only %.2f. Movement is stopped", elevation_angle_change);
+                    ESP_LOGE("Panel movement plausible check:", "Panel elevation angle change is only %.2f. Movement is stopped", elevation_angle_change);
+                    
+                    id(global_elevation_blocked_lower_detection_counter) = 0;
+                  }
+                }
+                else
+                {
+                  // Angle change sufficient - reset counter
+                  id(global_elevation_blocked_lower_detection_counter) = 0;
+                }
               }
-              id(panel_elevation_angle_sensor_old_state) = id(panel_elevation_angle_sensor).state;
             }
 
             // ===== Check azimuth axis =====
 
-            if (((esp_timer_get_time() / 1000) - id(panel_azimuth_moving_start_date)) >= ${panel_movement_plausible_check_delay})
+            // Skip azimuth blocked detection during magnetic declination calibration to avoid false positives.
+            if (((esp_timer_get_time() / 1000) - id(panel_azimuth_moving_start_date)) >= int(${panel_movement_plausible_check_delay}))
             {
-              id(panel_imu).update();
-              id(panel_compass_heading).update();  
-
-              float azimuth_angle_change = id(panel_compass_heading).state - id(panel_azimuth_angle_sensor_old_state);
-
-              // === DETECT WRONG AZIMUTH MOTOR DIRECTION ===
-              // Azimuth range: 10° to 350° (no wraparound)
-              if (id(auto_motor_direction_detection_on_off).state && !id(global_azimuth_motor_wrong_direction_detected))
+              if(!id(magnetic_declination_calibration_active).state)
               {
-                float azimuth_tolerance = ${azimuth_motor_direction_detection_tolerance};
-                
-                if (id(panel_rotation_in_cw_active).state)
+                // Compute shortest signed delta between two headings.
+                // This avoids false large jumps when crossing 0/360 degrees.
+                auto wrap_delta_deg = [](float current, float previous) {
+                  float delta = current - previous;
+                  while (delta > 180.0f) { delta -= 360.0f; }
+                  while (delta < -180.0f) { delta += 360.0f; }
+                  return delta;
+                };
+
+                float azimuth_angle_change = wrap_delta_deg(id(panel_compass_heading).state, id(panel_azimuth_angle_sensor_old_state));
+                id(azimuth_angle_change_value).publish_state(azimuth_angle_change);
+
+                // === DETECT WRONG AZIMUTH MOTOR DIRECTION ===
+                // Azimuth range: 10° to 350° (no wraparound)
+                if (id(auto_motor_direction_detection_on_off).state && !id(global_azimuth_motor_wrong_direction_detected))
                 {
-                  // For CW rotation, heading should increase (considering tolerance)
-                  if (azimuth_angle_change < -azimuth_tolerance)
+                  float azimuth_tolerance = float(${azimuth_motor_direction_detection_tolerance});
+                  const int required_consecutive = float(${azimuth_motor_wrong_direction_required_consecutive});
+                  
+                  if (id(panel_rotation_in_cw_active).state)
                   {
-                    // Heading is decreasing significantly (beyond tolerance) - WRONG DIRECTION!
-                    id(global_azimuth_motor_wrong_direction_detected) = true;
-                    id(global_azimuth_motor_wrong_direction_timestamp) = id(ds3231_time).now().timestamp;
-                    id(stop_panel_rotation_movement).execute();
-                    ESP_LOGE("Motor direction check:", "AZIMUTH MOTOR WRONG DIRECTION: CW rotation commanded but heading decreased %.2f° (tolerance: ±%.1f°)", azimuth_angle_change, azimuth_tolerance);
-                  }
-                } 
-                else if (id(panel_rotation_in_ccw_active).state)
-                {
-                  // For CCW rotation, heading should decrease (considering tolerance)
-                  if (azimuth_angle_change > azimuth_tolerance)
+                    // For CW rotation, heading should increase (considering tolerance)
+                    if (azimuth_angle_change < -azimuth_tolerance)
+                    {
+                      id(global_azimuth_motor_wrong_direction_consecutive_count)++;
+                      if (id(global_azimuth_motor_wrong_direction_consecutive_count) >= required_consecutive)
+                      {
+                        // Heading is decreasing significantly (beyond tolerance) across multiple samples.
+                        id(global_azimuth_motor_wrong_direction_detected) = true;
+                        id(global_azimuth_motor_wrong_direction_timestamp) = id(ds3231_time).now().timestamp;
+                        id(stop_panel_rotation_movement).execute();
+                        ESP_LOGE("Motor direction check:", "AZIMUTH MOTOR WRONG DIRECTION: CW rotation commanded but heading decreased %.2f° (tolerance: ±%.1f°)", azimuth_angle_change, azimuth_tolerance);
+                      }
+                    }
+                    else
+                    {
+                      id(global_azimuth_motor_wrong_direction_consecutive_count) = 0;
+                    }
+                  } 
+                  else if (id(panel_rotation_in_ccw_active).state)
                   {
-                    // Heading is increasing significantly (beyond tolerance) - WRONG DIRECTION!
-                    id(global_azimuth_motor_wrong_direction_detected) = true;
-                    id(global_azimuth_motor_wrong_direction_timestamp) = id(ds3231_time).now().timestamp;
-                    id(stop_panel_rotation_movement).execute();
-                    ESP_LOGE("Motor direction check:", "AZIMUTH MOTOR WRONG DIRECTION: CCW rotation commanded but heading increased %.2f° (tolerance: ±%.1f°)", azimuth_angle_change, azimuth_tolerance);
+                    // For CCW rotation, heading should decrease (considering tolerance)
+                    if (azimuth_angle_change > azimuth_tolerance)
+                    {
+                      id(global_azimuth_motor_wrong_direction_consecutive_count)++;
+                      if (id(global_azimuth_motor_wrong_direction_consecutive_count) >= required_consecutive)
+                      {
+                        // Heading is increasing significantly (beyond tolerance) across multiple samples.
+                        id(global_azimuth_motor_wrong_direction_detected) = true;
+                        id(global_azimuth_motor_wrong_direction_timestamp) = id(ds3231_time).now().timestamp;
+                        id(stop_panel_rotation_movement).execute();
+                        ESP_LOGE("Motor direction check:", "AZIMUTH MOTOR WRONG DIRECTION: CCW rotation commanded but heading increased %.2f° (tolerance: ±%.1f°)", azimuth_angle_change, azimuth_tolerance);
+                      }
+                    }
+                    else
+                    {
+                      id(global_azimuth_motor_wrong_direction_consecutive_count) = 0;
+                    }
                   }
                 }
-              }
 
-              if(id(panel_rotation_in_cw_active).state and 
-                  (azimuth_angle_change < ${panel_block_detection_azimuth_cw_angle_change_minimum}))
-              {                
-                id(stop_panel_rotation_movement).execute();
-                id(auto_control_azimuth_angle).turn_off();
-                id(global_azimuth_motor_blocked_missing_angle_cw_timestamp) = id(ds3231_time).now().timestamp;
+                  // Detect blocked azimuth movement: angle change stays below the minimum expected delta while motor is active.
+                  // CW expects a positive delta; CCW expects a negative delta. Trigger fault, stop movement, and disable auto control.
+                if(id(panel_rotation_in_cw_active).state)
+                {
+                  if (azimuth_angle_change < float(${panel_block_detection_azimuth_cw_angle_change_minimum}))
+                  {
+                    // Angle change below minimum - increment counter
+                    id(global_azimuth_blocked_cw_detection_counter)++;
+                    
+                    if (id(global_azimuth_blocked_cw_detection_counter) >= int(${motor_missing_angle_change_consecutive_detections_required}))
+                    {
+                      id(stop_panel_rotation_movement).execute();
+                      id(auto_control_azimuth_angle).turn_off();
+                      id(global_azimuth_motor_blocked_missing_angle_change_cw_fault_detected) = true;
+                      id(global_azimuth_motor_blocked_missing_angle_cw_timestamp) = id(ds3231_time).now().timestamp;
+                      id(global_azimuth_motor_blocked_missing_angle_change_cw_fault_reason) = "Azimuth angle change below minimum threshold during clockwise rotation - possible mechanical blockage or mechanical resistance.";
 
-                ESP_LOGE("Panel movement plausible check:", "Panel azimuth angle change is only %2.0f. Movement is stopped", azimuth_angle_change);
+                      ESP_LOGE("Panel movement plausible check:", "Panel azimuth angle change is only %.2f. Movement is stopped", azimuth_angle_change);
+                      
+                      id(global_azimuth_blocked_cw_detection_counter) = 0;
+                    }
+                  }
+                  else
+                  {
+                    // Angle change sufficient - reset counter
+                    id(global_azimuth_blocked_cw_detection_counter) = 0;
+                  }
+                } 
+                else if(id(panel_rotation_in_ccw_active).state)
+                {
+                  if (azimuth_angle_change > float(${panel_block_detection_azimuth_ccw_angle_change_minimum}))
+                  {
+                    // Angle change below minimum - increment counter
+                    id(global_azimuth_blocked_ccw_detection_counter)++;
+                    
+                    if (id(global_azimuth_blocked_ccw_detection_counter) >= int(${motor_missing_angle_change_consecutive_detections_required}))
+                    {
+                      id(stop_panel_rotation_movement).execute();
+                      id(auto_control_azimuth_angle).turn_off();
 
-              } else if(id(panel_rotation_in_ccw_active).state and 
-                  (azimuth_angle_change > ${panel_block_detection_azimuth_ccw_angle_change_minimum}))
+                      id(global_azimuth_motor_blocked_missing_angle_change_ccw_fault_detected) = true;
+                      id(global_azimuth_motor_blocked_missing_angle_ccw_timestamp) = id(ds3231_time).now().timestamp;
+                      id(global_azimuth_motor_blocked_missing_angle_change_ccw_fault_reason) = "Azimuth angle change below minimum threshold during counter-clockwise rotation - possible mechanical blockage or mechanical resistance.";
+
+                      ESP_LOGE("Panel movement plausible check:", "Panel azimuth angle change is only %.2f. Movement is stopped", azimuth_angle_change);
+                      
+                      id(global_azimuth_blocked_ccw_detection_counter) = 0;
+                    }
+                  }
+                  else
+                  {
+                    // Angle change sufficient - reset counter
+                    id(global_azimuth_blocked_ccw_detection_counter) = 0;
+                  }
+                }
+              } else
               {
-                id(stop_panel_rotation_movement).execute();
-                id(auto_control_azimuth_angle).turn_off();
-
-                id(global_azimuth_motor_blocked_missing_angle_change_ccw_fault_detected) = true;
-                id(global_azimuth_motor_blocked_missing_angle_ccw_timestamp) = id(ds3231_time).now().timestamp;
-
-                id(global_azimuth_motor_blocked_missing_angle_change_ccw_fault_detected) = true;
-
-                ESP_LOGE("Panel movement plausible check:", "Panel azimuth angle change is only %2.0f. Movement is stopped", azimuth_angle_change);
+                // During magnetic declination calibration we skip the blocked movement detection               
+                ESP_LOGD("Panel movement plausible check:", "Skipping azimuth movement plausibility check during magnetic declination calibration.");
               }
-              id(panel_azimuth_angle_sensor_old_state) = id(panel_compass_heading).state;
-
             }
+            // Update the old state independently to avoid false positives after calibration is finished. 
+            id(panel_elevation_angle_sensor_old_state) = id(panel_elevation_angle_sensor).state;
+            id(panel_azimuth_angle_sensor_old_state) = id(panel_compass_heading).state;
           }
 
   # this executes the needed steps to lift the panel
@@ -6516,6 +7424,7 @@ script:
                         id(panel_elevation_angle_sensor).update();
                         id(global_elevation_motor_start_angle) = id(panel_elevation_angle_sensor).state;
                         id(global_elevation_motor_wrong_direction_detected) = false;
+                        id(global_elevation_motor_wrong_direction_consecutive_count) = 0;
                     - if:
                         condition:
                           switch.is_on: elevation_motor_direction_inverted
@@ -6526,10 +7435,12 @@ script:
                           - switch.turn_off: motor_elevation_minus_pin
                           - switch.turn_on: motor_elevation_plus_pin                    
                     - lambda: ESP_LOGI("Panel lift control:", "Panel lifting started.");
+                    - text_sensor.template.publish:
+                        id: last_movement_command_text
+                        state: "Elevation: Lift"
                     - lambda: |-
-                        id(panel_elevation_moving_start_date) = (esp_timer_get_time() / 1000.0); // Convert microseconds to milliseconds
+                        id(panel_elevation_moving_start_date) = (esp_timer_get_time() / 1000); // Convert microseconds to milliseconds
                         id(panel_elevation_target_reached_handled) = false;  // Reset helper variable for new movement session
-                    #- lambda: "id(panel_elevation_angle_sensor_old_state) = id(panel_elevation_angle_sensor).state;" TODO
           else:
             - if:
                 condition:
@@ -6579,15 +7490,18 @@ script:
                           - switch.turn_on: motor_elevation_minus_pin
                           - switch.turn_off: motor_elevation_plus_pin
                     - lambda: ESP_LOGI("Panel lift control:", "Panel lowering started.");
+                    - text_sensor.template.publish:
+                        id: last_movement_command_text
+                        state: "Elevation: Lower"
                     - lambda: |-
-                        id(panel_elevation_moving_start_date) = (esp_timer_get_time() / 1000.0); // Convert microseconds to milliseconds
+                        id(panel_elevation_moving_start_date) = (esp_timer_get_time() / 1000); // Convert microseconds to milliseconds
                         id(panel_elevation_target_reached_handled) = false;  // Reset helper variable for new movement session
                     - lambda: |-
                         id(panel_imu).update();
                         id(panel_elevation_angle_sensor).update();
                         id(global_elevation_motor_start_angle) = id(panel_elevation_angle_sensor).state;
                         id(global_elevation_motor_wrong_direction_detected) = false;
-                    #- lambda: "id(panel_elevation_angle_sensor_old_state) = id(panel_elevation_angle_sensor).state;" TODO
+                        id(global_elevation_motor_wrong_direction_consecutive_count) = 0;
           else:
             - if:
                 condition:
@@ -6605,6 +7519,22 @@ script:
           {
             ESP_LOGE("Panel lift control:", "Panel elevation movement stopped.");
           }
+      - lambda: |-
+          if (id(panel_lifting_active).state || id(panel_lowering_active).state)
+          {
+            int64_t now_ms = esp_timer_get_time() / 1000;
+            int64_t start_ms = id(panel_elevation_moving_start_date);
+            id(global_elevation_last_movement_duration_ms) = now_ms - start_ms;
+            id(global_elevation_last_movement_end_timestamp_ms) = now_ms;
+            id(panel_elevation_moving_start_date) = 0;  // Reset movement start date
+            id(global_elevation_motor_overcurrent_detection_counter) = 0;  // Reset overcurrent counter
+            id(global_elevation_motor_wrong_direction_consecutive_count) = 0;  // Reset wrong direction counter
+            id(global_elevation_blocked_lift_detection_counter) = 0;  // Reset lift blocked counter
+            id(global_elevation_blocked_lower_detection_counter) = 0;  // Reset lower blocked counter
+          }
+      - text_sensor.template.publish:
+          id: last_movement_command_text
+          state: "Elevation: Stop"
       - switch.turn_off: motor_elevation_plus_pin
       - switch.turn_off: motor_elevation_minus_pin
       - delay: 300ms # Increase this value if needed. This pause is done to give the motor some time to stop. Otherwise the motor inrush current could be increased when a next movement is started directly.
@@ -6648,9 +7578,11 @@ script:
                           - switch.turn_off: motor_azimuth_plus_pin
                           - switch.turn_on: motor_azimuth_minus_pin 
                     - lambda: ESP_LOGI("Panel rotation control:", "Panel rotation in CCW direction started.");
-
+                    - text_sensor.template.publish:
+                        id: last_movement_command_text
+                        state: "Azimuth: CCW"
                     - lambda: |-
-                        id(panel_azimuth_moving_start_date) = (esp_timer_get_time() / 1000.0); // Convert microseconds to milliseconds
+                        id(panel_azimuth_moving_start_date) = (esp_timer_get_time() / 1000); // Convert microseconds to milliseconds
                         id(panel_azimuth_target_reached_handled) = false;  // Reset helper variable for new movement session
 
                     - lambda: |-
@@ -6658,7 +7590,7 @@ script:
                         id(panel_compass_heading).update();
                         id(global_azimuth_motor_start_angle) = id(panel_compass_heading).state;
                         id(global_azimuth_motor_wrong_direction_detected) = false;
-                    #- lambda: "id(panel_elevation_angle_sensor_old_state) = id(panel_elevation_angle_sensor).state;" TODO
+                        id(global_azimuth_motor_wrong_direction_consecutive_count) = 0;
               else:
                 - lambda: ESP_LOGI("Panel rotation control:", "Panel rotation in CCW direction not started because endstop is reached.");
 
@@ -6703,15 +7635,18 @@ script:
                           - switch.turn_off: motor_azimuth_minus_pin
 
                     - lambda: ESP_LOGI("Panel rotation control:", "Panel rotation in CW direction started.");
+                    - text_sensor.template.publish:
+                        id: last_movement_command_text
+                        state: "Azimuth: CW"
                     - lambda: |-
-                        id(panel_azimuth_moving_start_date) = (esp_timer_get_time() / 1000.0); // Convert microseconds to milliseconds
+                        id(panel_azimuth_moving_start_date) = (esp_timer_get_time() / 1000); // Convert microseconds to milliseconds
                         id(panel_azimuth_target_reached_handled) = false;  // Reset helper variable for new movement session
                     - lambda: |-
                         id(panel_imu).update();
                         id(panel_compass_heading).update();
                         id(global_azimuth_motor_start_angle) = id(panel_compass_heading).state;
                         id(global_azimuth_motor_wrong_direction_detected) = false;
-                    #- lambda: "id(panel_elevation_angle_sensor_old_state) = id(panel_elevation_angle_sensor).state;" TODO
+                        id(global_azimuth_motor_wrong_direction_consecutive_count) = 0;
               else:
                 - lambda: ESP_LOGI("Panel rotation control:", "Panel rotation in CW direction not started because endstop is reached.");
           else:
@@ -6728,6 +7663,21 @@ script:
           {
             ESP_LOGE("Panel rotation control:", "Panel rotation stopped.");
           }
+      - lambda: |-
+          if (id(panel_rotation_in_cw_active).state || id(panel_rotation_in_ccw_active).state)
+          {
+            int64_t now_ms = esp_timer_get_time() / 1000;
+            int64_t start_ms = id(panel_azimuth_moving_start_date);
+            id(global_azimuth_last_movement_duration_ms) = now_ms - start_ms;
+            id(global_azimuth_last_movement_end_timestamp_ms) = now_ms;
+            id(panel_azimuth_moving_start_date) = 0;  // Reset movement start date
+            id(global_azimuth_motor_overcurrent_detection_counter) = 0;  // Reset overcurrent counter
+            id(global_azimuth_blocked_cw_detection_counter) = 0;  // Reset CW blocked counter
+            id(global_azimuth_blocked_ccw_detection_counter) = 0;  // Reset CCW blocked counter
+          }
+      - text_sensor.template.publish:
+          id: last_movement_command_text
+          state: "Azimuth: Stop"
       - switch.turn_off: motor_azimuth_plus_pin
       - switch.turn_off: motor_azimuth_minus_pin
       - delay: 300ms # Increase this value if needed. This pause is done to give the motor some time to stop. Otherwise the motor inrush current could be increased when a next movement is started directly.
@@ -6826,6 +7776,7 @@ script:
                             {
                               ESP_LOGE("OWM retrieval:", "OWM API Key is not valid.");
                             }
+                        - script.execute: perform_publish_states_to_status_text_sensors
               else:
                 - lambda: ESP_LOGE("OWM retrieval:", "Internet connection is not available.");  
         else:

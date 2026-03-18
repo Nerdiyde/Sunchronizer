@@ -53,7 +53,7 @@ The system uses a **linear actuator** and **geared motor** to continuously orien
 - **[Measurement Analysis Overview](docu/measurements/MEASUREMENT_OVERVIEW.md)** - Daily performance results with links to detailed analysis reports
 - **[FAQ](FAQ.md)** - Frequently asked questions about assembly, firmware, performance, and operation
 - **[Full Wiki](https://github.com/Nerdiyde/Sunchronizer/wiki)** - Complete project documentation
-- **[Material List](https://github.com/Nerdiyde/Sunchronizer/wiki/1.-Preperations)** - Components and BOM
+- **[Material List](https://github.com/Nerdiyde/Sunchronizer/wiki/1.-Preparations)** - Components and BOM
 
 ### For Different Needs
 
@@ -112,7 +112,7 @@ STL files and detailed build information available at:
 
 ### External Components Required
 
-The firmware depends on two custom ESPHome components:
+The firmware depends on two ESPHome external components that are fetched from GitHub during the build:
 - [DS3231 RTC Component](https://github.com/Nerdiyde/DS3231-RTC-component-for-ESPHome/)
 - [BNO085 RVC Component](https://github.com/Nerdiyde/BNO085-RVC-component-for-ESPHome/)
 
@@ -260,8 +260,8 @@ Contributions are welcome! For bug reports, feature requests, or improvements:
 
 ## 🔗 Related Projects & Resources
 
-- [DS3231 RTC Component for ESPHome](https://github.com/Nerdiyde/DS3231-RTC-component-for-ESPHome/) - Custom component required for firmware
-- [BNO085 RVC Component for ESPHome](https://github.com/Nerdiyde/BNO085-RVC-component-for-ESPHome/) - Custom component required for firmware
+- [DS3231 RTC Component for ESPHome](https://github.com/Nerdiyde/DS3231-RTC-component-for-ESPHome/) - ESPHome external component used by the firmware
+- [BNO085 RVC Component for ESPHome](https://github.com/Nerdiyde/BNO085-RVC-component-for-ESPHome/) - ESPHome external component used by the firmware
 - [ESPHome Official Documentation](https://esphome.io/)
 - [Home Assistant](https://www.home-assistant.io/) - Smart home integration platform
 - [NERDIY.DE Blog](https://nerdiy.de/) - Project blog and store

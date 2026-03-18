@@ -196,9 +196,9 @@ Slower motors can also work, but then the parameter `azimuth_measurement_max_wai
 
 ---
 
-### Q: What are the custom ESPHome components?
+### Q: What are the ESPHome external components used by the firmware?
 
-**A:** The Sunchronizer firmware depends on two external components:
+**A:** The Sunchronizer firmware depends on two ESPHome external components:
 
 1. **[DS3231 RTC Component](https://github.com/Nerdiyde/DS3231-RTC-component-for-ESPHome/)**
    - Provides precise timekeeping independent of WiFi
@@ -210,7 +210,7 @@ Slower motors can also work, but then the parameter `azimuth_measurement_max_wai
    - Measures elevation angle of the tilted panel
    - Provides compass heading for azimuth verification
 
-Both are open-source and included in the firmware configuration automatically.
+Both are open-source and are fetched automatically from their GitHub repositories during the build.
 
 ---
 
