@@ -844,15 +844,6 @@ wifi:
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
 
-tinyusb:
-  id: "usb_id"
-  usb_product_id: 0x4001
-  usb_vendor_id: 0x303A
-  usb_lang_id: 0x0409
-  usb_manufacturer_str: "Nerdiy"
-  usb_product_str: "Sunchronizer"
-  # usb_serial_str (Optional, string): Serial number string descriptor. If not specified, the device’s MAC address will be used.
-
 improv_serial:
 
 captive_portal:
