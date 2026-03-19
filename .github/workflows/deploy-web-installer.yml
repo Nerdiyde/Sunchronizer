@@ -45,10 +45,10 @@ jobs:
           import urllib.request
 
           repo = os.environ["GITHUB_REPOSITORY"]
-          api_url = f"https://api.github.com/repos/{repo}/releases/latest"
+          releases_api_url = f"https://api.github.com/repos/{repo}/releases?per_page=20"
 
           req = urllib.request.Request(
-              api_url,
+              releases_api_url,
               headers={
                   "Accept": "application/vnd.github+json",
                   "User-Agent": "sunchronizer-web-installer-workflow",
@@ -56,7 +56,10 @@ jobs:
           )
 
           with urllib.request.urlopen(req) as response:
-              release = json.load(response)
+              releases = json.load(response)
+
+          if not isinstance(releases, list) or not releases:
+              raise RuntimeError("No releases found in GitHub API response.")
 
           site_dir = pathlib.Path("site")
           source_dir = pathlib.Path("firmware/web-installer")
@@ -74,19 +77,48 @@ jobs:
           binaries_dir = site_dir / "binaries"
           binaries_dir.mkdir(parents=True, exist_ok=True)
 
-          binaries = []
-          for asset in release.get("assets", []):
-              name = asset.get("name", "")
-              if name.lower().endswith(".bin"):
-                  binaries.append(name)
-                  target = binaries_dir / name
-                  print(f"Downloading {name}...")
+          release_entries = []
+
+          for release in releases:
+              tag = release.get("tag_name")
+              if not tag:
+                  continue
+
+              release_assets = []
+              target_release_dir = binaries_dir / tag
+              target_release_dir.mkdir(parents=True, exist_ok=True)
+
+              for asset in release.get("assets", []):
+                  name = asset.get("name", "")
+                  if not name.lower().endswith(".bin"):
+                      continue
+
+                  target = target_release_dir / name
+                  print(f"Downloading {tag} / {name}...")
                   urllib.request.urlretrieve(asset["browser_download_url"], target)
 
+                  release_assets.append(
+                      {
+                          "name": name,
+                          "path": f"binaries/{tag}/{name}",
+                      }
+                  )
+
+              if release_assets:
+                  release_entries.append(
+                      {
+                          "tag": tag,
+                          "release_url": release.get("html_url"),
+                          "binaries": release_assets,
+                      }
+                  )
+
+          if not release_entries:
+              raise RuntimeError("No .bin assets found across the selected releases.")
+
           metadata = {
-              "tag": release.get("tag_name"),
-              "release_url": release.get("html_url"),
-              "binaries": binaries,
+              "latest": release_entries[0]["tag"],
+              "releases": release_entries,
           }
           (site_dir / "release-metadata.json").write_text(
               json.dumps(metadata, indent=2),

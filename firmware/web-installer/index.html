@@ -35,6 +35,10 @@
         padding: 0 16px 24px;
       }
 
+      body.wide-layout main {
+        max-width: calc(100vw - 24px);
+      }
+
       .card {
         background: var(--card);
         border: 1px solid var(--border);
@@ -72,6 +76,10 @@
         display: grid;
         gap: 10px;
         margin-top: 12px;
+      }
+
+      .controls.two-col {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       }
 
       label {
@@ -117,6 +125,67 @@
         gap: 10px;
       }
 
+      .secondary-btn {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        font-size: 0.95rem;
+        color: var(--ink);
+        background: #303034;
+        cursor: pointer;
+      }
+
+      .secondary-btn:hover {
+        background: #36363b;
+      }
+
+      .logs-wrap {
+        margin-top: 12px;
+        display: none;
+        overflow-x: auto;
+      }
+
+      .logs-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-bottom: 8px;
+      }
+
+      .logs {
+        width: 100%;
+        min-height: 170px;
+        height: 240px;
+        min-width: 320px;
+        max-width: none;
+        max-height: 70vh;
+        resize: both;
+        overflow: auto;
+        white-space: pre-wrap;
+        font-family: Consolas, "Courier New", monospace;
+        font-size: 0.84rem;
+        line-height: 1.35;
+        padding: 10px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: #181819;
+        color: #cde8ff;
+      }
+
+      .logs-footer {
+        margin-top: 10px;
+        display: flex;
+        justify-content: center;
+      }
+
+      .logs-footer .secondary-btn {
+        width: auto;
+        min-width: 230px;
+        max-width: 280px;
+      }
+
       .small {
         font-size: 0.9rem;
       }
@@ -139,26 +208,50 @@
       <section class="card">
         <h1>Sunchronizer Web Installer</h1>
         <p class="muted">
-          Flash the latest release firmware directly from a Chromium-based browser
+          Flash release firmware directly from a Chromium-based browser
           (Chrome, Edge, Brave, Opera).
         </p>
 
-        <div id="status" class="status">Loading latest release data...</div>
+        <div id="status" class="status">Loading release data...</div>
 
-        <div class="controls">
+        <div class="controls two-col">
+          <div>
+            <label for="releaseSelect">Release</label>
+            <select id="releaseSelect" disabled>
+              <option>Loading...</option>
+            </select>
+          </div>
+
+          <div>
           <label for="binSelect">Firmware Binary</label>
           <select id="binSelect" disabled>
             <option>Loading...</option>
           </select>
+          </div>
         </div>
 
         <div class="actions">
           <esp-web-install-button id="installButton" style="display: none">
             <button slot="activate" class="install-btn">Install Selected Firmware</button>
           </esp-web-install-button>
+          <button id="toggleLogsButton" class="secondary-btn" type="button">Show Serial Logs</button>
           <a id="releaseLink" class="button" target="_blank" rel="noopener noreferrer" href="https://github.com/Nerdiyde/Sunchronizer/releases/latest">
             Open Latest Release Assets
           </a>
+        </div>
+
+        <div id="logsWrap" class="logs-wrap">
+          <div class="logs-actions">
+            <button id="connectLogsButton" class="secondary-btn" type="button" style="max-width: 230px;">Connect Log Stream</button>
+            <button id="disconnectLogsButton" class="secondary-btn" type="button" style="max-width: 230px;" disabled>Disconnect Log Stream</button>
+            <button id="clearLogsButton" class="secondary-btn" type="button" style="max-width: 180px;">Clear Logs</button>
+            <button id="rebootButton" class="secondary-btn" type="button" style="max-width: 180px;">Reboot Device</button>
+          </div>
+          <pre id="serialLogOutput" class="logs">Serial logs are hidden. Click "Show Serial Logs".
+</pre>
+          <div class="logs-footer">
+            <button id="toggleWidthButton" class="secondary-btn" type="button">Expand Layout Width</button>
+          </div>
         </div>
 
         <p class="small muted" style="margin-top: 14px">
@@ -176,15 +269,54 @@
 
     <script type="module" src="https://cdn.jsdelivr.net/npm/esp-web-tools@9/dist/web/install-button.js?module"></script>
     <script>
-      const API_URL = "https://api.github.com/repos/Nerdiyde/Sunchronizer/releases/latest";
+      const METADATA_URL = "release-metadata.json";
+      const API_RELEASES_URL = "https://api.github.com/repos/Nerdiyde/Sunchronizer/releases?per_page=20";
+
       const statusEl = document.getElementById("status");
+      const releaseSelectEl = document.getElementById("releaseSelect");
       const selectEl = document.getElementById("binSelect");
       const installButton = document.getElementById("installButton");
       const releaseLink = document.getElementById("releaseLink");
+      const toggleWidthButton = document.getElementById("toggleWidthButton");
+      const toggleLogsButton = document.getElementById("toggleLogsButton");
+      const logsWrap = document.getElementById("logsWrap");
+      const connectLogsButton = document.getElementById("connectLogsButton");
+      const disconnectLogsButton = document.getElementById("disconnectLogsButton");
+      const clearLogsButton = document.getElementById("clearLogsButton");
+      const rebootButton = document.getElementById("rebootButton");
+      const serialLogOutput = document.getElementById("serialLogOutput");
+
+      let releasesCache = [];
+      let currentManifestUrl = null;
+
+      let serialPort = null;
+      let serialReader = null;
+      let serialKeepReading = false;
+      let serialReadLoopPromise = null;
+
+      function delay(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+      }
 
       function setStatus(message, isError = false) {
         statusEl.textContent = message;
         statusEl.className = isError ? "status error" : "status";
+      }
+
+      function appendLog(message) {
+        const line = `[${new Date().toLocaleTimeString()}] ${message}`;
+        if (serialLogOutput.textContent.trim() === "Serial logs are hidden. Click \"Show Serial Logs\".") {
+          serialLogOutput.textContent = "";
+        }
+        serialLogOutput.textContent += `${line}\n`;
+        serialLogOutput.scrollTop = serialLogOutput.scrollHeight;
+      }
+
+      function resetManifestUrl(url) {
+        if (currentManifestUrl) {
+          URL.revokeObjectURL(currentManifestUrl);
+        }
+        currentManifestUrl = url;
       }
 
       function createManifestUrl(assetUrl, versionTag) {
@@ -210,79 +342,327 @@
         return URL.createObjectURL(blob);
       }
 
-      async function loadLatestRelease() {
-        try {
-          const response = await fetch(API_URL, {
-            headers: {
-              Accept: "application/vnd.github+json"
-            }
-          });
+      function getReleaseByTag(tag) {
+        return releasesCache.find((release) => release.tag === tag);
+      }
 
-          if (!response.ok) {
-            throw new Error(`GitHub API error ${response.status}`);
+      function updateBinaryOptionsForRelease(tag) {
+        const release = getReleaseByTag(tag);
+
+        selectEl.innerHTML = "";
+        if (!release || !release.binaries || release.binaries.length === 0) {
+          selectEl.disabled = true;
+          selectEl.innerHTML = "<option>No binaries available</option>";
+          installButton.style.display = "none";
+          setStatus("The selected release has no mirrored .bin binaries.", true);
+          return;
+        }
+
+        for (const binary of release.binaries) {
+          const option = document.createElement("option");
+          option.value = new URL(binary.path, window.location.href).href;
+          option.textContent = binary.name;
+          selectEl.appendChild(option);
+        }
+
+        selectEl.disabled = false;
+        installButton.style.display = "inline-block";
+        releaseLink.href = release.release_url || releaseLink.href;
+
+        const manifestUrl = createManifestUrl(selectEl.value, release.tag || "unknown");
+        resetManifestUrl(manifestUrl);
+        installButton.setAttribute("manifest", manifestUrl);
+        setStatus(`Loaded release ${release.tag}. Select a binary and click Install.`);
+      }
+
+      function wireReleaseUiEvents() {
+        releaseSelectEl.addEventListener("change", () => {
+          updateBinaryOptionsForRelease(releaseSelectEl.value);
+        });
+
+        selectEl.addEventListener("change", () => {
+          const selectedRelease = getReleaseByTag(releaseSelectEl.value);
+          const manifestUrl = createManifestUrl(selectEl.value, selectedRelease?.tag || "unknown");
+          resetManifestUrl(manifestUrl);
+          installButton.setAttribute("manifest", manifestUrl);
+        });
+      }
+
+      async function fetchMetadata() {
+        const response = await fetch(METADATA_URL, { cache: "no-store" });
+        if (!response.ok) {
+          throw new Error(`Metadata fetch failed with ${response.status}`);
+        }
+        return response.json();
+      }
+
+      async function fetchReleasesFromApi() {
+        const response = await fetch(API_RELEASES_URL, {
+          headers: {
+            Accept: "application/vnd.github+json"
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`GitHub API error ${response.status}`);
+        }
+
+        const releases = await response.json();
+        return (releases || []).map((release) => ({
+          tag: release.tag_name,
+          release_url: release.html_url,
+          binaries: (release.assets || [])
+            .filter((asset) => asset.name && asset.name.toLowerCase().endsWith(".bin"))
+            .map((asset) => ({
+              name: asset.name,
+              // Fallback uses direct GitHub asset URL when no mirrored metadata exists.
+              path: asset.browser_download_url
+            }))
+        }));
+      }
+
+      function renderReleaseOptions() {
+        releaseSelectEl.innerHTML = "";
+        if (!releasesCache.length) {
+          releaseSelectEl.disabled = true;
+          releaseSelectEl.innerHTML = "<option>No releases available</option>";
+          return;
+        }
+
+        for (const release of releasesCache) {
+          const option = document.createElement("option");
+          option.value = release.tag;
+          option.textContent = release.tag;
+          releaseSelectEl.appendChild(option);
+        }
+
+        releaseSelectEl.disabled = false;
+      }
+
+      async function loadReleaseData() {
+        try {
+          let loadedFromMetadata = false;
+
+          try {
+            const metadata = await fetchMetadata();
+            if (metadata && Array.isArray(metadata.releases) && metadata.releases.length) {
+              releasesCache = metadata.releases;
+              loadedFromMetadata = true;
+            }
+          } catch (metadataError) {
+            console.warn("Could not load release-metadata.json, falling back to API.", metadataError);
           }
 
-          const release = await response.json();
-          const assets = (release.assets || []).filter((asset) =>
-            asset.name && asset.name.toLowerCase().endsWith(".bin")
+          if (!loadedFromMetadata) {
+            releasesCache = await fetchReleasesFromApi();
+          }
+
+          releasesCache = releasesCache.filter((release) =>
+            release.tag && Array.isArray(release.binaries) && release.binaries.length > 0
           );
 
-          releaseLink.href = release.html_url || releaseLink.href;
-
-          if (assets.length === 0) {
-            setStatus(
-              "No .bin assets found in the latest release. Upload firmware assets first.",
-              true
-            );
+          if (!releasesCache.length) {
+            setStatus("No releases with .bin assets were found.", true);
+            releaseSelectEl.disabled = true;
             selectEl.disabled = true;
+            releaseSelectEl.innerHTML = "<option>No releases available</option>";
             selectEl.innerHTML = "<option>No binaries available</option>";
             return;
           }
 
-          selectEl.innerHTML = "";
-          for (const asset of assets) {
-            const option = document.createElement("option");
-            // Release assets are mirrored to GitHub Pages to avoid cross-origin fetch issues.
-            option.value = new URL(
-              `binaries/${encodeURIComponent(asset.name)}`,
-              window.location.href
-            ).href;
-            option.textContent = asset.name;
-            selectEl.appendChild(option);
+          renderReleaseOptions();
+          updateBinaryOptionsForRelease(releaseSelectEl.value);
+
+          if (loadedFromMetadata) {
+            setStatus("Release metadata loaded. Select a release and binary, then click Install.");
+          } else {
+            setStatus("Loaded releases via GitHub API fallback. Select a release and binary, then click Install.");
           }
-
-          selectEl.disabled = false;
-          installButton.style.display = "inline-block";
-
-          const initialManifestUrl = createManifestUrl(
-            selectEl.value,
-            release.tag_name || "latest"
-          );
-          installButton.setAttribute("manifest", initialManifestUrl);
-
-          selectEl.addEventListener("change", () => {
-            const manifestUrl = createManifestUrl(
-              selectEl.value,
-              release.tag_name || "latest"
-            );
-            installButton.setAttribute("manifest", manifestUrl);
-          });
-
-          setStatus(
-            `Loaded latest release: ${release.tag_name || "latest"}. Select a mirrored binary and click Install.`
-          );
         } catch (error) {
           console.error(error);
           setStatus(
-            "Could not load latest release metadata from GitHub. Check internet or API limits.",
+            "Could not load release data. Check internet connectivity, API limits, or deployment metadata.",
             true
           );
+          releaseSelectEl.disabled = true;
+          releaseSelectEl.innerHTML = "<option>Load failed</option>";
           selectEl.disabled = true;
           selectEl.innerHTML = "<option>Load failed</option>";
         }
       }
 
-      loadLatestRelease();
+      async function disconnectSerialLogs() {
+        serialKeepReading = false;
+
+        if (serialReader) {
+          try {
+            await serialReader.cancel();
+          } catch (_) {
+            // Reader might already be closed.
+          }
+          try {
+            serialReader.releaseLock();
+          } catch (_) {
+            // Ignore lock release errors.
+          }
+          serialReader = null;
+        }
+
+        if (serialReadLoopPromise) {
+          try {
+            await serialReadLoopPromise;
+          } catch (_) {
+            // Ignore loop shutdown errors.
+          }
+          serialReadLoopPromise = null;
+        }
+
+        if (serialPort) {
+          try {
+            await serialPort.close();
+          } catch (_) {
+            // Port might already be closed.
+          }
+          serialPort = null;
+        }
+
+        connectLogsButton.disabled = false;
+        disconnectLogsButton.disabled = true;
+        appendLog("Serial log stream disconnected.");
+      }
+
+      async function connectSerialLogs() {
+        if (!("serial" in navigator)) {
+          setStatus("Web Serial is not supported by this browser.", true);
+          appendLog("Web Serial is not supported by this browser.");
+          return;
+        }
+
+        try {
+          serialPort = await navigator.serial.requestPort();
+          await serialPort.open({ baudRate: 115200 });
+
+          const decoder = new TextDecoderStream();
+          serialPort.readable.pipeTo(decoder.writable).catch(() => {
+            // Pipe closes when port closes.
+          });
+
+          serialReader = decoder.readable.getReader();
+          serialKeepReading = true;
+          connectLogsButton.disabled = true;
+          disconnectLogsButton.disabled = false;
+          appendLog("Serial log stream connected at 115200 baud.");
+
+          serialReadLoopPromise = (async () => {
+            while (serialKeepReading && serialReader) {
+              const { value, done } = await serialReader.read();
+              if (done) {
+                break;
+              }
+              if (value) {
+                serialLogOutput.textContent += value;
+                serialLogOutput.scrollTop = serialLogOutput.scrollHeight;
+              }
+            }
+          })();
+        } catch (error) {
+          console.error(error);
+          appendLog(`Failed to connect serial logs: ${error.message || error}`);
+          await disconnectSerialLogs();
+        }
+      }
+
+      async function rebootDevice() {
+        if (!("serial" in navigator)) {
+          setStatus("Web Serial is not supported by this browser.", true);
+          appendLog("Web Serial is not supported by this browser.");
+          return;
+        }
+
+        const hadActiveLogStream = Boolean(serialPort);
+        let portForReboot = serialPort;
+        let openedTemporarily = false;
+
+        try {
+          if (!portForReboot) {
+            portForReboot = await navigator.serial.requestPort();
+            await portForReboot.open({ baudRate: 115200 });
+            openedTemporarily = true;
+            appendLog("Opened temporary serial connection for reboot.");
+          }
+
+          // Toggle control lines to trigger ESP32 auto-reset sequence.
+          await portForReboot.setSignals({ dataTerminalReady: false, requestToSend: true });
+          await delay(120);
+          await portForReboot.setSignals({ dataTerminalReady: true, requestToSend: false });
+          await delay(120);
+          await portForReboot.setSignals({ dataTerminalReady: false, requestToSend: false });
+
+          setStatus("Reboot signal sent. The device should restart now.");
+          appendLog("Reboot signal sent.");
+        } catch (error) {
+          console.error(error);
+          setStatus("Failed to send reboot signal over Web Serial.", true);
+          appendLog(`Failed to reboot device: ${error.message || error}`);
+        } finally {
+          if (openedTemporarily && portForReboot) {
+            try {
+              await portForReboot.close();
+              appendLog("Closed temporary serial connection.");
+            } catch (_) {
+              // Ignore close errors.
+            }
+          }
+
+          if (hadActiveLogStream) {
+            await disconnectSerialLogs();
+            appendLog("Reconnect log stream after reboot if needed.");
+          }
+        }
+      }
+
+      function wireLogUiEvents() {
+        toggleWidthButton.addEventListener("click", () => {
+          const isWide = document.body.classList.toggle("wide-layout");
+          toggleWidthButton.textContent = isWide ? "Use Normal Width" : "Expand Layout Width";
+        });
+
+        toggleLogsButton.addEventListener("click", () => {
+          const isVisible = logsWrap.style.display === "block";
+          logsWrap.style.display = isVisible ? "none" : "block";
+          toggleLogsButton.textContent = isVisible ? "Show Serial Logs" : "Hide Serial Logs";
+        });
+
+        connectLogsButton.addEventListener("click", () => {
+          connectSerialLogs();
+        });
+
+        disconnectLogsButton.addEventListener("click", () => {
+          disconnectSerialLogs();
+        });
+
+        clearLogsButton.addEventListener("click", () => {
+          serialLogOutput.textContent = "";
+          appendLog("Log output cleared.");
+        });
+
+        rebootButton.addEventListener("click", () => {
+          rebootDevice();
+        });
+      }
+
+      wireReleaseUiEvents();
+      wireLogUiEvents();
+      loadReleaseData();
+
+      window.addEventListener("beforeunload", () => {
+        if (currentManifestUrl) {
+          URL.revokeObjectURL(currentManifestUrl);
+        }
+        if (serialPort) {
+          disconnectSerialLogs();
+        }
+      });
     </script>
   </body>
 </html>

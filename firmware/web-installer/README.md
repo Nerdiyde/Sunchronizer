@@ -33,4 +33,6 @@ Deploy is triggered on:
 
 - Browser flashing requires a secure context (`https://`), which GitHub Pages provides.
 - Chromium-based browser is required for Web Serial support.
-- The deployment workflow mirrors latest release `.bin` assets into the Pages artifact (`/binaries/*`) so install fetches work without cross-origin issues.
+- The installer supports selecting a release and binary (not only `latest`).
+- The deployment workflow mirrors `.bin` assets for multiple recent releases into the Pages artifact (`/binaries/<tag>/*`) so install fetches work without cross-origin issues.
+- A serial log panel can be toggled with a button and connected/disconnected on demand via Web Serial.
