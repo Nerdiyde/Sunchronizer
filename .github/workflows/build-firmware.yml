@@ -208,6 +208,9 @@ jobs:
     needs: discover
     if: ${{ needs.discover.result == 'success' && needs.discover.outputs.count != '' && needs.discover.outputs.count != '0' }}
     runs-on: ubuntu-latest
+    env:
+      ESPHOME_VERSION: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.esphome_version || '2025.12.7' }}
+      RELEASE_TAG: ${{ github.event_name == 'release' && github.event.release.tag_name || (github.event_name == 'workflow_dispatch' && github.event.inputs.release_tag) || '' }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.discover.outputs.matrix) }}
@@ -223,8 +226,6 @@ jobs:
 
       - name: Install ESPHome
         shell: bash
-        env:
-          ESPHOME_VERSION: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.esphome_version || '2025.12.7' }}
         run: |
           python -m pip install --upgrade pip
           echo "Installing ESPHome ${ESPHOME_VERSION}"
@@ -239,11 +240,22 @@ jobs:
         shell: bash
         run: |
           python - <<'PY'
+          import os
+          import re
           from pathlib import Path
 
           config_file = Path("${{ matrix.config_file }}")
           pcb_folder = "${{ matrix.pcb_folder }}"
           binary_name = "${{ matrix.binary_name }}"
+          esphome_version = os.getenv("ESPHOME_VERSION", "unknown")
+          release_tag = os.getenv("RELEASE_TAG", "")
+
+          def slug(value: str) -> str:
+              return re.sub(r"[^A-Za-z0-9._-]+", "-", value.strip())
+
+          suffix = f".esphome-{slug(esphome_version)}"
+          if release_tag.strip():
+              suffix += f".tag-{slug(release_tag)}"
 
           build_root = config_file.parent / ".esphome" / "build"
           if not build_root.exists():
@@ -261,8 +273,8 @@ jobs:
           ota_src = ota_bins[0]
           dst_dir = Path("firmware") / "binaries" / pcb_folder
           dst_dir.mkdir(parents=True, exist_ok=True)
-          factory_dst = dst_dir / f"{binary_name}.factory.bin"
-          ota_dst = dst_dir / f"{binary_name}.ota.bin"
+          factory_dst = dst_dir / f"{binary_name}{suffix}.factory.bin"
+          ota_dst = dst_dir / f"{binary_name}{suffix}.ota.bin"
           factory_dst.write_bytes(factory_src.read_bytes())
           ota_dst.write_bytes(ota_src.read_bytes())
 
@@ -275,8 +287,8 @@ jobs:
         with:
           name: firmware-${{ matrix.pcb_folder }}-${{ matrix.binary_name }}
           path: |
-            firmware/binaries/${{ matrix.pcb_folder }}/${{ matrix.binary_name }}.factory.bin
-            firmware/binaries/${{ matrix.pcb_folder }}/${{ matrix.binary_name }}.ota.bin
+            firmware/binaries/${{ matrix.pcb_folder }}/${{ matrix.binary_name }}*.factory.bin
+            firmware/binaries/${{ matrix.pcb_folder }}/${{ matrix.binary_name }}*.ota.bin
           retention-days: 30
 
       - name: Upload release asset
@@ -285,8 +297,8 @@ jobs:
         with:
           tag_name: ${{ github.event_name == 'release' && github.event.release.tag_name || github.event.inputs.release_tag }}
           files: |
-            firmware/binaries/${{ matrix.pcb_folder }}/${{ matrix.binary_name }}.factory.bin
-            firmware/binaries/${{ matrix.pcb_folder }}/${{ matrix.binary_name }}.ota.bin
+            firmware/binaries/${{ matrix.pcb_folder }}/${{ matrix.binary_name }}*.factory.bin
+            firmware/binaries/${{ matrix.pcb_folder }}/${{ matrix.binary_name }}*.ota.bin
           fail_on_unmatched_files: true
           overwrite_files: true
 

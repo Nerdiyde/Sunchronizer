@@ -346,26 +346,57 @@
         return releasesCache.find((release) => release.tag === tag);
       }
 
-      function isInstallableBinary(binaryName) {
+      function isFactoryBinary(binaryName) {
         const name = (binaryName || "").toLowerCase();
         if (!name.endsWith(".bin")) {
           return false;
         }
 
-        // Web installer should only expose serial-installable factory binaries.
         return name.includes("factory");
+      }
+
+      function isLegacyInstallableBinary(binaryName) {
+        const name = (binaryName || "").toLowerCase();
+        if (!name.endsWith(".bin")) {
+          return false;
+        }
+
+        // Exclude non-serial artifacts for legacy naming schemes.
+        if (name.includes("ota") || name.includes("update")) {
+          return false;
+        }
+
+        return true;
+      }
+
+      function getInstallableBinaries(release) {
+        const binaries = release?.binaries || [];
+        const factoryBinaries = binaries.filter((binary) => isFactoryBinary(binary.name));
+        if (factoryBinaries.length) {
+          return {
+            binaries: factoryBinaries,
+            source: "factory"
+          };
+        }
+
+        const legacyBinaries = binaries.filter((binary) => isLegacyInstallableBinary(binary.name));
+        return {
+          binaries: legacyBinaries,
+          source: "legacy"
+        };
       }
 
       function updateBinaryOptionsForRelease(tag) {
         const release = getReleaseByTag(tag);
-        const installableBinaries = (release?.binaries || []).filter((binary) => isInstallableBinary(binary.name));
+        const installable = getInstallableBinaries(release);
+        const installableBinaries = installable.binaries;
 
         selectEl.innerHTML = "";
         if (!release || !installableBinaries.length) {
           selectEl.disabled = true;
-          selectEl.innerHTML = "<option>No factory binaries found</option>";
+          selectEl.innerHTML = "<option>No installable binaries found</option>";
           installButton.style.display = "none";
-          setStatus("The selected release has no installable factory .bin image.", true);
+          setStatus("The selected release has no installable .bin image.", true);
           return;
         }
 
@@ -383,7 +414,14 @@
         const manifestUrl = createManifestUrl(selectEl.value, release.tag || "unknown");
         resetManifestUrl(manifestUrl);
         installButton.setAttribute("manifest", manifestUrl);
-        setStatus(`Loaded release ${release.tag}. Select a factory binary and click Install.`);
+        if (installable.source === "factory") {
+          setStatus(`Loaded release ${release.tag}. Select a factory binary and click Install.`);
+        } else {
+          setStatus(
+            `Loaded release ${release.tag}. No factory binary found, using legacy .bin fallback.`,
+            true
+          );
+        }
       }
 
       function wireReleaseUiEvents() {
@@ -469,15 +507,15 @@
           }
 
           releasesCache = releasesCache.filter((release) =>
-            release.tag && Array.isArray(release.binaries) && release.binaries.some((binary) => isInstallableBinary(binary.name))
+            release.tag && Array.isArray(release.binaries) && getInstallableBinaries(release).binaries.length > 0
           );
 
           if (!releasesCache.length) {
-            setStatus("No releases with installable factory .bin assets were found.", true);
+            setStatus("No releases with installable .bin assets were found.", true);
             releaseSelectEl.disabled = true;
             selectEl.disabled = true;
             releaseSelectEl.innerHTML = "<option>No releases available</option>";
-            selectEl.innerHTML = "<option>No factory binaries available</option>";
+            selectEl.innerHTML = "<option>No installable binaries available</option>";
             return;
           }
 

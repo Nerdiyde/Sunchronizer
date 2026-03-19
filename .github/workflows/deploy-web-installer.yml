@@ -8,6 +8,11 @@ on:
     paths:
       - "firmware/web-installer/**"
       - ".github/workflows/deploy-web-installer.yml"
+  release:
+    types:
+      - published
+      - released
+      - edited
   workflow_dispatch:
 
 env:
