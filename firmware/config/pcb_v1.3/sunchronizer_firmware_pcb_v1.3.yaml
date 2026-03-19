@@ -726,7 +726,7 @@ external_components:
   - source:
       type: git
       url: https://github.com/Nerdiyde/DS3231-RTC-component-for-ESPHome.git
-      ref: v2026.3.0
+      ref: v2026.3.1
       path: components
     components: [ ds3231 ]
   - source:
