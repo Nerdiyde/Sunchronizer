@@ -346,19 +346,30 @@
         return releasesCache.find((release) => release.tag === tag);
       }
 
+      function isInstallableBinary(binaryName) {
+        const name = (binaryName || "").toLowerCase();
+        if (!name.endsWith(".bin")) {
+          return false;
+        }
+
+        // Web installer should only expose serial-installable factory binaries.
+        return name.includes("factory");
+      }
+
       function updateBinaryOptionsForRelease(tag) {
         const release = getReleaseByTag(tag);
+        const installableBinaries = (release?.binaries || []).filter((binary) => isInstallableBinary(binary.name));
 
         selectEl.innerHTML = "";
-        if (!release || !release.binaries || release.binaries.length === 0) {
+        if (!release || !installableBinaries.length) {
           selectEl.disabled = true;
-          selectEl.innerHTML = "<option>No binaries available</option>";
+          selectEl.innerHTML = "<option>No factory binaries found</option>";
           installButton.style.display = "none";
-          setStatus("The selected release has no mirrored .bin binaries.", true);
+          setStatus("The selected release has no installable factory .bin image.", true);
           return;
         }
 
-        for (const binary of release.binaries) {
+        for (const binary of installableBinaries) {
           const option = document.createElement("option");
           option.value = new URL(binary.path, window.location.href).href;
           option.textContent = binary.name;
@@ -372,7 +383,7 @@
         const manifestUrl = createManifestUrl(selectEl.value, release.tag || "unknown");
         resetManifestUrl(manifestUrl);
         installButton.setAttribute("manifest", manifestUrl);
-        setStatus(`Loaded release ${release.tag}. Select a binary and click Install.`);
+        setStatus(`Loaded release ${release.tag}. Select a factory binary and click Install.`);
       }
 
       function wireReleaseUiEvents() {
@@ -458,15 +469,15 @@
           }
 
           releasesCache = releasesCache.filter((release) =>
-            release.tag && Array.isArray(release.binaries) && release.binaries.length > 0
+            release.tag && Array.isArray(release.binaries) && release.binaries.some((binary) => isInstallableBinary(binary.name))
           );
 
           if (!releasesCache.length) {
-            setStatus("No releases with .bin assets were found.", true);
+            setStatus("No releases with installable factory .bin assets were found.", true);
             releaseSelectEl.disabled = true;
             selectEl.disabled = true;
             releaseSelectEl.innerHTML = "<option>No releases available</option>";
-            selectEl.innerHTML = "<option>No binaries available</option>";
+            selectEl.innerHTML = "<option>No factory binaries available</option>";
             return;
           }
 

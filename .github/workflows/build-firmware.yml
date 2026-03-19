@@ -191,7 +191,11 @@ jobs:
           print(f"Selected {len(selected)} firmware config(s) for this run.")
           print(f"Event: {event_name}")
           for item in selected:
-              print(f"- {item['config_file']} -> firmware/binaries/{item['pcb_folder']}/{item['binary_name']}.bin")
+              print(
+                f"- {item['config_file']} -> "
+                f"firmware/binaries/{item['pcb_folder']}/{item['binary_name']}.factory.bin + "
+                f"firmware/binaries/{item['pcb_folder']}/{item['binary_name']}.ota.bin"
+              )
           PY
 
   build:
@@ -223,7 +227,7 @@ jobs:
         run: |
           esphome compile "${{ matrix.config_file }}"
 
-      - name: Collect binary in firmware/binaries structure
+      - name: Collect factory and OTA binaries in firmware/binaries structure
         shell: bash
         run: |
           python - <<'PY'
@@ -237,24 +241,34 @@ jobs:
           if not build_root.exists():
               raise SystemExit(f"ESPHome build directory not found: {build_root}")
 
-          firmware_bins = sorted(build_root.rglob("firmware.bin"), key=lambda p: p.stat().st_mtime, reverse=True)
-          if not firmware_bins:
-              raise SystemExit(f"No firmware.bin found under {build_root}")
+            factory_bins = sorted(build_root.rglob("firmware.factory.bin"), key=lambda p: p.stat().st_mtime, reverse=True)
+            if not factory_bins:
+              raise SystemExit(f"No firmware.factory.bin found under {build_root}")
 
-          src = firmware_bins[0]
+            ota_bins = sorted(build_root.rglob("firmware.ota.bin"), key=lambda p: p.stat().st_mtime, reverse=True)
+            if not ota_bins:
+              raise SystemExit(f"No firmware.ota.bin found under {build_root}")
+
+            factory_src = factory_bins[0]
+            ota_src = ota_bins[0]
           dst_dir = Path("firmware") / "binaries" / pcb_folder
           dst_dir.mkdir(parents=True, exist_ok=True)
-          dst = dst_dir / f"{binary_name}.bin"
-          dst.write_bytes(src.read_bytes())
+            factory_dst = dst_dir / f"{binary_name}.factory.bin"
+            ota_dst = dst_dir / f"{binary_name}.ota.bin"
+            factory_dst.write_bytes(factory_src.read_bytes())
+            ota_dst.write_bytes(ota_src.read_bytes())
 
-          print(f"Copied {src} -> {dst}")
+            print(f"Copied {factory_src} -> {factory_dst}")
+            print(f"Copied {ota_src} -> {ota_dst}")
           PY
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: firmware-${{ matrix.pcb_folder }}-${{ matrix.binary_name }}
-          path: firmware/binaries/${{ matrix.pcb_folder }}/${{ matrix.binary_name }}.bin
+          path: |
+            firmware/binaries/${{ matrix.pcb_folder }}/${{ matrix.binary_name }}.factory.bin
+            firmware/binaries/${{ matrix.pcb_folder }}/${{ matrix.binary_name }}.ota.bin
           retention-days: 30
 
       - name: Upload release asset
@@ -262,7 +276,9 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.event_name == 'release' && github.event.release.tag_name || github.event.inputs.release_tag }}
-          files: firmware/binaries/${{ matrix.pcb_folder }}/${{ matrix.binary_name }}.bin
+          files: |
+            firmware/binaries/${{ matrix.pcb_folder }}/${{ matrix.binary_name }}.factory.bin
+            firmware/binaries/${{ matrix.pcb_folder }}/${{ matrix.binary_name }}.ota.bin
           fail_on_unmatched_files: true
           overwrite_files: true
 

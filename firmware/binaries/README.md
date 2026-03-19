@@ -8,9 +8,10 @@ Firmware binaries are published as GitHub Release assets.
 
 ## 📦 Available Binaries
 
-| Filename | PCB Version | Description | Status |
-|----------|-------------|-------------|--------|
-| `sunchronizer_firmware_pcb_v1.3.bin` | v1.3 | Firmware for PCB v1.3 | ✅ Tested & Stable |
+|Filename|PCB Version|Description|Status|
+|---|---|---|---|
+|`sunchronizer_firmware_pcb_v1.3.factory.bin`|v1.3|Factory image for serial/Web Installer flashing|✅ Tested & Stable|
+|`sunchronizer_firmware_pcb_v1.3.ota.bin`|v1.3|OTA update image for in-device updates|✅ Tested & Stable|
 
 ## 🚀 Quick Start - Flashing Instructions
 
@@ -18,12 +19,14 @@ Firmware binaries are published as GitHub Release assets.
 
 1. Open: [Web Installer](../web-installer/index.html)
 2. Use a Chromium-based browser (Chrome, Edge, Brave, Opera)
-3. Select the detected `.bin` from the latest release and click Install
+3. Select the detected `.factory.bin` from the latest release and click Install
 
 ### Step 0: Download the Binary
 
 1. Open: [GitHub Releases (latest)](https://github.com/Nerdiyde/Sunchronizer/releases/latest)
-2. In **Assets**, download the `.bin` matching your PCB version
+2. In **Assets**, download the file matching your use case:
+   - `.factory.bin` for serial/Web Installer flashing
+   - `.ota.bin` for OTA updates
 
 ### Option 1: Using ESPHome Web Interface (Easiest)
 
@@ -39,10 +42,11 @@ Firmware binaries are published as GitHub Release assets.
 pip install esptool
 
 # Flash the binary
-esptool.py --port /dev/ttyUSB0 write_flash 0x0 sunchronizer_firmware_pcb_v1.3.bin
+esptool.py --port /dev/ttyUSB0 write_flash 0x0 sunchronizer_firmware_pcb_v1.3.factory.bin
 ```
 
 Replace `/dev/ttyUSB0` with your device's serial port:
+
 - **Linux/macOS**: `/dev/ttyUSB0` or `/dev/ttyACM0`
 - **Windows**: `COM3`, `COM4`, etc.
 
@@ -93,6 +97,8 @@ esphome compile ../config/pcb_v1.3/sunchronizer_firmware_pcb_v1.3.yaml
 ## ⚠️ Important Notes
 
 - ✅ Always verify the binary version matches your PCB hardware
+- ✅ Use `.factory.bin` for USB/serial flashing and Web Installer
+- ✅ Use `.ota.bin` only for OTA updates from a running device
 - ✅ Back up your configuration before flashing new firmware
 - ✅ Ensure USB cable provides stable power during flashing
 - ⚠️ Do **NOT** use binaries on incompatible PCB versions
