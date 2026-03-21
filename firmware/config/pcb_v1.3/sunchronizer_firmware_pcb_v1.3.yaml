@@ -1729,6 +1729,7 @@ button:
   - platform: factory_reset
     name: "Factory reset"
     id: factory_reset_button
+    disabled_by_default: true
     web_server:
       sorting_group_id: sorting_group_system
       sorting_weight: ${sorting_groups.system.factory_reset_button}
