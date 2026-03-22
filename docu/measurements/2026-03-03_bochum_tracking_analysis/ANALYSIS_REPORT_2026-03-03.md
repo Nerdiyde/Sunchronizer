@@ -116,6 +116,33 @@ The moderate temperature (~15°C) during this early spring day provided ideal co
 ### Graph 5: Power Profile (Smoothed)
 ![Performance Area](graph_5_performance_area.png)
 
+### Graph 8: Time-Series Performance Ratio vs. Static East+West Sum
+![Performance Ratio](graph_8_performance_ratio_vs_east_west_sum.png)
+
+**Definition (time-dependent):**
+- **S2 ratio** = CH2 / (CH1 + CH3)
+- **D2 ratio** = CH4 / (CH1 + CH3)
+
+**How to read this chart (plain language):**
+- The x-axis is the time of day, the y-axis is the ratio in percent.
+- The denominator **(CH1 + CH3)** is the combined output of both fixed reference modules (West + East).
+- A value of **100%** means the tracking channel produces exactly the same power as both static modules together at that moment.
+- Values **above 100%** mean the tracker is better than the static East+West sum; values **below 100%** mean it is lower.
+- The curves are lightly smoothed (rolling median) to suppress short measurement spikes and make overall behavior easier to interpret.
+- Only intervals with **CH1 + CH3 > 5 W** are included to avoid unstable ratios around sunrise/sunset and during near-zero irradiance.
+
+**What this adds beyond daily totals:**
+- Daily yield percentages show the total energy result for the whole day.
+- This graph shows **when** during the day each tracker has stronger or weaker relative performance.
+- It helps separate midday effects from morning/evening behavior and therefore makes operating characteristics easier to explain to non-specialists.
+
+**Summary over valid intervals (CH1+CH3 > 5 W):**
+- S2 mean ratio: **100.3%**
+- S2 median ratio: **107.8%**
+- D2 mean ratio: **133.7%**
+- D2 median ratio: **110.6%**
+- Samples used: **631**
+
 ### Graph 6: Outside Temperature Progression
 ![Outside Temperature](graph_6_temperature_progression.png)
 
@@ -310,7 +337,7 @@ Based on this measurement:
 
 ---
 
-*Report generated: March 18, 2026*  
+*Report generated: March 22, 2026*  
 *Location: Bochum, North Rhine-Westphalia, Germany*  
 *System: Sunchronizer Test Setup with HMS 1600-4T Monitoring*  
 *Temperature during test: 12.1°C average*

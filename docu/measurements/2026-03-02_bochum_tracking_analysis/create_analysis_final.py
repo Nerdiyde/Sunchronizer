@@ -306,6 +306,8 @@ for ch in ['ch1', 'ch2', 'ch3', 'ch4']:
 # ============================================================================
 print("\n[4/5] Creating visualizations...")
 
+ratio_stats = None
+
 # Colors for channels
 colors = {
     'ch1': '#FF6B6B',  # Red - West
@@ -449,6 +451,77 @@ plt.tight_layout()
 plt.savefig(measurement_dir / 'graph_5_performance_area.png', 
            dpi=150, bbox_inches='tight')
 plt.close()
+
+# ============ GRAPH 8: Time-series ratio vs. static East+West sum ============
+print("  - Graph 8: Time-series performance ratio (tracking vs East+West sum)...")
+required_ratio_channels = {'ch1', 'ch2', 'ch3', 'ch4'}
+if required_ratio_channels.issubset(set(power_data.keys())):
+    ratio_series = {}
+    for ch_name in ['ch1', 'ch2', 'ch3', 'ch4']:
+        ratio_series[ch_name] = (
+            power_data[ch_name]
+            .set_index('last_changed')['state_numeric']
+            .resample('1min')
+            .mean()
+            .rename(ch_name)
+        )
+
+    ratio_df = pd.concat(
+        [ratio_series['ch1'], ratio_series['ch2'], ratio_series['ch3'], ratio_series['ch4']],
+        axis=1,
+    )
+    ratio_df['east_west_sum'] = ratio_df['ch1'] + ratio_df['ch3']
+
+    # Avoid unstable ratio values when denominator is near zero.
+    ratio_df = ratio_df[ratio_df['east_west_sum'] > 5].copy()
+    ratio_df['ratio_s2_pct'] = (ratio_df['ch2'] / ratio_df['east_west_sum']) * 100.0
+    ratio_df['ratio_d2_pct'] = (ratio_df['ch4'] / ratio_df['east_west_sum']) * 100.0
+    ratio_df = ratio_df.replace([np.inf, -np.inf], np.nan).dropna(subset=['ratio_s2_pct', 'ratio_d2_pct'])
+
+    if len(ratio_df) > 0:
+        ratio_df['ratio_s2_pct_smoothed'] = ratio_df['ratio_s2_pct'].rolling(window=5, center=True, min_periods=1).median()
+        ratio_df['ratio_d2_pct_smoothed'] = ratio_df['ratio_d2_pct'].rolling(window=5, center=True, min_periods=1).median()
+
+        ratio_stats = {
+            'samples': len(ratio_df),
+            's2_mean': ratio_df['ratio_s2_pct'].mean(),
+            's2_median': ratio_df['ratio_s2_pct'].median(),
+            'd2_mean': ratio_df['ratio_d2_pct'].mean(),
+            'd2_median': ratio_df['ratio_d2_pct'].median(),
+        }
+
+        fig, ax = plt.subplots(figsize=(15, 6))
+        ax.plot(
+            ratio_df.index,
+            ratio_df['ratio_s2_pct_smoothed'],
+            color=colors['ch2'],
+            linewidth=2.0,
+            label='S2 / (CH1 + CH3)',
+        )
+        ax.plot(
+            ratio_df.index,
+            ratio_df['ratio_d2_pct_smoothed'],
+            color=colors['ch4'],
+            linewidth=2.0,
+            label='D2 / (CH1 + CH3)',
+        )
+        ax.axhline(100, color='gray', linestyle='--', linewidth=1.2, alpha=0.8, label='100% reference')
+
+        ax.set_xlabel('Time of Day (UTC)', fontsize=12)
+        ax.set_ylabel('Performance ratio vs. East+West sum (%)', fontsize=12)
+        ax.set_title('Time-Series Performance Ratio: Tracking Systems vs. Static East+West Sum', fontsize=14, fontweight='bold')
+        ax.grid(True, alpha=0.3)
+        ax.legend(loc='upper right', fontsize=10, framealpha=0.95)
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+        ax.xaxis.set_major_locator(mdates.HourLocator(interval=1))
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.savefig(measurement_dir / 'graph_8_performance_ratio_vs_east_west_sum.png', dpi=150, bbox_inches='tight')
+        plt.close()
+    else:
+        print("  - Graph 8 skipped: No valid ratio samples after denominator filtering")
+else:
+    print("  - Graph 8 skipped: Missing required channels CH1-CH4")
 
 # ============ GRAPH 6: Outside temperature progression ============
 print("  - Graph 6: Outside temperature progression...")
@@ -681,6 +754,33 @@ The moderate temperature (~15°C) during this early spring day provided ideal co
 ### Graph 5: Power Profile (Smoothed)
 ![Performance Area](graph_5_performance_area.png)
 
+### Graph 8: Time-Series Performance Ratio vs. Static East+West Sum
+![Performance Ratio](graph_8_performance_ratio_vs_east_west_sum.png)
+
+**Definition (time-dependent):**
+- **S2 ratio** = CH2 / (CH1 + CH3)
+- **D2 ratio** = CH4 / (CH1 + CH3)
+
+**How to read this chart (plain language):**
+- The x-axis is the time of day, the y-axis is the ratio in percent.
+- The denominator **(CH1 + CH3)** is the combined output of both fixed reference modules (West + East).
+- A value of **100%** means the tracking channel produces exactly the same power as both static modules together at that moment.
+- Values **above 100%** mean the tracker is better than the static East+West sum; values **below 100%** mean it is lower.
+- The curves are lightly smoothed (rolling median) to suppress short measurement spikes and make overall behavior easier to interpret.
+- Only intervals with **CH1 + CH3 > 5 W** are included to avoid unstable ratios around sunrise/sunset and during near-zero irradiance.
+
+**What this adds beyond daily totals:**
+- Daily yield percentages show the total energy result for the whole day.
+- This graph shows **when** during the day each tracker has stronger or weaker relative performance.
+- It helps separate midday effects from morning/evening behavior and therefore makes operating characteristics easier to explain to non-specialists.
+
+**Summary over valid intervals (CH1+CH3 > 5 W):**
+- S2 mean ratio: **{ratio_stats['s2_mean'] if ratio_stats else float('nan'):.1f}%**
+- S2 median ratio: **{ratio_stats['s2_median'] if ratio_stats else float('nan'):.1f}%**
+- D2 mean ratio: **{ratio_stats['d2_mean'] if ratio_stats else float('nan'):.1f}%**
+- D2 median ratio: **{ratio_stats['d2_median'] if ratio_stats else float('nan'):.1f}%**
+- Samples used: **{ratio_stats['samples'] if ratio_stats else 0}**
+
 ### Graph 6: Outside Temperature Progression
 ![Outside Temperature](graph_6_temperature_progression.png)
 
@@ -895,5 +995,6 @@ print(f"  📊 graph_4_advantage_analysis.png")
 print(f"  📊 graph_5_performance_area.png")
 print(f"  📊 graph_6_temperature_progression.png")
 print(f"  📊 graph_7_tracking_deviation.png")
+print(f"  📊 graph_8_performance_ratio_vs_east_west_sum.png")
 print(f"\nAll files in directory:")
 print(f"  docu/measurements/")
