@@ -1,0 +1,228 @@
+alias: Sunchronizer - Fault notifications
+id: sunchronizer_fault_notifications
+description: ""
+mode: single
+triggers:
+  - trigger: state
+    entity_id: binary_sensor.sunchronizer_ctrlr_v1_3_azimuth_axis_not_calibrated
+    to: "on"
+    id: azimuth_axis_not_calibrated
+  - trigger: state
+    entity_id: binary_sensor.sunchronizer_ctrlr_v1_3_elevation_axis_not_calibrated
+    to: "on"
+    id: elevation_axis_not_calibrated
+  - trigger: state
+    entity_id: binary_sensor.sunchronizer_ctrlr_v1_3_azimuth_motor_blocked_high_current
+    to: "on"
+    id: azimuth_motor_blocked_high_current
+  - trigger: state
+    entity_id: binary_sensor.sunchronizer_ctrlr_v1_3_azimuth_motor_not_connected_low_current
+    to: "on"
+    id: azimuth_motor_not_connected_low_current
+  - trigger: state
+    entity_id: binary_sensor.sunchronizer_ctrlr_v1_3_azimuth_motor_no_angle_change_cw
+    to: "on"
+    id: azimuth_motor_no_angle_change_cw
+  - trigger: state
+    entity_id: binary_sensor.sunchronizer_ctrlr_v1_3_azimuth_motor_no_angle_change_ccw
+    to: "on"
+    id: azimuth_motor_no_angle_change_ccw
+  - trigger: state
+    entity_id: binary_sensor.sunchronizer_ctrlr_v1_3_elevation_motor_blocked_high_current
+    to: "on"
+    id: elevation_motor_blocked_high_current
+  - trigger: state
+    entity_id: binary_sensor.sunchronizer_ctrlr_v1_3_elevation_motor_not_connected_low_current
+    to: "on"
+    id: elevation_motor_not_connected_low_current
+  - trigger: state
+    entity_id: binary_sensor.sunchronizer_ctrlr_v1_3_elevation_motor_no_angle_change_lift
+    to: "on"
+    id: elevation_motor_no_angle_change_lift
+  - trigger: state
+    entity_id: binary_sensor.sunchronizer_ctrlr_v1_3_elevation_motor_no_angle_change_lowering
+    to: "on"
+    id: elevation_motor_no_angle_change_lowering
+  - trigger: state
+    entity_id: binary_sensor.sunchronizer_ctrlr_v1_3_magnetic_declination_calibration_failed
+    to: "on"
+    id: magnetic_declination_calibration_failed
+  - trigger: state
+    entity_id: binary_sensor.sunchronizer_ctrlr_v1_3_azimuth_angle_calculation_failed
+    to: "on"
+    id: azimuth_angle_calculation_failed
+  - trigger: state
+    entity_id: binary_sensor.sunchronizer_ctrlr_v1_3_elevation_angle_calculation_failed
+    to: "on"
+    id: elevation_angle_calculation_failed
+  - trigger: state
+    entity_id: binary_sensor.sunchronizer_ctrlr_v1_3_elevation_motor_wrong_direction_detected
+    to: "on"
+    id: elevation_motor_wrong_direction_detected
+  - trigger: state
+    entity_id: binary_sensor.sunchronizer_ctrlr_v1_3_azimuth_motor_wrong_direction_detected
+    to: "on"
+    id: azimuth_motor_wrong_direction_detected
+  - trigger: state
+    entity_id: binary_sensor.sunchronizer_ctrlr_v1_3_elevation_target_angle_timeout_detected
+    to: "on"
+    id: elevation_target_angle_timeout_detected
+  - trigger: state
+    entity_id: binary_sensor.sunchronizer_ctrlr_v1_3_azimuth_target_angle_timeout_detected
+    to: "on"
+    id: azimuth_target_angle_timeout_detected
+conditions: []
+actions:
+  - if:
+      - condition: trigger
+        id: azimuth_axis_not_calibrated
+    then:
+      - action: persistent_notification.create
+        data:
+          title: Sunchronizer fault detected
+          message: >-
+            Azimuth axis not calibrated.
+  - if:
+      - condition: trigger
+        id: elevation_axis_not_calibrated
+    then:
+      - action: persistent_notification.create
+        data:
+          title: Sunchronizer fault detected
+          message: >-
+            Elevation axis not calibrated.
+  - if:
+      - condition: trigger
+        id: azimuth_motor_blocked_high_current
+    then:
+      - action: persistent_notification.create
+        data:
+          title: Sunchronizer fault detected
+          message: >-
+            Azimuth motor blocked (high current).
+  - if:
+      - condition: trigger
+        id: azimuth_motor_not_connected_low_current
+    then:
+      - action: persistent_notification.create
+        data:
+          title: Sunchronizer fault detected
+          message: >-
+            Azimuth motor not connected (low current).
+  - if:
+      - condition: trigger
+        id: azimuth_motor_no_angle_change_cw
+    then:
+      - action: persistent_notification.create
+        data:
+          title: Sunchronizer fault detected
+          message: >-
+            Azimuth motor no angle change (CW).
+  - if:
+      - condition: trigger
+        id: azimuth_motor_no_angle_change_ccw
+    then:
+      - action: persistent_notification.create
+        data:
+          title: Sunchronizer fault detected
+          message: >-
+            Azimuth motor no angle change (CCW).
+  - if:
+      - condition: trigger
+        id: elevation_motor_blocked_high_current
+    then:
+      - action: persistent_notification.create
+        data:
+          title: Sunchronizer fault detected
+          message: >-
+            Elevation motor blocked (high current).
+  - if:
+      - condition: trigger
+        id: elevation_motor_not_connected_low_current
+    then:
+      - action: persistent_notification.create
+        data:
+          title: Sunchronizer fault detected
+          message: >-
+            Elevation motor not connected (low current).
+  - if:
+      - condition: trigger
+        id: elevation_motor_no_angle_change_lift
+    then:
+      - action: persistent_notification.create
+        data:
+          title: Sunchronizer fault detected
+          message: >-
+            Elevation motor no angle change (lift).
+  - if:
+      - condition: trigger
+        id: elevation_motor_no_angle_change_lowering
+    then:
+      - action: persistent_notification.create
+        data:
+          title: Sunchronizer fault detected
+          message: >-
+            Elevation motor no angle change (lowering).
+  - if:
+      - condition: trigger
+        id: magnetic_declination_calibration_failed
+    then:
+      - action: persistent_notification.create
+        data:
+          title: Sunchronizer fault detected
+          message: >-
+            Magnetic declination calibration failed.
+  - if:
+      - condition: trigger
+        id: azimuth_angle_calculation_failed
+    then:
+      - action: persistent_notification.create
+        data:
+          title: Sunchronizer fault detected
+          message: >-
+            Azimuth angle calculation failed.
+  - if:
+      - condition: trigger
+        id: elevation_angle_calculation_failed
+    then:
+      - action: persistent_notification.create
+        data:
+          title: Sunchronizer fault detected
+          message: >-
+            Elevation angle calculation failed.
+  - if:
+      - condition: trigger
+        id: elevation_motor_wrong_direction_detected
+    then:
+      - action: persistent_notification.create
+        data:
+          title: Sunchronizer fault detected
+          message: >-
+            Elevation motor wrong direction detected.
+  - if:
+      - condition: trigger
+        id: azimuth_motor_wrong_direction_detected
+    then:
+      - action: persistent_notification.create
+        data:
+          title: Sunchronizer fault detected
+          message: >-
+            Azimuth motor wrong direction detected.
+  - if:
+      - condition: trigger
+        id: elevation_target_angle_timeout_detected
+    then:
+      - action: persistent_notification.create
+        data:
+          title: Sunchronizer fault detected
+          message: >-
+            Elevation target angle timeout detected.
+  - if:
+      - condition: trigger
+        id: azimuth_target_angle_timeout_detected
+    then:
+      - action: persistent_notification.create
+        data:
+          title: Sunchronizer fault detected
+          message: >-
+            Azimuth target angle timeout detected.

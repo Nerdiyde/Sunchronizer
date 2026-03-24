@@ -8,11 +8,11 @@ on:
     paths:
       - "firmware/web-installer/**"
       - ".github/workflows/deploy-web-installer.yml"
-  release:
+  workflow_run:
+    workflows:
+      - Build ESPHome Firmware
     types:
-      - published
-      - released
-      - edited
+      - completed
   workflow_dispatch:
 
 env:
@@ -30,6 +30,7 @@ concurrency:
 jobs:
   deploy:
     name: Deploy to GitHub Pages
+    if: ${{ github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'release') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

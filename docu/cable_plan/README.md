@@ -145,9 +145,9 @@ The wiring diagrams cover:
 
 - **[WireViz Guide](WIREVIZ_GUIDE.md)** - How to regenerate and edit wiring diagrams
 - **[Main Documentation](../README.md)** - Complete docu directory overview
-- **[Firmware Configuration](../../firmware/config/)** - Pin assignments in code
-- **[Project README](../../README.md)** - Hardware specifications
-- **[Pictures & Diagrams](../../pictures/)** - Visual assembly guides
+- **[Firmware Configuration](https://github.com/Nerdiyde/Sunchronizer/tree/main/firmware/config)** - Pin assignments in code
+- **[Project README](https://github.com/Nerdiyde/Sunchronizer/blob/main/README.md)** - Hardware specifications
+- **[Pictures & Diagrams](https://github.com/Nerdiyde/Sunchronizer/tree/main/pictures)** - Visual assembly guides
 - **[Full Wiki](https://github.com/Nerdiyde/Sunchronizer/wiki)** - Detailed assembly guide
 
 ## 🆘 Troubleshooting

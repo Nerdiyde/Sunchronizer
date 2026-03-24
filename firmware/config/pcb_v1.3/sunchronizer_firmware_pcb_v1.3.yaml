@@ -4547,7 +4547,8 @@ binary_sensor:
       sorting_group_id: sorting_group_standby_mode
       sorting_weight: ${sorting_groups.standby_mode.panel_is_in_stand_by_position}
     lambda: |-
-      return (abs(id(stand_by_mode_elevation_target_angle).state - id(panel_elevation_angle_sensor).state) <= id(panel_elev_target_angle_tolerance).state) 
+      return id(stand_by_mode_active).state
+        && (abs(id(stand_by_mode_elevation_target_angle).state - id(panel_elevation_angle_sensor).state) <= id(panel_elev_target_angle_tolerance).state) 
         && (abs(id(stand_by_mode_azimuth_target_angle).state - id(panel_compass_heading).state) <= id(panel_azimuth_target_angle_tolerance).state);
 
   - platform: template
