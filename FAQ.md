@@ -65,8 +65,13 @@ However, Home Assistant integration adds convenience and monitoring capabilities
 ### Q: Where can I get the 3D models (STLs)?
 
 **A:** STL files are available for purchase on the official store:
-- **Sunchronizer S1:** https://nerdiy.de/en/product-2/sunchronizer-s1-400w-solartracker-fuer-elevation-achse-3d-druckbar-stl-dateien/
-- **Sunchronizer D1:** https://nerdiy.de/en/product-2/sunchronizer-d1-dual-axis-solartracker-fuer-azimut-und-elevation-achse-3d-druckbar-stl-dateien/
+
+| Variant | NERDIY.DE | Printables | Cults |
+|---------|-----------|------------|--------|
+| **Sunchronizer S1** (single-axis, 1st gen) | [NERDIY.DE](https://nerdiy.de/en/product-2/sunchronizer-s1-400w-solartracker-fuer-elevation-achse-3d-druckbar-stl-dateien/) | — | — |
+| **Sunchronizer S2** (single-axis, 2nd gen) | — | [Printables](https://www.printables.com/model/1574048-sunchronizer-s2-400w-module-solartracker-for-eleva) | [Cults](https://cults3d.com/de/modell-3d/gadget/sunchronizer-s2-400w-module-solartracker-for-elevation-axis-by-nerdiy-de-new) |
+| **Sunchronizer D1** (dual-axis, 1st gen) | [NERDIY.DE](https://nerdiy.de/en/product-2/sunchronizer-d1-dual-axis-solartracker-fuer-azimut-und-elevation-achse-3d-druckbar-stl-dateien/) | — | — |
+| **Sunchronizer D2** (dual-axis, 2nd gen) | — | [Printables](https://www.printables.com/model/1574049-sunchronizer-d2-400w-module-solartracker-for-eleva) | [Cults](https://cults3d.com/de/modell-3d/gadget/sunchronizer-d2-400w-module-solartracker-for-elevation-azimuth-axis-by-nerdi) |
 
 The STL files include a complete bill of materials and assembly instructions.
 
@@ -106,9 +111,10 @@ The STL files include a complete bill of materials and assembly instructions.
 
 **Recommendation:**
 1. **Purchase the STL files** from [NERDIY.DE](https://nerdiy.de/) or [Printables](https://www.printables.com/) — includes assembly PDFs
-2. **Review this GitHub repo** — additional documentation, measurement data, and firmware guides
-3. **Check the [Wiki](https://github.com/Nerdiyde/Sunchronizer/wiki)** — answers common assembly questions
-4. **Start with the BOM** — gather all components before printing
+2. **Alternative marketplace links:** S2 and D2 are also available on [Cults3D](https://cults3d.com/)
+3. **Review this GitHub repo** — additional documentation, measurement data, and firmware guides
+4. **Check the [Wiki](https://github.com/Nerdiyde/Sunchronizer/wiki)** — answers common assembly questions
+5. **Start with the BOM** — gather all components before printing
 
 You will have **everything needed** to successfully assemble your tracker! 🚀
 
