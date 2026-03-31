@@ -11,7 +11,6 @@
 
 This document provides a quick summary of all solar panel tracking measurements conducted in Bochum, Germany. Each day compares four mounting configurations across 4 measurement channels using HMS 1600-4T micro-inverters.
 
----
 
 ## Test Configuration
 
@@ -22,6 +21,18 @@ This document provides a quick summary of all solar panel tracking measurements 
 | 3 | Static Ref. | East 30° | None | JAM54S31-395 | 395 W |
 | 4 | **Sunchronizer D2** | Variable | 2-Axis | JAM54S31-395 | 395 W |
 
+
+### Testbench Setup
+
+The following photos show the real testbench used for all measurement series and analysis:
+
+<p align="center">
+	<img src="../../pictures/testbench/sunchronizer_testbench_(1).jpg" width="32%" />
+	<img src="../../pictures/testbench/sunchronizer_testbench_(2).jpg" width="32%" />
+	<img src="../../pictures/testbench/sunchronizer_testbench_(3).jpg" width="32%" />
+</p>
+
+* Testbench for Sunchronizer S2/D2 and static reference panels (all channels measured in parallel)  
 ---
 
 ## Measurement Data

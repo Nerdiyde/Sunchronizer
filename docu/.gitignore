@@ -1,0 +1,9 @@
+node_modules/
+.vitepress/cache/
+.vitepress/dist/
+
+# Ignore 3D model files
+*.stl
+*.STL
+*.step
+*.STEP

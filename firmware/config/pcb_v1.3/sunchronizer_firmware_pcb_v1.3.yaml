@@ -352,6 +352,7 @@ substitutions:
 
   # Stand by mode settings
   stand_by_mode_elevtation_trigger_angle_tolerance: "2"      # Tolerance in degrees for elevation angle to consider panel in standby/park position - Example: "2"
+  stand_by_mode_elevation_trigger_hysteresis: "2"            # Additional degrees above trigger angle required to leave standby trigger state (hysteresis) - Example: "2"
 
   # display settings
   screensaver_offset: "0"                        # Screensaver position offset in pixels from edges - Example: "0" (no offset)
@@ -797,7 +798,7 @@ esphome:
         - script.execute: perform_openweathermap_data_retrieval 
 
 esp32:
-  board: esp32-s3-devkitc-1
+  board: seeed_xiao_esp32s3
   framework:
     #type: arduino
     type: esp-idf
@@ -4319,7 +4320,24 @@ binary_sensor:
       sorting_group_id: sorting_group_standby_mode
       sorting_weight: ${sorting_groups.standby_mode.sun_elevation_angle_below_stand_by_mode_threshold}
     lambda: |-
-      return id(sun_elevation).state <= id(stand_by_mode_elevation_trigger_angle).state;
+      if (isnan(id(sun_elevation).state))
+      {
+        return id(global_stand_by_mode_sun_elevation_hysteresis_active);
+      }
+
+      const float activation_threshold = id(stand_by_mode_elevation_trigger_angle).state;
+      const float release_threshold = activation_threshold + float(${stand_by_mode_elevation_trigger_hysteresis});
+
+      if (!id(global_stand_by_mode_sun_elevation_hysteresis_active) && id(sun_elevation).state <= activation_threshold)
+      {
+        id(global_stand_by_mode_sun_elevation_hysteresis_active) = true;
+      }
+      else if (id(global_stand_by_mode_sun_elevation_hysteresis_active) && id(sun_elevation).state >= release_threshold)
+      {
+        id(global_stand_by_mode_sun_elevation_hysteresis_active) = false;
+      }
+
+      return id(global_stand_by_mode_sun_elevation_hysteresis_active);
 
 # OWM data
 
@@ -5222,6 +5240,12 @@ globals:
     initial_value: 'false'
     # Current state of wind gust hysteresis - Used to determine if stand by mode is active due to high wind gusts
 
+  - id: global_stand_by_mode_sun_elevation_hysteresis_active
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+    # Current state of stand by mode sun elevation hysteresis - true means sun elevation trigger is considered active
+
   # Motor direction detection variables - Detect if motor rotates in correct direction based on sensor feedback
   - id: global_elevation_motor_start_angle
     type: float
@@ -5988,13 +6012,28 @@ script:
 
 
   # deactivate all automatic controls
+
   - id: perform_deactivate_all_automatic_axis_controls
     mode: single
     then:
       - switch.turn_off: auto_control_elevation_angle
       - switch.turn_off: auto_control_azimuth_angle
-      - lambda: |-     
+      - lambda: |-
           ESP_LOGI("Auto control:", "All automatic controls deactivated.");
+
+  - id: perform_deactivate_automatic_elevation_axis_controls
+    mode: single
+    then:
+      - switch.turn_off: auto_control_elevation_angle
+      - lambda: |-
+          ESP_LOGI("Auto control:", "Elevation axis automatic control deactivated.");
+
+  - id: perform_deactivate_automatic_azimuth_axis_controls
+    mode: single
+    then:
+      - switch.turn_off: auto_control_azimuth_angle
+      - lambda: |-
+          ESP_LOGI("Auto control:", "Azimuth axis automatic control deactivated.");
 
 
   # checks if the threshold for cloudy mode control is reached or not and enables/disables the cloudy mode if needed
@@ -6067,7 +6106,7 @@ script:
               {
                 if (reason_sun_control_active && !reason_sun) 
                 {
-                  ESP_LOGE("Stand by mode control", "Sun elevation angle is above trigger angle. Disabling Switch: \"Stand By Mode Active\".");
+                  ESP_LOGE("Stand by mode control", "Sun elevation angle is above release threshold (trigger + hysteresis). Disabling Switch: \"Stand By Mode Active\".");
                 }
 
                 if (reason_expired_control_active && !reason_expired) 
@@ -6998,7 +7037,7 @@ script:
                   float threshold_current = id(elevation_motor_blocked_current_threshold).state;
                   
                   id(stop_panel_elevation_movement).execute();
-                  id(perform_deactivate_all_automatic_axis_controls).execute();  
+                  id(perform_deactivate_automatic_elevation_axis_controls).execute();
                   id(global_elevation_motor_blocked_high_current_fault_detected) = true;
                   id(global_elevation_motor_blocked_high_current_detected_value) = detected_current;
                   id(global_elevation_motor_blocked_high_current_timestamp) = id(ds3231_time).now().timestamp;
@@ -7038,8 +7077,8 @@ script:
                   float detected_current = id(motor_azimuth_supply_current).state;
                   float threshold_current = id(azimuth_motor_blocked_current_threshold).state;
                   
-                  id(stop_panel_rotation_movement).execute();    
-                  id(perform_deactivate_all_automatic_axis_controls).execute();
+                  id(stop_panel_rotation_movement).execute();
+                  id(perform_deactivate_automatic_azimuth_axis_controls).execute();
                   id(global_azimuth_motor_blocked_high_current_fault_detected) = true;
                   id(global_azimuth_motor_blocked_high_current_detected_value) = detected_current;
                   id(global_azimuth_motor_blocked_high_current_timestamp) = id(ds3231_time).now().timestamp;
