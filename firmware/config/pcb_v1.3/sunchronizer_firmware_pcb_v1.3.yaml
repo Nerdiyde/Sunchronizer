@@ -351,7 +351,6 @@ substitutions:
   panel_compass_heading_max_jump_deg: "5.0"        # Hard cap for single-sample heading jump
 
   # Stand by mode settings
-  stand_by_mode_elevtation_trigger_angle_tolerance: "2"      # Tolerance in degrees for elevation angle to consider panel in standby/park position - Example: "2"
   stand_by_mode_elevation_trigger_hysteresis: "2"            # Additional degrees above trigger angle required to leave standby trigger state (hysteresis) - Example: "2"
 
   # display settings
@@ -720,6 +719,9 @@ substitutions:
       stand_by_mode_trigger_expired_owm_data: 12
       stand_by_mode_trigger_sun_elevation: 13
       stand_by_mode_trigger_azimuth_fault: 14
+      stand_by_mode_estimated_activation_time: 15
+      stand_by_mode_estimated_deactivation_time: 16
+      stand_by_mode_estimation_threshold_info: 17
 
 # =============================================================================================================================
 
@@ -727,7 +729,7 @@ external_components:
   - source:
       type: git
       url: https://github.com/Nerdiyde/DS3231-RTC-component-for-ESPHome.git
-      ref: v2026.3.2
+      ref: v2026.4.0
       path: components
     components: [ ds3231 ]
   - source:
@@ -1313,10 +1315,9 @@ text_sensor:
       sorting_group_id: sorting_group_system
       sorting_weight: ${sorting_groups.system.sunchronizer_firmware_version_text_detailed}
     lambda: |-    
-      return { ESPHOME_PROJECT_VERSION " " + App.get_compilation_time() };
-      //char time_str[26];
-      //App.get_build_time_string(time_str);
-      //return { ESPHOME_PROJECT_VERSION " " + std::string(time_str) };
+      char time_str[26];
+      App.get_build_time_string(time_str);
+      return { ESPHOME_PROJECT_VERSION " " + std::string(time_str) };
 
   - platform: template
     name: "PCB Version"
@@ -1421,6 +1422,227 @@ text_sensor:
       }
 
 # Time related sensors
+
+  - platform: template
+    name: "Standby mode estimated activation time"
+    id: stand_by_mode_estimated_activation_time
+    icon: "mdi:clock-end"
+    update_interval: 60s
+    web_server:
+      sorting_group_id: sorting_group_standby_mode
+      sorting_weight: ${sorting_groups.standby_mode.stand_by_mode_estimated_activation_time}
+    lambda: |-
+      const time_t now_ts = id(ds3231_time).now().timestamp;
+      if (now_ts <= 0 || isnan(id(device_latitude).state) || isnan(id(device_longitude).state))
+      {
+        return {"N/A"};
+      }
+
+      const double deg2rad = 3.14159265358979323846 / 180.0;
+      const double rad2deg = 180.0 / 3.14159265358979323846;
+      const double lat_rad = id(device_latitude).state * deg2rad;
+      const double lon_deg = id(device_longitude).state;
+      const double threshold_deg = id(stand_by_mode_elevation_trigger_angle).state;
+
+      auto normalize_deg = [](double value) -> double {
+        value = fmod(value, 360.0);
+        if (value < 0.0) value += 360.0;
+        return value;
+      };
+
+      auto signed_deg = [](double value) -> double {
+        value = fmod(value + 180.0, 360.0);
+        if (value < 0.0) value += 360.0;
+        return value - 180.0;
+      };
+
+      auto sun_elevation_deg = [&](time_t ts) -> double {
+        const double jd = (static_cast<double>(ts) / 86400.0) + 2440587.5;
+        const double n = jd - 2451545.0;
+
+        const double L = normalize_deg(280.460 + 0.9856474 * n);
+        const double g = normalize_deg(357.528 + 0.9856003 * n);
+        const double g_rad = g * deg2rad;
+
+        const double lambda = normalize_deg(L + 1.915 * sin(g_rad) + 0.020 * sin(2.0 * g_rad));
+        const double lambda_rad = lambda * deg2rad;
+        const double epsilon_rad = (23.439 - 0.0000004 * n) * deg2rad;
+
+        double ra_deg = atan2(cos(epsilon_rad) * sin(lambda_rad), cos(lambda_rad)) * rad2deg;
+        ra_deg = normalize_deg(ra_deg);
+
+        const double dec_rad = asin(sin(epsilon_rad) * sin(lambda_rad));
+        const double gmst_deg = normalize_deg(280.46061837 + 360.98564736629 * (jd - 2451545.0));
+        const double lst_deg = normalize_deg(gmst_deg + lon_deg);
+        const double h_rad = signed_deg(lst_deg - ra_deg) * deg2rad;
+
+        const double elev_rad = asin(sin(lat_rad) * sin(dec_rad) + cos(lat_rad) * cos(dec_rad) * cos(h_rad));
+        return elev_rad * rad2deg;
+      };
+
+      const int step_seconds = 300;
+      const int search_horizon_seconds = 48 * 3600;
+      double prev_diff = sun_elevation_deg(now_ts) - threshold_deg;
+      bool found = false;
+      time_t a = now_ts;
+      time_t b = now_ts;
+
+      for (int dt = step_seconds; dt <= search_horizon_seconds; dt += step_seconds)
+      {
+        const time_t t = now_ts + dt;
+        const double diff = sun_elevation_deg(t) - threshold_deg;
+        if (prev_diff > 0.0 && diff <= 0.0)
+        {
+          a = t - step_seconds;
+          b = t;
+          found = true;
+          break;
+        }
+        prev_diff = diff;
+      }
+
+      if (!found)
+      {
+        return {"N/A"};
+      }
+
+      for (int i = 0; i < 20; i++)
+      {
+        const time_t mid = a + (b - a) / 2;
+        const double mid_diff = sun_elevation_deg(mid) - threshold_deg;
+        if (mid_diff > 0.0)
+        {
+          a = mid;
+        }
+        else
+        {
+          b = mid;
+        }
+      }
+
+      char str[17];
+      const time_t crossing = b;
+      strftime(str, sizeof(str), "%d.%m.%Y %H:%M", localtime(&crossing));
+      return {str};
+
+  - platform: template
+    name: "Standby mode estimated deactivation time"
+    id: stand_by_mode_estimated_deactivation_time
+    icon: "mdi:clock-start"
+    update_interval: 60s
+    web_server:
+      sorting_group_id: sorting_group_standby_mode
+      sorting_weight: ${sorting_groups.standby_mode.stand_by_mode_estimated_deactivation_time}
+    lambda: |-
+      const time_t now_ts = id(ds3231_time).now().timestamp;
+      if (now_ts <= 0 || isnan(id(device_latitude).state) || isnan(id(device_longitude).state))
+      {
+        return {"N/A"};
+      }
+
+      const double deg2rad = 3.14159265358979323846 / 180.0;
+      const double rad2deg = 180.0 / 3.14159265358979323846;
+      const double lat_rad = id(device_latitude).state * deg2rad;
+      const double lon_deg = id(device_longitude).state;
+      const double activation_threshold_deg = id(stand_by_mode_elevation_trigger_angle).state;
+      const double release_threshold_deg = activation_threshold_deg + float(${stand_by_mode_elevation_trigger_hysteresis});
+
+      auto normalize_deg = [](double value) -> double {
+        value = fmod(value, 360.0);
+        if (value < 0.0) value += 360.0;
+        return value;
+      };
+
+      auto signed_deg = [](double value) -> double {
+        value = fmod(value + 180.0, 360.0);
+        if (value < 0.0) value += 360.0;
+        return value - 180.0;
+      };
+
+      auto sun_elevation_deg = [&](time_t ts) -> double {
+        const double jd = (static_cast<double>(ts) / 86400.0) + 2440587.5;
+        const double n = jd - 2451545.0;
+
+        const double L = normalize_deg(280.460 + 0.9856474 * n);
+        const double g = normalize_deg(357.528 + 0.9856003 * n);
+        const double g_rad = g * deg2rad;
+
+        const double lambda = normalize_deg(L + 1.915 * sin(g_rad) + 0.020 * sin(2.0 * g_rad));
+        const double lambda_rad = lambda * deg2rad;
+        const double epsilon_rad = (23.439 - 0.0000004 * n) * deg2rad;
+
+        double ra_deg = atan2(cos(epsilon_rad) * sin(lambda_rad), cos(lambda_rad)) * rad2deg;
+        ra_deg = normalize_deg(ra_deg);
+
+        const double dec_rad = asin(sin(epsilon_rad) * sin(lambda_rad));
+        const double gmst_deg = normalize_deg(280.46061837 + 360.98564736629 * (jd - 2451545.0));
+        const double lst_deg = normalize_deg(gmst_deg + lon_deg);
+        const double h_rad = signed_deg(lst_deg - ra_deg) * deg2rad;
+
+        const double elev_rad = asin(sin(lat_rad) * sin(dec_rad) + cos(lat_rad) * cos(dec_rad) * cos(h_rad));
+        return elev_rad * rad2deg;
+      };
+
+      const int step_seconds = 300;
+      const int search_horizon_seconds = 48 * 3600;
+      double prev_diff = sun_elevation_deg(now_ts) - release_threshold_deg;
+      bool found = false;
+      time_t a = now_ts;
+      time_t b = now_ts;
+
+      for (int dt = step_seconds; dt <= search_horizon_seconds; dt += step_seconds)
+      {
+        const time_t t = now_ts + dt;
+        const double diff = sun_elevation_deg(t) - release_threshold_deg;
+        if (prev_diff < 0.0 && diff >= 0.0)
+        {
+          a = t - step_seconds;
+          b = t;
+          found = true;
+          break;
+        }
+        prev_diff = diff;
+      }
+
+      if (!found)
+      {
+        return {"N/A"};
+      }
+
+      for (int i = 0; i < 20; i++)
+      {
+        const time_t mid = a + (b - a) / 2;
+        const double mid_diff = sun_elevation_deg(mid) - release_threshold_deg;
+        if (mid_diff < 0.0)
+        {
+          a = mid;
+        }
+        else
+        {
+          b = mid;
+        }
+      }
+
+      char str[17];
+      const time_t crossing = b;
+      strftime(str, sizeof(str), "%d.%m.%Y %H:%M", localtime(&crossing));
+      return {str};
+
+  - platform: template
+    name: "Standby estimation thresholds"
+    id: stand_by_mode_estimation_threshold_info
+    icon: "mdi:information-outline"
+    update_interval: 60s
+    web_server:
+      sorting_group_id: sorting_group_standby_mode
+      sorting_weight: ${sorting_groups.standby_mode.stand_by_mode_estimation_threshold_info}
+    lambda: |-
+      const float trigger = id(stand_by_mode_elevation_trigger_angle).state;
+      const float hysteresis = float(${stand_by_mode_elevation_trigger_hysteresis});
+      const float release = trigger + hysteresis;
+      char str[80];
+      snprintf(str, sizeof(str), "Trigger %.1f deg | Release %.1f deg (+%.1f)", trigger, release, hysteresis);
+      return {str};
 
   - platform: template
     name: "DS3231 Time"
@@ -4263,7 +4485,7 @@ binary_sensor:
       sorting_group_id: sorting_group_system
       sorting_weight: ${sorting_groups.system.homeassistant_api_connected}
     lambda: |-
-      return id(api_id).is_connected(true);
+      return id(api_id).is_connected();
 
   - platform: template
     name: "OWM API Key entered"

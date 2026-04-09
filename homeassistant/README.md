@@ -1,50 +1,55 @@
-# Sunchronizer Home Assistant Automations
+# Sunchronizer Home Assistant
 
-## Overview
+This folder contains Home Assistant resources for Sunchronizer:
 
-This directory contains Home Assistant automations for Sunchronizer fault and status notifications.
+- fault/status automations
+- the Sunchronizer Virtual Camera custom integration
 
-These automations are based on the fault and status sensors defined in:
+## Contents
+
+- `automations/sunchronizer_fault_notifications.yaml`
+- `custom_components/sunchronizer_virtual_camera/`
+
+## Automations
+
+### Overview
+
+The automation file provides fault and status notifications based on Sunchronizer sensors
+defined in the firmware configuration, especially:
+
 - `firmware/config/pcb_v1.3/sunchronizer_firmware_pcb_v1.3.yaml`
 
-## Included File
+### Setup (YAML include)
 
-- `sunchronizer_fault_notifications.yaml`
-
-## Setup
-
-1. Copy the automation file into your Home Assistant configuration, for example to:
+1. Copy `automations/sunchronizer_fault_notifications.yaml` to your Home Assistant config,
+   for example:
    - `/config/automations/sunchronizer_fault_notifications.yaml`
-2. Include the automation directory in your `configuration.yaml` if this is not already configured:
+2. Ensure automations are included in `configuration.yaml`:
 
 ```yaml
 automation: !include_dir_merge_list automations/
 ```
 
-3. Reload Home Assistant automations or restart Home Assistant.
+3. Reload automations or restart Home Assistant.
 
-## Alternative Setup via the Home Assistant UI
+### Alternative Setup (UI only)
 
-If you prefer not to manage a separate YAML file, you can also copy the automation content into a newly created automation directly in Home Assistant:
-
-1. Open `Settings -> Automations & Scenes` in Home Assistant.
+1. Open `Settings -> Automations & Scenes`.
 2. Create a new automation.
-3. Open the automation menu and switch to `Edit in YAML`.
-4. Copy the contents of `sunchronizer_fault_notifications.yaml` into the editor.
-5. Save the automation.
-6. Repeat this for each automation block in the file if Home Assistant expects one automation per editor entry.
+3. Open the menu and choose `Edit in YAML`.
+4. Paste content from `sunchronizer_fault_notifications.yaml`.
+5. Save.
+6. Repeat per automation block if required by your setup.
 
-This approach is useful if you want to manage the automation entirely in the Home Assistant UI instead of maintaining a separate file in `/config/automations/`.
+### Behavior
 
-## Behavior
+- Critical binary sensor faults create `persistent_notification` entries.
+- Calibration-required states create dedicated `persistent_notification` entries.
+- Status text sensors create notifications when the state is not `Normal`.
 
-- Critical binary sensor faults create a `persistent_notification`.
-- Calibration-required states create a dedicated `persistent_notification`.
-- Status text sensors create a notification whenever the state is no longer `Normal`.
+### Optional Mobile Push
 
-## Optional: Mobile Push Notifications
-
-If you want mobile push notifications, add an additional service call to the automation, for example:
+Add a notify service action to your automation, for example:
 
 ```yaml
 - service: notify.mobile_app_your_phone
@@ -52,3 +57,98 @@ If you want mobile push notifications, add an additional service call to the aut
     title: Sunchronizer Fault
     message: "{{ trigger.event.data.new_state.attributes.friendly_name }}"
 ```
+
+## Virtual Camera Integration
+
+The custom integration creates a synthetic camera image showing:
+
+- panel orientation (foreground)
+- sun position (background)
+- azimuth/elevation values
+- tracking delta and quality
+- optional weather context
+
+Viewpoint is south-oriented by default.
+
+[![Open your Home Assistant instance and open the add repository dialog with this repository pre-filled.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=Nerdiyde&repository=Sunchronizer&category=integration)
+
+### Features
+
+- UI setup via config flow
+- editable options after setup
+- view modes: `south`, `top_down`, `side`, `follow_sun`
+- themes and overlays via services
+- trail history and calibration guides
+- fixed resolution presets and `auto` mode
+- multi-instance support
+- diagnostic sensors for tracking quality
+
+### Installation
+
+#### Option 1: HACS button
+
+1. Use the button above.
+2. Add repository in HACS.
+3. Install `Sunchronizer Virtual Camera`.
+4. Restart Home Assistant.
+
+#### Option 2: HACS custom repository (manual)
+
+1. Open HACS.
+2. `Custom repositories`.
+3. Repository URL: `https://github.com/Nerdiyde/Sunchronizer`
+4. Category: `Integration`
+5. Install `Sunchronizer Virtual Camera`.
+6. Restart Home Assistant.
+
+#### Option 3: Manual (without HACS)
+
+1. Copy `custom_components/sunchronizer_virtual_camera` to:
+   - `/config/custom_components/sunchronizer_virtual_camera`
+2. Restart Home Assistant.
+
+### Setup
+
+1. Open `Settings -> Devices & Services`.
+2. Click `Add Integration`.
+3. Select `Sunchronizer Virtual Camera`.
+4. Enter source entities and initial options.
+
+### Change Options Later
+
+1. Open `Settings -> Devices & Services`.
+2. Open `Sunchronizer Virtual Camera`.
+3. Click `Configure`.
+4. Update settings (including resolution preset).
+
+### Resolution Presets
+
+- `auto` (uses requested client size, fallback 1280x720)
+- `640x360`
+- `854x480`
+- `1280x720`
+- `1920x1080`
+
+### Services
+
+- `sunchronizer_virtual_camera.save_snapshot`
+- `sunchronizer_virtual_camera.set_theme`
+- `sunchronizer_virtual_camera.set_view_mode`
+- `sunchronizer_virtual_camera.set_overlays`
+- `sunchronizer_virtual_camera.set_resolution`
+- `sunchronizer_virtual_camera.clear_trail`
+
+### Diagnostic Sensors
+
+- Tracking Delta Azimuth
+- Tracking Delta Elevation
+- Tracking Quality
+
+### Lovelace Example
+
+- `custom_components/sunchronizer_virtual_camera/lovelace_example.yaml`
+
+### Notes
+
+- If entities are unavailable, rendering continues and missing values appear as `n/a`.
+- The camera entity can be used in standard Lovelace cards that support camera entities.
