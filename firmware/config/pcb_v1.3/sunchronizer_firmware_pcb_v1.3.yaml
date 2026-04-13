@@ -268,6 +268,7 @@ substitutions:
     stand_by_mode_elevation_target_angle: "-90"   # Default elevation target angle for stand by mode in degrees - Example: "-90"
     panel_azimuth_angle_max: "350"                # Maximum allowed azimuth angle when properly aligned - Example: "350"
     panel_azimuth_angle_min: "10"                 # Minimum allowed azimuth angle when properly aligned - Example: "10"
+    panel_azimuth_auto_soft_endstop_margin: "5.0" # Soft safety margin in degrees used only for automatic azimuth control
     panel_elev_target_angle_tolerance: "2"        # Acceptable elevation angle deviation from target in degrees - Example: "2"
     panel_azimuth_target_angle_tolerance: "2"     # Acceptable azimuth angle deviation from target in degrees - Example: "2"
     panel_azimuth_orientation: "180"              # Initial panel azimuth orientation (compass heading) in degrees - Example: "180" (South)
@@ -3072,6 +3073,37 @@ number:
               
               auto call = id(panel_azimuth_angle_max).make_call();
               call.set_value(new_value > ${initial_value.panel_azimuth_angle_max} ? ${initial_value.panel_azimuth_angle_max} : new_value );
+              call.perform();
+            }
+
+  - platform: template
+    name: "Panel azimuth auto soft endstop margin"
+    id: panel_azimuth_auto_soft_endstop_margin
+    icon: "mdi:shield-sun"
+    max_value: 30
+    min_value: 0
+    step: 0.1
+    initial_value: ${initial_value.panel_azimuth_auto_soft_endstop_margin}
+    unit_of_measurement: "°"
+    optimistic: true
+    restore_value: true
+    entity_category: "config"
+    mode: box
+    web_server:
+      sorting_group_id: sorting_group_azimuth_axis
+      sorting_weight: 8
+    on_value:
+      then:
+        - lambda: |-
+            const float available_span = id(panel_azimuth_angle_max).state - id(panel_azimuth_angle_min).state;
+            const float max_margin = available_span / 2.0f;
+
+            if (x > max_margin)
+            {
+              ESP_LOGE("main", "Error: \"Panel azimuth auto soft endstop margin\" is too large for current min/max span.");
+
+              auto call = id(panel_azimuth_auto_soft_endstop_margin).make_call();
+              call.set_value(max_margin > 0.0f ? max_margin : 0.0f);
               call.perform();
             }
 
@@ -6404,6 +6436,30 @@ script:
               }          
             } else
             {
+              const bool use_soft_auto_endstop = id(auto_control_azimuth_angle).state && !id(measurement_or_calibration_active).state;
+              const float soft_margin = use_soft_auto_endstop ? id(panel_azimuth_auto_soft_endstop_margin).state : 0.0f;
+              float azimuth_soft_min = id(panel_azimuth_angle_min).state + soft_margin;
+              float azimuth_soft_max = id(panel_azimuth_angle_max).state - soft_margin;
+
+              if (azimuth_soft_max < azimuth_soft_min)
+              {
+                const float center = (id(panel_azimuth_angle_min).state + id(panel_azimuth_angle_max).state) / 2.0f;
+                azimuth_soft_min = center;
+                azimuth_soft_max = center;
+              }
+
+              if (use_soft_auto_endstop)
+              {
+                if (id(panel_rotation_in_cw_planned).state && id(panel_compass_heading).state >= azimuth_soft_max)
+                {
+                  id(stop_panel_rotation_movement).execute();
+                }
+                if (id(panel_rotation_in_ccw_planned).state && id(panel_compass_heading).state <= azimuth_soft_min)
+                {
+                  id(stop_panel_rotation_movement).execute();
+                }
+              }
+
               if (id(panel_within_azimuth_target_angle_range_binary_sensor).state)
               {
                 if (id(panel_rotation_in_cw_planned).state or id(panel_rotation_in_ccw_planned).state)
@@ -6414,13 +6470,19 @@ script:
               {
                 if (!id(panel_rotation_in_cw_planned).state)
                 {
-                  id(start_panel_rotation_clockwise).execute();
+                  if (!use_soft_auto_endstop || id(panel_compass_heading).state < azimuth_soft_max)
+                  {
+                    id(start_panel_rotation_clockwise).execute();
+                  }
                 }
               } else if (id(panel_right_from_azimuth_target_angle_binary_sensor).state)
               {
                 if (!id(panel_rotation_in_ccw_planned).state)
                 {
-                  id(start_panel_rotation_counterclockwise).execute();
+                  if (!use_soft_auto_endstop || id(panel_compass_heading).state > azimuth_soft_min)
+                  {
+                    id(start_panel_rotation_counterclockwise).execute();
+                  }
                 }
               } 
             }
@@ -7016,6 +7078,32 @@ script:
                 {
                     tmp_panel_azimuth_target_value = id(panel_azimuth_angle_min).state;
                     ESP_LOGI("Azimuth angle calculation:", "Angle smaller than min possible panel azimuth angle. Target angle limited to min possible value(%1.0f°).", id(panel_azimuth_angle_min).state);
+                }
+
+                // In normal automatic operation, keep the requested target away from physical endstops.
+                if (id(auto_control_azimuth_angle).state && !id(measurement_or_calibration_active).state)
+                {
+                  const float soft_margin = id(panel_azimuth_auto_soft_endstop_margin).state;
+                  float azimuth_soft_min = id(panel_azimuth_angle_min).state + soft_margin;
+                  float azimuth_soft_max = id(panel_azimuth_angle_max).state - soft_margin;
+
+                  if (azimuth_soft_max < azimuth_soft_min)
+                  {
+                    const float center = (id(panel_azimuth_angle_min).state + id(panel_azimuth_angle_max).state) / 2.0f;
+                    azimuth_soft_min = center;
+                    azimuth_soft_max = center;
+                  }
+
+                  if (tmp_panel_azimuth_target_value > azimuth_soft_max)
+                  {
+                    tmp_panel_azimuth_target_value = azimuth_soft_max;
+                    ESP_LOGI("Azimuth angle calculation:", "Target angle limited by auto soft endstop max (%1.1f°).", azimuth_soft_max);
+                  }
+                  else if (tmp_panel_azimuth_target_value < azimuth_soft_min)
+                  {
+                    tmp_panel_azimuth_target_value = azimuth_soft_min;
+                    ESP_LOGI("Azimuth angle calculation:", "Target angle limited by auto soft endstop min (%1.1f°).", azimuth_soft_min);
+                  }
                 }
 
                 ESP_LOGI("Azimuth angle calculation:", "Sun azimuth value is %2.0f", id(sun_azimuth).state);
