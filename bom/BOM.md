@@ -1,95 +1,260 @@
+﻿# Sunchronizer BOM
 
-This BOM collects the required materials and tools for the Sunchronizer S1 and D1 variants.
-The lists are separated by model and include quantities, items, and purchase links.
-Note: All links in this document are affiliate links.
+## Introduction
 
-## Needed Tools
+This BOM contains the key information required to build the Sunchronizer variants S2 and D2.
+It combines purchasable components (including ASIN/Amazon links where available), variant-specific quantities,
+3D-printable parts with print settings, and additional non-purchasable or project-specific items.
 
-| Count | Item | Link |
-| --- | --- | --- |
-| 1x | Screwdriver set | https://www.amazon.de/dp/B092LVWNX8?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 1x | Soldering iron | https://www.amazon.de/dp/B0CCV6T329?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 1x | 3D Printer | |
-| 1x | Cordless screwdriver | https://www.amazon.de/dp/B015WGDX6E?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 1x | Bit set | https://www.amazon.de/dp/B0097DYZHK?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 1x | Pointed pliers | https://www.amazon.de/dp/B0001P0BZS?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
+Please note:
 
-# Sunchronizer S1 BOM
+- This material list was created to the best of my knowledge and belief, but I cannot guarantee that it is complete or perfectly error-free.
+- If you have questions or notice mistakes, please open an issue in the repository. Feedback and corrections are very welcome.
+- The tables are intended as a practical purchasing and assembly reference, but they do not replace technical validation for your specific build.
+- Quantities and configurations may vary depending on hardware revision, mechanical setup, and locally available components.
+- The listed quantities always refer to the underlying individual item, for example a single screw. The linked products may still be sold as sets or multi-packs.
+- For 3D-printed parts, orientation, material choice, and print parameters are safety- and function-critical.
+- All metal parts should, whenever possible, be weather-resistant and made from stainless steel.
+- Material selection should be made responsibly and with practical engineering judgment for the intended environment and load case.
+- Local/proprietary parts and unlisted small consumables may still need to be added depending on your setup.
 
-| Count | Item | Link |
-| --- | --- | --- |
-| 6x to 8x | Concrete slab 40x40x5cm | |
-| 14x | M3 thread insert | https://www.amazon.de/dp/B08BCRZZS3?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 18x | M5 thread insert | https://www.amazon.de/dp/B07YSVXWS8?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 4x | Cylinder head screw M5x30 | https://www.amazon.de/dp/B07FN1GNPD?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 4x | Cylinder head screw M5x85 | https://www.amazon.de/dp/B07NNMXSP7?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 1x | Cylinder head screw M5x95 | https://www.amazon.de/dp/B07NNNR2XH?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 12x | M3x10 countersunk screw | https://www.amazon.de/dp/B07PVKLP5F?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 20x | M5x10 countersunk head screw | https://www.amazon.de/dp/B08WZZ1HST?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 87x | M5x16 countersunk head screw | https://www.amazon.de/dp/B07NMQSNYM?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 8x | M5x25 cylinder head screw | https://www.amazon.de/dp/B07PVKRPQR?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 4x | M5x35 cylinder head screw | https://www.amazon.de/dp/B07PXL231X?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 4x | M5x40 cylinder head screw | https://www.amazon.de/dp/B07NMRPFC1?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 8x | M5x45 cylinder head screw | https://www.amazon.de/dp/B07NMRPHC7?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 114x | Slot nut M5 | https://www.amazon.de/dp/B0CR8KSW7K?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 5x | Self-locking nut M5 | https://www.amazon.de/dp/B0BJZCMG1K?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 4x | Washer width 5.2mm | https://www.amazon.de/dp/B087RPP8NY?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 3x | Self-drilling screws 4.8x32 | https://www.amazon.de/dp/B08V99X5L8?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 1x | Aluminum profile 2020 1m | https://www.amazon.de/dp/B09BD6J694?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 2x | Aluminum profile 2060 1m | https://www.amazon.de/dp/B0759T6DBB?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 1x | Aluminum profile 2060 1.2m | https://www.amazon.de/dp/B0759FRQY5?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 10x | MR105-2RS Miniature ball bearing | https://www.amazon.de/dp/B09T9NZZY1?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 1x | M16 cable gland | https://www.amazon.de/dp/B0CH3KYQY2?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 5-6x | M12 cable gland | https://www.amazon.de/dp/B085GG8X9M?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 2x | Waterproof pushbutton 12mm | https://www.amazon.de/dp/B08L49F7DV?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 1x | Linear actuator 250mm 6000N | https://www.amazon.de/dp/B0CWN77CGW?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 1x | 3D printing Filament UV Resistant PETG | https://www.amazon.de/dp/B0C6MKZN2B?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 1x | USB-C PD 60W cable | https://www.amazon.de/dp/B0832DC7W8?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 1-2x | Hose clamps endless | https://www.amazon.de/dp/B0CSDHS8B5?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 1x | USB-C PD 60W cable | https://www.amazon.de/dp/B0C52SCQLG?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 1x | Solar Panel 1x430W | https://www.amazon.de/dp/B0CR69S2QN?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 1x | Inverter | https://www.amazon.de/dp/B0CJGKQXVL?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 1x | BMI160 Elevation Sensor from Nerdiy.de | https://nerdiy.de/en/product-2/bmi160-modul-gehaeuse-3d-druckbar-stl-dateien/ |
-| 1x (optional) | GPS receiver from Nerdiy.de | https://nerdiy.de/en/product-2/neo7mv2-gps-empfaenger-modul-gehaeuse-3d-druckbar-stl-dateien/ |
-| 1x (optional) | Anemosens speed wind sensor | |
+---
 
-# Sunchronizer D1 BOM
+## Purchaseable Tools & Parts
 
-| Count | Item | Link |
-| --- | --- | --- |
-| 6x to 8x | Concrete slab 40x40x5cm | |
-| 14x | M3 thread insert | https://www.amazon.de/dp/B08BCRZZS3?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 18x | M5 thread insert | https://www.amazon.de/dp/B07YSVXWS8?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 4x | Cylinder head screw M5x30 | https://www.amazon.de/dp/B07FN1GNPD?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 4x | Cylinder head screw M5x85 | https://www.amazon.de/dp/B07NNMXSP7?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 1x | Cylinder head screw M5x95 | https://www.amazon.de/dp/B07NNNR2XH?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 12x | M3x10 countersunk screw | https://www.amazon.de/dp/B07PVKLP5F?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 20x | M5x10 countersunk head screw | https://www.amazon.de/dp/B08WZZ1HST?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 87x | M5x16 countersunk head screw | https://www.amazon.de/dp/B07NMQSNYM?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 8x | M5x25 cylinder head screw | https://www.amazon.de/dp/B07PVKRPQR?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 4x | M5x35 cylinder head screw | https://www.amazon.de/dp/B07PXL231X?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 4x | M5x40 cylinder head screw | https://www.amazon.de/dp/B07NMRPFC1?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 8x | M5x45 cylinder head screw | https://www.amazon.de/dp/B07NMRPHC7?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 114x | Slot nut M5 | https://www.amazon.de/dp/B0CR8KSW7K?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 5x | Self-locking nut M5 | https://www.amazon.de/dp/B0BJZCMG1K?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 4x | Washer width 5.2mm | https://www.amazon.de/dp/B087RPP8NY?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 3x | Self-drilling screws 4.8x32 | https://www.amazon.de/dp/B08V99X5L8?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 1x | Aluminum profile 2020 1m | https://www.amazon.de/dp/B09BD6J694?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 2x | Aluminum profile 2060 1m | https://www.amazon.de/dp/B0759T6DBB?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 1x | Aluminum profile 2060 1.2m | https://www.amazon.de/dp/B0759FRQY5?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 10x | MR105-2RS Miniature ball bearing | https://www.amazon.de/dp/B09T9NZZY1?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 1x | M16 cable gland | https://www.amazon.de/dp/B0CH3KYQY2?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 5-6x | M12 cable gland | https://www.amazon.de/dp/B085GG8X9M?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 2x | Waterproof pushbutton 12mm | https://www.amazon.de/dp/B08L49F7DV?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 1x | Linear actuator 250mm 6000N | https://www.amazon.de/dp/B0CWN77CGW?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 1x | 3D printing Filament UV Resistant PETG | https://www.amazon.de/dp/B0C6MKZN2B?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 1x | USB-C PD 60W cable | https://www.amazon.de/dp/B0832DC7W8?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 1-2x | Hose clamps endless | https://www.amazon.de/dp/B0CSDHS8B5?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 1x | USB-C PD 60W cable | https://www.amazon.de/dp/B0C52SCQLG?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 1x | Solar Panel 1x430W | https://www.amazon.de/dp/B0CR69S2QN?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 1x | Inverter | https://www.amazon.de/dp/B0CJGKQXVL?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1 |
-| 1x | BMI160 Elevation Sensor from Nerdiy.de | https://nerdiy.de/en/product-2/bmi160-modul-gehaeuse-3d-druckbar-stl-dateien/ |
-| 1x (optional) | GPS receiver from Nerdiy.de | https://nerdiy.de/en/product-2/neo7mv2-gps-empfaenger-modul-gehaeuse-3d-druckbar-stl-dateien/ |
-| 1x (optional) | Anemosens speed wind sensor | |
+- All Amazon links are affiliate links.
+
+### Recommended Tools
+
+| Component | Description | Qty | Amazon (DE) | Alternative Link |
+| ----------- | ----------- | ----------- | ----------- | ------------------ |
+| 3D Printer | FDM printer for structural parts | - | - | [Prusa3D](https://www.prusa3d.com/de/#a_aid=Nerdiy) |
+| Screwdriver Set | Multi-size, magnetic | - | [Amazon](https://www.amazon.de/dp/B086SQZGLJ?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | - |
+| Soldering Iron | Temperature controlled | - | [Amazon](https://www.amazon.de/dp/B0D5M727WM?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | - |
+| Heat Shrink Tubing Set | Assorted shrink tubing for cable insulation and strain relief | - | [Amazon](https://www.amazon.de/dp/B071D7LJ31?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | - |
+| Cordless Screwdriver | Battery-powered | - | [Amazon](https://www.amazon.de/dp/B015WGDX6E?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | - |
+| Bit Set | Various sizes | - | [Amazon](https://www.amazon.de/dp/B0097DYZHK?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | - |
+| Pointed Pliers | Precision work | - | [Amazon](https://www.amazon.de/dp/B0001P0BZS?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | - |
+
+
+### Core Electronics & Mechanics
+
+| Component | Description | Qty S2 | Qty D2 | Amazon (DE) | Notes |
+| ----------- | ----------- | ----------- | ----------- | ----------- | ------- |
+| Linear Actuator 250mm 6000N | Elevation axis actuator | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0CWN77CGW?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required |
+| USB-C PD Cable | 60W rated | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0832DC7W8?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required |
+| Waterproof Pushbutton 12mm | Manual controls | 2 | 2 | [Amazon](https://www.amazon.de/dp/B08L49F7DV?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required |
+| JGY-370 motor 12V (~5 RPM recommended) | D2 azimuth drive motor | - | 1 | [Amazon](https://www.amazon.de/dp/B0G6MP823F?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | D2 azimuth axis; firmware timing must match motor speed; use a D-shaped 8 mm shaft |
+| Omron V-156-1C25 switch | D2 azimuth endstop switch | - | 2 | [Amazon](https://www.amazon.de/dp/B0BN143PRT?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | D2 azimuth endstop switches |
+
+
+#### PCB Version 1.4
+
+The following components are the required parts for PCB version 1.4. The required materials can change for other PCB versions or future revisions.
+
+| Component | Description | Qty S2 | Qty D2 | Amazon (DE) | Notes |
+| ----------- | ----------- | ----------- | ----------- | ----------- | ------- |
+| Control electronics PCB (pcb_control_electronics_V1.0) | Custom control PCB for S2 | 1 | Soon available on Nerdiy.de | - | Required for PCB v1.4 |
+| Seeed Studio XIAO ESP32-S3 | MCU ESP32-S3 | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0BYSB66S5?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required for PCB v1.4 |
+| SD13 2-pin connector | PCB connector | 3 | 3 | [Amazon](https://www.amazon.de/dp/B0893C63BQ?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required for PCB v1.4 |
+| SD13 3-pin connector | PCB connector | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0894RMWRG?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required for PCB v1.4 |
+| SD13 6-pin connector | PCB connector | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0893C6Q86?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required for PCB v1.4 |
+| JST-XH 2-pin plug | PCB/internal connector | 3 | 3 | - | Matching 2-pin JST-XH plug for PCB v1.4 |
+| JST-XH 2-pin socket | PCB/internal connector | 3 | 3 | - | Matching 2-pin JST-XH socket for PCB v1.4 |
+| JST-XH 3-pin plug | PCB/internal connector | 1 | 1 | - | Matching 3-pin JST-XH plug for PCB v1.4 |
+| JST-XH 3-pin socket | PCB/internal connector | 1 | 1 | - | Matching 3-pin JST-XH socket for PCB v1.4 |
+| JST-XH 6-pin plug | PCB/internal connector | 1 | 1 | - | Matching 6-pin JST-XH plug for PCB v1.4 |
+| JST-XH 6-pin socket | PCB/internal connector | 1 | 1 | - | Matching 6-pin JST-XH socket for PCB v1.4 |
+| 2-pin cable | Cable assembly, details TBD | - | - | - | Placeholder entry for later specification |
+| 3-pin cable | Cable assembly, details TBD | - | - | - | Placeholder entry for later specification |
+| 6-pin cable | Cable assembly, details TBD | - | - | - | Placeholder entry for later specification |
+| WS2812 Pixel 20mm | Addressable RGB status pixel | 1 | 1 | - | Required for PCB v1.4 |
+| RF Koaxial Pigtail cable U.FL to RP-SMA | RF connector assembly kit | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0DZ5WM37M?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required for PCB v1.4 |
+| Mini Wifi antenna | Wifi antenna | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0CR5JPMNX?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required for PCB v1.4 |
+| BNO085 9DOF IMU | IMU sensor | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0GHNRV4KD?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required for PCB v1.4 |
+
+
+### Ball Bearings
+
+| Component | Description | Qty S2 | Qty D2 | Amazon (DE) | Notes |
+| ----------- | ----------- | ----------- | ----------- | ----------- | ------- |
+| MR105-2RS Ball Bearing | 5x10x4mm | 10 | 15 | [Amazon](https://www.amazon.de/dp/B09T9NZZY1?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required |
+| 625-2Z Ball Bearing | 5x16x5mm | - | 14 | [Amazon](https://www.amazon.de/s?k=625-2Z+Kugellager&tag=nerdiyde018-21) | D2 azimuth axis |
+
+
+### Solar Equipment
+
+| Component | Description | Qty S2 | Qty D2 | Amazon (DE) | Notes |
+| ----------- | ----------- | ----------- | ----------- | ----------- | ------- |
+| Solar Panel | 430W reference panel | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0FH2DD2R3?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Typical size |
+| Inverter | Balcony power plant inverter | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0CJGKQXVL?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required |
+| MC4 Solar Cable | DC connection cable between panel and inverter | 1 set | 1 set | [Amazon](https://www.amazon.de/s?k=MC4+Solarkabel&tag=nerdiyde018-21) | Length depends on installation |
+| AC Connection Cable | Schuko plug cable for inverter to wall socket | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0FBWS4ZLH?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Check local regulations/system |
+
+
+### Aluminum Profiles
+
+| Component | Description | Qty S2 | Qty D2 | Amazon (DE) | Notes |
+| ----------- | ----------- | ----------- | ----------- | ----------- | ------- |
+| Aluminum Profile 2060 - 560mm length | Structural profile | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0759T6DBB?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required |
+| Aluminum Profile 2060 - 770mm length | Structural profile | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0759FRQY5?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required; suitable for typical 400W-class modules around 1762 x 1134 mm to 1800 x 1130 mm |
+| Aluminum Profile 2060 - 1000mm length | Structural profile for longer panels | optional | optional | - | Recommended for longer 500W-class modules around 1953 x 1134 mm to 2000 x 1130 mm |
+| Aluminum Profile 2060 - 1200mm length | Structural profile | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0759FRQY5?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required |
+
+#### Wooden Profile Alternative
+
+Wooden profiles can be used as an alternative to the aluminum profiles above. Keep in mind that wood may have a different service life and must be properly selected, treated, and sealed to remain weather-resistant outdoors.
+
+| Component | Description | Qty S2 | Qty D2 | Amazon (DE) | Notes |
+| ----------- | ----------- | ----------- | ----------- | ----------- | ------- |
+| Wooden profile 2060 - 560mm length | Frame alternative | 3 parts | 3 parts | - | Alternative to the aluminum profiles above; use weatherproof treated wood |
+| Wooden profile 2060 - 770mm length | Frame alternative | 3 parts | 3 parts | - | Alternative to the aluminum profiles above; suitable for typical 400W-class modules around 1762 x 1134 mm to 1800 x 1130 mm |
+| Wooden profile 2060 - 1000mm length | Frame alternative for longer panels | optional | optional | - | Use for longer 500W-class modules around 1953 x 1134 mm to 2000 x 1130 mm |
+| Wooden profile se2060 - 1200mm lengtht | Frame alternative | 3 parts | 3 parts | - | Alternative to the aluminum profiles above; use weatherproof treated wood |
+
+
+### Fasteners & Hardware
+
+| Component | Description | Qty S2 | Qty D2 | Amazon (DE) |
+| ----------- | ----------- | ----------- | ----------- | ----------- |
+| M2 Thread Insert | Brass inserts | 14-17 | 14-17 | [Amazon](https://www.amazon.de/dp/B08DDBWKZF?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) |
+| M3 Thread Insert | Brass inserts | 25-64 | 25-64 | [Amazon](https://www.amazon.de/dp/B08BCRZZS3?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) |
+| M5 Thread Insert | Brass inserts | 15-27 | 15-27 | [Amazon](https://www.amazon.de/dp/B07YSVXWS8?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) |
+| M3x8 Countersunk | Stainless steel countersunk screw | 14 | 14 | [Amazon](https://www.amazon.de/dp/B0957T69W6?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) |
+| M3x10 Countersunk | Stainless steel countersunk screw | 4-21 | 4-21 | [Amazon](https://www.amazon.de/dp/B07PVKLP5F?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) |
+| M3x16 Countersunk | Stainless steel countersunk screw | 14-28 | 14-28 | [Amazon](https://www.amazon.de/dp/B0957VNMTS?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) |
+| M3x20 Countersunk | Stainless steel countersunk screw | 2 | 2 | [Amazon](https://www.amazon.de/dp/B09MZPK3KM?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) |
+| M3 Knurled Screw | Stainless steel thumb screw / knurled screw | - | - | [Amazon](https://www.amazon.de/dp/B0CS2XMVBJ?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) |
+| M2x8 Countersunk | Stainless steel countersunk screw | 8 | 8 | [Amazon](https://www.amazon.de/dp/B0957TSYBY?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) |
+| M2x10 Countersunk | Stainless steel countersunk screw | 3 | 3 | [Amazon](https://www.amazon.de/dp/B0957SLZTB?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) |
+| M5x10 Countersunk | Stainless steel countersunk screw | 13-14 | 13-14 | [Amazon](https://www.amazon.de/dp/B08WZZ1HST?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) |
+| M5x16 Countersunk | Stainless steel countersunk screw | 39-62 | 39-62 | [Amazon](https://www.amazon.de/dp/B07NMQSNYM?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) |
+| M5x25 Cylinder Head | Stainless steel cylinder head screw | 3 | 3 | [Amazon](https://www.amazon.de/dp/B07PVKRPQR?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) |
+| M5x30 Cylinder Head | Stainless steel cylinder head screw | 4 | 4 | [Amazon](https://www.amazon.de/dp/B07FN1GNPD?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) |
+| M5x35 Cylinder Head | Stainless steel cylinder head screw | 4 | 4 | [Amazon](https://www.amazon.de/dp/B07PXL231X?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) |
+| M5x40 Cylinder Head | Stainless steel cylinder head screw | - | - | [Amazon](https://www.amazon.de/dp/B07NMRPFC1?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) |
+| M5x45 Cylinder Head | Stainless steel cylinder head screw | 6-7 | 6-7 | [Amazon](https://www.amazon.de/dp/B07NMRPHC7?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) |
+| M5x85 Cylinder Head | Stainless steel cylinder head screw | - | - | [Amazon](https://www.amazon.de/dp/B07NNMXSP7?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) |
+| M5x95 Cylinder Head | Stainless steel cylinder head screw | 2 | 2 | [Amazon](https://www.amazon.de/dp/B07NNNR2XH?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) |
+| Slot Nut M5 | For T-slot profiles | 55-58 | 55-58 | [Amazon](https://www.amazon.de/dp/B0CR8KSW7K?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) |
+| Self-locking Nut M5 | Anti-vibration | 5 | 5 | [Amazon](https://www.amazon.de/dp/B0BJZCMG1K?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) |
+| Washer 5.2mm | Load distribution | 4 | 4 | [Amazon](https://www.amazon.de/dp/B087RPP8NY?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) |
+| Hose clamps (endless/stainless) | Cable/mechanical fixing | - | - | [Amazon](https://www.amazon.de/dp/B0CQYV4RYJ?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) |
+| Self-drilling Screw 4.8x32 | Auxiliary mounting | - | - | [Amazon](https://www.amazon.de/dp/B08V99X5L8?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) |
+| M12 Cable Gland | Waterproof cable entry | 3-5 | 3-5 | [Amazon](https://www.amazon.de/dp/B085GG8X9M?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Depends on wiring |
+| M16 Cable Gland | Waterproof cable entry | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0CH3KYQY2?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Optional depending on cable set |
+| M3x8 Cylinder Head (ISO 4762) | Stainless steel cylinder head screw | 1 | 1 | [Amazon](https://www.amazon.de/dp/B01IMGYPJU?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) |
+| M5x50 Cylinder Head (DIN 912) | Stainless steel cylinder head screw | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0DQV8ZT82?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) |
+| M5x80 Cylinder Head (DIN 912) | Stainless steel cylinder head screw | 2 | 2 | [Amazon](https://www.amazon.de/dp/B07TD4GKPR?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) |
+| M5x50 Countersunk | Stainless steel countersunk screw | - | 12 | [Amazon](https://www.amazon.de/dp/B0BDZSLHFQ?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) |
+| M5x70 Countersunk | Stainless steel countersunk screw | - | 6 | [Amazon](https://www.amazon.de/dp/B08PNY7Q5T?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) |
+
+
+### 3D Printing Filaments
+
+| Component | Description | Qty | Amazon (DE) | Notes |
+| ---------- | ----------- | ----------- | ----------- | ------- |
+| PETG Filament UV Resistant | Structural weather-exposed prints | 2968 g (S2) / 3553 g (D2) | [Amazon](https://www.amazon.de/dp/B0C6MKZN2B?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Based on total filament from the 3D print parts tables |
+
+
+
+
+### Proprietary / Local Sources
+
+| Component | Description | Qty | Source | Alternative Link |
+| ----------- | ----------- | ----------- | -------- | -------- |
+| Concrete Slab 40x40x5cm | Foundation mass | 4 | Local sourcing | [Bauhaus](https://www.bauhaus.info/betonplatten/diephaus-gehwegplatte/p/29561186) |
+
+---
+
+## 3D printable parts for Sunchronizer D2
+
+### 3D Printing Guidelines
+
+**Filament Type:** Weather and UV-resistant materials, e.g. PETG, ABS, etc.
+
+**Print Settings:**
+
+Each part uses one of two print profiles. The profile is listed in the Strength column of the parts tables below.
+
+- **Strong** — for structural and load-bearing parts:
+  - Layer Thickness: 0.2 mm
+  - Infill Density: 30%
+  - Wall Lines (Perimeters): 6
+- **Standard** — for non-structural covers and enclosures:
+  - Layer Thickness: 0.2 mm
+  - Infill Density: 20%
+  - Wall Lines (Perimeters): 4
+
+**Important Notes:**
+- I highly recommend printing the parts in the already-defined orientation. The defined orientation is intended to maximize the structural integrity of each part.
+- Verify slicing output before printing to ensure adherence to part-specific settings in the tables below.
+
+
+### Sunchronizer S2 - 3D Printed Parts
+
+- **Total print time:** 3 days 20 hours 7 minutes
+- **Total filament:** 2968 g
+
+| Component | Description | Qty | Print Settings | Strength | Required/Optional | Preview |
+| --- | --- | --- | --- | --- | --- | --- |
+| actuator_bottom_base_2060_6000N_actuator_V1.2 | Bottom base for 2060 actuator, 6000N | 1x | 0.2mm layer / 6 outlines / 30% infill | **Strong** | Required | <img src="3d_previews/sunchronizer_s2/actuator_bottom_base_2060_6000N_actuator_V1.2.gif" alt="actuator_bottom_base_2060_6000N_actuator_V1.2" width="120" /> |
+| actuator_top_base_2060_6000N_actuator_V1.1 | Top base for 2060 actuator, 6000N | 1x | 0.2mm layer / 6 outlines / 30% infill | **Strong** | Required | <img src="3d_previews/sunchronizer_s2/actuator_top_base_2060_6000N_actuator_V1.1.gif" alt="actuator_top_base_2060_6000N_actuator_V1.1" width="120" /> |
+| beton_plate_holder_V1.0 | Holder for concrete foundation plates | 3x | 0.2mm layer / 6 outlines / 30% infill | **Strong** | Required | - |
+| bottom_elevation_hinge_left_2060_V1.1 | Left elevation hinge for 2060 profile | 1x | 0.2mm layer / 6 outlines / 30% infill | **Strong** | Required | <img src="3d_previews/sunchronizer_s2/bottom_elevation_hinge_left_2060_V1.1.gif" alt="bottom_elevation_hinge_left_2060_V1.1" width="120" /> |
+| bottom_elevation_hinge_male_2060_V1.0 | Male elevation hinge for 2060 profile | 2x | 0.2mm layer / 6 outlines / 30% infill | **Strong** | Required | <img src="3d_previews/sunchronizer_s2/bottom_elevation_hinge_male_2060_V1.0.gif" alt="bottom_elevation_hinge_male_2060_V1.0" width="120" /> |
+| bottom_elevation_hinge_right_2060_V1.1 | Right elevation hinge for 2060 profile | 1x | 0.2mm layer / 6 outlines / 30% infill | **Strong** | Required | <img src="3d_previews/sunchronizer_s2/bottom_elevation_hinge_right_2060_V1.1.gif" alt="bottom_elevation_hinge_right_2060_V1.1" width="120" /> |
+| bottom_t_cross_connector_2060_V1.2 | T-cross connector for 2060 profile, bottom | 1x | 0.2mm layer / 6 outlines / 30% infill | **Strong** | Required | <img src="3d_previews/sunchronizer_s2/bottom_t_cross_connector_2060_V1.2.gif" alt="bottom_t_cross_connector_2060_V1.2" width="120" /> |
+| cable_holder1_V1.0 | Cable holder type 1 | 1x | 0.2mm layer / 6 outlines / 30% infill | **Strong** | Required | <img src="3d_previews/sunchronizer_s2/cable_holder1_V1.0.gif" alt="cable_holder1_V1.0" width="120" /> |
+| cable_mount_single_V1.0 | Single cable mount | 12x | 0.2mm layer / 6 outlines / 30% infill | **Strong** | Required | <img src="3d_previews/sunchronizer_s2/cable_mount_single_V1.0.gif" alt="cable_mount_single_V1.0" width="120" /> |
+| electronics_box_lid_assembly_V1.0 | Lid assembly for electronics box | 1x | 0.2mm layer / 4 outlines / 20% infill | Standard | Required | - |
+| electronics_housing_base_V1.1 | Base for electronics housing | 1x | 0.2mm layer / 4 outlines / 20% infill | Standard | Required | <img src="3d_previews/sunchronizer_s2/electronics_housing_base_V1.1.gif" alt="electronics_housing_base_V1.1" width="120" /> |
+| elevation_motor_cover_lid_V1.0 | Lid for elevation motor cover | 1x | 0.2mm layer / 4 outlines / 20% infill | Standard | Required | <img src="3d_previews/sunchronizer_s2/elevation_motor_cover_lid_V1.0.gif" alt="elevation_motor_cover_lid_V1.0" width="120" /> |
+| elevation_motor_cover_V1.0 | Cover for elevation motor | 1x | 0.2mm layer / 4 outlines / 20% infill | Standard | Required | <img src="3d_previews/sunchronizer_s2/elevation_motor_cover_V1.0.gif" alt="elevation_motor_cover_V1.0" width="120" /> |
+| panel_clamp_bottom_2060_V1.2 | Bottom clamp for 2060 panel | 1x | 0.2mm layer / 6 outlines / 30% infill | **Strong** | Required | <img src="3d_previews/sunchronizer_s2/panel_clamp_bottom_2060_V1.2.gif" alt="panel_clamp_bottom_2060_V1.2" width="120" /> |
+| panel_clamp_top_2060_V1.2 | Top clamp for 2060 panel | 1x | 0.2mm layer / 6 outlines / 30% infill | **Strong** | Required | <img src="3d_previews/sunchronizer_s2/panel_clamp_top_2060_V1.2.gif" alt="panel_clamp_top_2060_V1.2" width="120" /> |
+| panel_elevation_distancer_V1.0 | Distancer for panel elevation | 1x | 0.2mm layer / 4 outlines / 20% infill | Standard | Required | <img src="3d_previews/sunchronizer_s2/panel_elevation_distancer_V1.0.gif" alt="panel_elevation_distancer_V1.0" width="120" /> |
+| panel_holder_bottom_bottom_clamp_V1.1 | Bottom clamp for panel holder | 2x | 0.2mm layer / 6 outlines / 30% infill | **Strong** | Required | <img src="3d_previews/sunchronizer_s2/panel_holder_bottom_bottom_clamp_V1.1.gif" alt="panel_holder_bottom_bottom_clamp_V1.1" width="120" /> |
+| panel_holder_bottom_top_clamp_center_V1.0 | Center top clamp for panel holder | 1x | 0.2mm layer / 6 outlines / 30% infill | **Strong** | Required | <img src="3d_previews/sunchronizer_s2/panel_holder_bottom_top_clamp_center_V1.0.gif" alt="panel_holder_bottom_top_clamp_center_V1.0" width="120" /> |
+| panel_holder_bottom_top_clamp_V1.1 | Top clamp for panel holder | 2x | 0.2mm layer / 6 outlines / 30% infill | **Strong** | Required | <img src="3d_previews/sunchronizer_s2/panel_holder_bottom_top_clamp_V1.1.gif" alt="panel_holder_bottom_top_clamp_V1.1" width="120" /> |
+| profile_cap_top_V1.0 | Top profile cap | 1x | 0.2mm layer / 6 outlines / 30% infill | **Strong** | Required | <img src="3d_previews/sunchronizer_s2/profile_cap_top_V1.0.gif" alt="profile_cap_top_V1.0" width="120" /> |
+| profile_cap_V1.0 | Profile cap | 1x | 0.2mm layer / 6 outlines / 30% infill | **Strong** | Required | <img src="3d_previews/sunchronizer_s2/profile_cap_V1.0.gif" alt="profile_cap_V1.0" width="120" /> |
+| sensornest_housing_base_V1.3 | Base for sensor nest housing | 1x | 0.2mm layer / 6 outlines / 30% infill | **Strong** | Required | <img src="3d_previews/sunchronizer_s2/sensornest_housing_base_V1.3.gif" alt="sensornest_housing_base_V1.3" width="120" /> |
+| sensornest_housing_cap_V1.1 | Cap for sensor nest housing | 1x | 0.2mm layer / 6 outlines / 30% infill | **Strong** | Required | <img src="3d_previews/sunchronizer_s2/sensornest_housing_cap_V1.1.gif" alt="sensornest_housing_cap_V1.1" width="120" /> |
+| top_t_cross_connector_2060_V1.1 | Top T-cross connector for 2060 profile | 1x | 0.2mm layer / 6 outlines / 30% infill | **Strong** | Required | <img src="3d_previews/sunchronizer_s2/top_t_cross_connector_2060_V1.1.gif" alt="top_t_cross_connector_2060_V1.1" width="120" /> |
+
+### Sunchronizer D2 - 3D Printed Parts
+
+- **Total print time:** 4 days 8 hours 35 minutes
+- **Total filament:** 3553 g
+
+| Component | Description | Qty | Print Settings | Strength | Required/Optional | Preview |
+| --- | --- | --- | --- | --- | --- | --- |
+| azimut_base_hook_V1.0 | Mounting hook for azimuth base | 1x | 0.2mm layer / 6 outlines / 30% infill | **Strong** | Required | <img src="3d_previews/sunchronizer_d2/azimut_base_hook_V1.0.gif" alt="azimut_base_hook_V1.0" width="120" /> |
+| azimut_base_hook_bottom_bearing_holder_V1.0 | Bottom bearing holder for azimuth base hook | 3x | 0.2mm layer / 6 outlines / 30% infill | **Strong** | Required | <img src="3d_previews/sunchronizer_d2/azimut_base_hook_bottom_bearing_holder_V1.0.gif" alt="azimut_base_hook_bottom_bearing_holder_V1.0" width="120" /> |
+| azimut_base_hook_mount_back_V1.0 | Back mounting for azimuth base hook | 1x | 0.2mm layer / 6 outlines / 30% infill | **Strong** | Required | <img src="3d_previews/sunchronizer_d2/azimut_base_hook_mount_back_V1.0.gif" alt="azimut_base_hook_mount_back_V1.0" width="120" /> |
+| azimut_base_hook_mount_sides_V1.0 | Side mount for azimuth base hook | 1x | 0.2mm layer / 6 outlines / 30% infill | **Strong** | Required | <img src="3d_previews/sunchronizer_d2/azimut_base_hook_mount_sides_V1.0.gif" alt="azimut_base_hook_mount_sides_V1.0" width="120" /> |
+| azimut_base_hook_mount_sides_V1.0_MIR | Mirrored side mount for azimuth base hook | 1x | 0.2mm layer / 6 outlines / 30% infill | **Strong** | Required | <img src="3d_previews/sunchronizer_d2/azimut_base_hook_mount_sides_V1.0_MIR.gif" alt="azimut_base_hook_mount_sides_V1.0_MIR" width="120" /> |
+| azimuth_gear_box_dual_gear_V1.0 | Dual gear for azimuth gearbox | 1x | 0.2mm layer / 6 outlines / 30% infill | **Strong** | Required | <img src="3d_previews/sunchronizer_d2/azimuth_gear_box_dual_gear_V1.0.gif" alt="azimuth_gear_box_dual_gear_V1.0" width="120" /> |
+| azimuth_motor_mount_V1.2 | Motor mount for azimuth axis | 1x | 0.2mm layer / 4 outlines / 20% infill | Standard | Required | <img src="3d_previews/sunchronizer_d2/azimuth_motor_mount_V1.2.gif" alt="azimuth_motor_mount_V1.2" width="120" /> |
+| azimuth_motor_mount_adapter_plate_V1.0 | Adapter plate for azimuth motor mount | 1x | 0.2mm layer / 6 outlines / 30% infill | **Strong** | Required | <img src="3d_previews/sunchronizer_d2/azimuth_motor_mount_adapter_plate_V1.0.gif" alt="azimuth_motor_mount_adapter_plate_V1.0" width="120" /> |
+| azimuth_motor_mount_cover_V1.0 | Cover for azimuth motor mount | 1x | 0.2mm layer / 6 outlines / 30% infill | **Strong** | Required | <img src="3d_previews/sunchronizer_d2/azimuth_motor_mount_cover_V1.0.gif" alt="azimuth_motor_mount_cover_V1.0" width="120" /> |
+| azimuth_motor_mount_gear_support_V1.2 | Gear support for azimuth motor mount | 1x | 0.2mm layer / 6 outlines / 30% infill | **Strong** | Required | <img src="3d_previews/sunchronizer_d2/azimuth_motor_mount_gear_support_V1.2.gif" alt="azimuth_motor_mount_gear_support_V1.2" width="120" /> |
+| base_ring_endstop_blocker_V1.2 | Endstop blocker for base ring | 1x | 0.2mm layer / 6 outlines / 30% infill | **Strong** | Required | <img src="3d_previews/sunchronizer_d2/base_ring_endstop_blocker_V1.2.gif" alt="base_ring_endstop_blocker_V1.2" width="120" /> |
+| base_ring_endstop_blocker_V1.2_MIR | Mirrored endstop blocker for base ring | 1x | 0.2mm layer / 6 outlines / 30% infill | **Strong** | Required | <img src="3d_previews/sunchronizer_d2/base_ring_endstop_blocker_V1.2_MIR.gif" alt="base_ring_endstop_blocker_V1.2_MIR" width="120" /> |
+| base_ring_gear_V1.0 | Gear for base ring | 6x | 0.2mm layer / 6 outlines / 30% infill | **Strong** | Required | <img src="3d_previews/sunchronizer_d2/base_ring_gear_V1.0.gif" alt="base_ring_gear_V1.0" width="120" /> |
+| base_ring_gearbox_gear_1_V1.0 | Gear 1 for base ring gearbox | 1x | 0.2mm layer / 6 outlines / 30% infill | **Strong** | Required | <img src="3d_previews/sunchronizer_d2/base_ring_gearbox_gear_1_V1.0.gif" alt="base_ring_gearbox_gear_1_V1.0" width="120" /> |
+| base_ring_gearbox_gear_4_V1.0 | Gear 4 for base ring gearbox | 1x | 0.2mm layer / 6 outlines / 30% infill | **Strong** | Required | <img src="3d_previews/sunchronizer_d2/base_ring_gearbox_gear_4_V1.0.gif" alt="base_ring_gearbox_gear_4_V1.0" width="120" /> |
+| base_ring_segment_V1.2 | Segment for base ring | 7x | 0.2mm layer / 4 outlines / 20% infill | Standard | Required | <img src="3d_previews/sunchronizer_d2/base_ring_segment_V1.2.gif" alt="base_ring_segment_V1.2" width="120" /> |
+| base_ring_south_direction_indicator_V1.0 | South direction indicator for base ring | 1x | 0.2mm layer / 6 outlines / 30% infill | **Strong** | Required | <img src="3d_previews/sunchronizer_d2/base_ring_south_direction_indicator_V1.0.gif" alt="base_ring_south_direction_indicator_V1.0" width="120" /> |
+| endstop_switch_holder_V1.3 | Holder for endstop switch | 1x | 0.2mm layer / 4 outlines / 20% infill | Standard | Required | <img src="3d_previews/sunchronizer_d2/endstop_switch_holder_V1.3.gif" alt="endstop_switch_holder_V1.3" width="120" /> |
+| endstop_switch_holder_cap_V1.1 | Cap for endstop switch holder | 1x | 0.2mm layer / 6 outlines / 30% infill | **Strong** | Required | <img src="3d_previews/sunchronizer_d2/endstop_switch_holder_cap_V1.1.gif" alt="endstop_switch_holder_cap_V1.1" width="120" /> |
+| ring_protection_cover_center_V1.1 | Center protection cover for ring | 1x | 0.2mm layer / 4 outlines / 20% infill | Standard | Required | <img src="3d_previews/sunchronizer_d2/ring_protection_cover_center_V1.1.gif" alt="ring_protection_cover_center_V1.1" width="120" /> |
+| ring_protection_cover_side_V1.1 | Side protection cover for ring | 1x | 0.2mm layer / 4 outlines / 20% infill | Standard | Required | <img src="3d_previews/sunchronizer_d2/ring_protection_cover_side_V1.1.gif" alt="ring_protection_cover_side_V1.1" width="120" /> |
+| ring_protection_cover_side_V1.1_MIR | Mirrored side protection cover for ring | 1x | 0.2mm layer / 4 outlines / 20% infill | Standard | Required | <img src="3d_previews/sunchronizer_d2/ring_protection_cover_side_V1.1_MIR.gif" alt="ring_protection_cover_side_V1.1_MIR" width="120" /> |
+
+
+**Last Updated**: March 2026
+
 
 

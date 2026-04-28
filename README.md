@@ -17,7 +17,7 @@
 
 ## 🎯 Introduction
 
-Working with balcony power plants in Germany, I wondered how to maximize solar panel efficiency. The solution: **Sunchronizer** – a fully automated, 3D-printable solar tracker available in single-axis (S1) and dual-axis (D1) configurations.
+Working with balcony power plants in Germany, I wondered how to maximize solar panel efficiency. The solution: **Sunchronizer** – a fully automated, 3D-printable solar tracker available in single-axis and dual-axis configurations.
 
 The system uses a **linear actuator** and **geared motor** to continuously orient your solar panels toward the sun, significantly improving daily energy yield.
 
@@ -33,9 +33,9 @@ The system uses a **linear actuator** and **geared motor** to continuously orien
 
 | Model | Capability | Best For |
 |-------|-----------|----------|
-| **S1** | Elevation angle tracking (single-axis, 1st generation) | Simpler installations, fixed azimuth |
+| ~~**S1**~~ ⚠️ (deprecated) | ~~Elevation angle tracking (single-axis, 1st generation)~~ | ~~Simpler installations, fixed azimuth~~ — **deprecated**, use **S2** instead |
 | **S2** | Elevation angle tracking (single-axis, 2nd generation) | Refined single-axis builds with lower complexity |
-| **D1** | Elevation + azimuth tracking (dual-axis, 1st generation) | Full dual-axis tracking for flexible installations |
+| ~~**D1**~~ ⚠️ (deprecated) | ~~Elevation + azimuth tracking (dual-axis, 1st generation)~~ | ~~Full dual-axis tracking for flexible installations~~ — **deprecated**, use **D2** instead |
 | **D2** | Elevation + azimuth tracking (dual-axis, 2nd generation) | Maximum efficiency, most refined dual-axis variant |
 
 ---
@@ -75,10 +75,9 @@ The system uses a **linear actuator** and **geared motor** to continuously orien
 
 | Sensor | Purpose | Details |
 |--------|---------|---------|
-| **BNO085 IMU** | Elevation angle measurement | 9-DOF accelerometer, gyro, magnetometer |
+| **BNO085 IMU** | Elevation & Heading angle measurement | 9-DOF accelerometer, gyro, magnetometer |
 | **DS3231 RTC** | Precise timekeeping | Independent of network connection |
 | **GPS Module** (optional) | Position & time retrieval | Enables standalone operation |
-| **Magnetometer/Compass** | Heading verification | Ensures correct azimuth orientation |
 
 ### Controls
 - **UP/CCW Button** - Lift panel or rotate counter-clockwise
@@ -93,11 +92,11 @@ The system uses a **linear actuator** and **geared motor** to continuously orien
 
 STL files and detailed build information available at:
 
-| Variant | NERDIY.DE | Printables | Cults |
+| Variant | Nerdiy.de | Printables.com | Cults3d.com |
 |---------|-----------|------------|--------|
-| **Sunchronizer S1** (single-axis, 1st gen) | [NERDIY.DE](https://nerdiy.de/en/product-2/sunchronizer-s1-400w-solartracker-fuer-elevation-achse-3d-druckbar-stl-dateien/) | — | — |
+| ~~**Sunchronizer S1**~~ ⚠️ (single-axis, 1st gen — **deprecated**, use S2) | [NERDIY.DE](https://nerdiy.de/en/product-2/sunchronizer-s1-400w-solartracker-fuer-elevation-achse-3d-druckbar-stl-dateien/) | — | — |
 | **Sunchronizer S2** (single-axis, 2nd gen) | — | [Printables](https://www.printables.com/model/1574048-sunchronizer-s2-400w-module-solartracker-for-eleva) | [Cults](https://cults3d.com/de/modell-3d/gadget/sunchronizer-s2-400w-module-solartracker-for-elevation-axis-by-nerdiy-de-new) |
-| **Sunchronizer D1** (dual-axis, 1st gen) | [NERDIY.DE](https://nerdiy.de/en/product-2/sunchronizer-d1-dual-axis-solartracker-fuer-azimut-und-elevation-achse-3d-druckbar-stl-dateien/) | — | — |
+| ~~**Sunchronizer D1**~~ ⚠️ (dual-axis, 1st gen — **deprecated**, use D2) | [NERDIY.DE](https://nerdiy.de/en/product-2/sunchronizer-d1-dual-axis-solartracker-fuer-azimut-und-elevation-achse-3d-druckbar-stl-dateien/) | — | — |
 | **Sunchronizer D2** (dual-axis, 2nd gen) | — | [Printables](https://www.printables.com/model/1574049-sunchronizer-d2-400w-module-solartracker-for-eleva) | [Cults](https://cults3d.com/de/modell-3d/gadget/sunchronizer-d2-400w-module-solartracker-for-elevation-azimuth-axis-by-nerdi) |
 
 ---
@@ -144,7 +143,7 @@ Every coffee helps fund research, development, and documentation! ☕
 ## 📸 Gallery
 
 <details>
-<summary><strong>Sunchronizer S1 (Single-Axis)</strong></summary>
+<summary><strong>~~Sunchronizer S1 (Single-Axis)~~ ⚠️ deprecated — use S2 instead</strong></summary>
 
 ![](https://github.com/Nerdiyde/Sunchronizer/blob/main/pictures/S1/mark1/anotations/11.png)
 
@@ -157,7 +156,7 @@ Every coffee helps fund research, development, and documentation! ☕
 </details>
 
 <details>
-<summary><strong>Sunchronizer D1 (Dual-Axis)</strong></summary>
+<summary><strong>~~Sunchronizer D1 (Dual-Axis)~~ ⚠️ deprecated — use D2 instead</strong></summary>
 
 *Coming soon — photos and technical drawings to be added.*
 
@@ -176,43 +175,6 @@ Every coffee helps fund research, development, and documentation! ☕
 *Coming soon — photos and technical drawings to be added.*
 
 </details>
-
----
-
-## 📋 Directory Structure
-
-```
-Sunchronizer/
-├── README.md                           # This file - Project overview
-├── firmware/                           # Firmware documentation & configuration
-│   ├── README.md                       # Firmware guide & quick start
-│   ├── binaries/                       # Optional local/CI output folder
-│   │   └── [latest downloadable binaries are attached to Releases]
-│   └── config/                         # ESPHome YAML configuration files
-│       ├── pcb_v1.3/                   # Configuration for PCB v1.3
-│       │   ├── README.md               # v1.3 configuration documentation
-│       │   ├── sunchronizer_firmware_pcb_v1.3.yaml
-│       │   └── secrets.yaml            # WiFi & API credentials (use secrets.yaml.example as template)
-│       └── [other PCB versions...]
-├── docu/                               # Documentation & technical resources
-│   ├── cable_plan/                     # Wiring diagrams & BOMs
-│   │   ├── pcb_v1.3/                   # v1.3 wiring documentation
-│   │   └── pcb_v1.4/                   # v1.4 wiring documentation
-│   ├── diagrams/                       # System architecture diagrams
-│   └── datasheets/                     # Component datasheets
-├── pictures/                           # Photos & technical drawings
-│   ├── S1/                             # Single-axis tracker photos
-│   │   ├── mark1/                      # Original prototype
-│   │   ├── technical_drawings/         # CAD drawings
-│   │   └── GIFs/                       # Animated demonstrations
-│   ├── D1/                             # Dual-axis tracker photos
-│   │   └── technical_drawings/
-│   ├── D2/                             # Variant photos
-│   ├── PCBs/                           # PCB images & layouts
-│   │   └── v1.3/
-│   └── testbench/                      # Testing setup photos
-└── .github/                            # GitHub workflows & CI/CD configuration
-```
 
 ---
 
@@ -246,15 +208,6 @@ All firmware configuration files and software code are licensed under:
 
 - [AGPL Summary (TLDR)](https://tldrlegal.com/license/gnu-affero-general-public-license-v3-(agpl-3.0)#summary)
 - [AGPL Full Legal Text (German)](https://www.gnu.org/licenses/agpl-3.0.de.html)
-
----
-
-## 👨‍💻 Contributing
-
-Contributions are welcome! For bug reports, feature requests, or improvements:
-1. Check the [GitHub Issues](https://github.com/Nerdiyde/Sunchronizer/issues)
-2. Review the [Wiki](https://github.com/Nerdiyde/Sunchronizer/wiki) for existing solutions
-3. Create a new issue or pull request
 
 ---
 

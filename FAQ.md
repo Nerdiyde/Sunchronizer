@@ -1,4 +1,4 @@
-# Sunchronizer — Frequently Asked Questions
+﻿# Sunchronizer — Frequently Asked Questions
 
 This document answers common questions from users and developers about the Sunchronizer project.
 
@@ -35,9 +35,9 @@ However, Home Assistant integration adds convenience and monitoring capabilities
 
 | Variant | Axes | Generation | Best For |
 |---------|------|------------|----------|
-| **S1** | Elevation only | 1st gen | Simple installs, fixed azimuth |
+| ~~**S1**~~ ⚠️ (deprecated) | ~~Elevation only~~ | ~~1st gen~~ | ~~Simple installs, fixed azimuth~~ — **deprecated**, use **S2** |
 | **S2** | Elevation only | 2nd gen | Improved single-axis, lower complexity |
-| **D1** | Elevation + Azimuth | 1st gen | Full dual-axis tracking |
+| ~~**D1**~~ ⚠️ (deprecated) | ~~Elevation + Azimuth~~ | ~~1st gen~~ | ~~Full dual-axis tracking~~ — **deprecated**, use **D2** |
 | **D2** | Elevation + Azimuth | 2nd gen | Maximum efficiency, production-ready |
 
 **Performance:** Dual-axis (D1/D2) yields **~12-15% more energy** than single-axis (S1/S2) over a full day.
@@ -66,11 +66,11 @@ However, Home Assistant integration adds convenience and monitoring capabilities
 
 **A:** STL files are available for purchase on the official store:
 
-| Variant | NERDIY.DE | Printables | Cults |
+| Variant | Nerdiy.de | Printables | Cults |
 |---------|-----------|------------|--------|
-| **Sunchronizer S1** (single-axis, 1st gen) | [NERDIY.DE](https://nerdiy.de/en/product-2/sunchronizer-s1-400w-solartracker-fuer-elevation-achse-3d-druckbar-stl-dateien/) | — | — |
+| ~~**Sunchronizer S1**~~ ⚠️ (single-axis, 1st gen — **deprecated**, use S2) | [Nerdiy.de](https://nerdiy.de/en/product-2/sunchronizer-s1-400w-solartracker-fuer-elevation-achse-3d-druckbar-stl-dateien/) | — | — |
 | **Sunchronizer S2** (single-axis, 2nd gen) | — | [Printables](https://www.printables.com/model/1574048-sunchronizer-s2-400w-module-solartracker-for-eleva) | [Cults](https://cults3d.com/de/modell-3d/gadget/sunchronizer-s2-400w-module-solartracker-for-elevation-axis-by-nerdiy-de-new) |
-| **Sunchronizer D1** (dual-axis, 1st gen) | [NERDIY.DE](https://nerdiy.de/en/product-2/sunchronizer-d1-dual-axis-solartracker-fuer-azimut-und-elevation-achse-3d-druckbar-stl-dateien/) | — | — |
+| ~~**Sunchronizer D1**~~ ⚠️ (dual-axis, 1st gen — **deprecated**, use D2) | [Nerdiy.de](https://nerdiy.de/en/product-2/sunchronizer-d1-dual-axis-solartracker-fuer-azimut-und-elevation-achse-3d-druckbar-stl-dateien/) | — | — |
 | **Sunchronizer D2** (dual-axis, 2nd gen) | — | [Printables](https://www.printables.com/model/1574049-sunchronizer-d2-400w-module-solartracker-for-eleva) | [Cults](https://cults3d.com/de/modell-3d/gadget/sunchronizer-d2-400w-module-solartracker-for-elevation-azimuth-axis-by-nerdi) |
 
 The STL files include a complete bill of materials and assembly instructions.
@@ -92,7 +92,7 @@ The STL files include a complete bill of materials and assembly instructions.
 
 ### Q: I'm interested in building the Sunchronizer D2. What do the STL files include? Do I get assembly instructions, component lists, and PDFs?
 
-**A:** The **product files** available on [NERDIY.DE](https://nerdiy.de/) and [Printables](https://www.printables.com/) include:
+**A:** The **product files** available on [Nerdiy.de](https://nerdiy.de/) and [Printables](https://www.printables.com/) include:
 
 ✅ **What's Included:**
 - All STL files (3D-printable parts) for D2/D1 variants
@@ -110,7 +110,7 @@ The STL files include a complete bill of materials and assembly instructions.
 - [Full Wiki](https://github.com/Nerdiyde/Sunchronizer/wiki) — detailed technical documentation
 
 **Recommendation:**
-1. **Purchase the STL files** from [NERDIY.DE](https://nerdiy.de/) or [Printables](https://www.printables.com/) — includes assembly PDFs
+1. **Purchase the STL files** from [Nerdiy.de](https://nerdiy.de/) or [Printables](https://www.printables.com/) — includes assembly PDFs
 2. **Alternative marketplace links:** S2 and D2 are also available on [Cults3D](https://cults3d.com/)
 3. **Review this GitHub repo** — additional documentation, measurement data, and firmware guides
 4. **Check the [Wiki](https://github.com/Nerdiyde/Sunchronizer/wiki)** — answers common assembly questions
@@ -478,7 +478,7 @@ Without Home Assistant, the system still operates fully — WiFi integration is 
 
 **A:** The main places to connect:
 1. **[GitHub Issues](https://github.com/Nerdiyde/Sunchronizer/issues)** — bug reports, feature requests, questions
-2. **[NERDIY.DE Blog](https://nerdiy.de/)** — project blog, store, and community discussions
+2. **[Nerdiy.de Blog](https://nerdiy.de/)** — project blog, store, and community discussions
 3. **[ESPHome Community Forums](https://community.home-assistant.io/)** — broad general smart-home support
 
 ---
@@ -528,7 +528,7 @@ Without Home Assistant, the system still operates fully — WiFi integration is 
 - ❌ No commercial use
 - ❌ Derivatives must use the same license
 
-**Recommendation:** For questions about commercial use beyond these terms, contact the project author at [NERDIY.DE](https://nerdiy.de/).
+**Recommendation:** For questions about commercial use beyond these terms, contact the project author at [Nerdiy.de](https://nerdiy.de/).
 
 ---
 
