@@ -122,6 +122,22 @@ You will have **everything needed** to successfully assemble your tracker! 🚀
 
 ## Hardware & Construction
 
+### Q: What are the possible mounting options for fixing the tracker to concrete base weight/slabs?
+
+**A:** There are two supported mounting methods for concrete-based installations:
+
+1. **Method 1 (S2 only):**
+   Mount using an endless stainless hose clamp that runs around both the aluminum profile and the concrete weight.
+   This method uses a dedicated 3D-printed holder to guide and secure the clamp path.
+
+2. **Method 2 (mandatory for D2, optional for S2):**
+   Drill into the concrete slab/paving stone and fix the tracker with concrete anchors.
+   For D2, this is the only supported mounting method.
+
+See also the [Bill of Materials (BOM)](bom/BOM.md). The required material for both mounting methods is listed there, including quantities and links.
+
+---
+
 ### Q: Will the construction support a 500W solar panel?
 ### (Dimensions: 1960 × 1134 × 30 mm, Weight: ~ 26.6 kg)
 

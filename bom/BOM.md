@@ -31,9 +31,12 @@ Please note:
 | 3D Printer | FDM printer for structural parts | - | - | [Prusa3D](https://www.prusa3d.com/de/#a_aid=Nerdiy) |
 | Screwdriver Set | Multi-size, magnetic | - | [Amazon](https://www.amazon.de/dp/B086SQZGLJ?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | - |
 | Soldering Iron | Temperature controlled | - | [Amazon](https://www.amazon.de/dp/B0D5M727WM?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | - |
+| Solder Wire | Lead-free solder wire | - | [Amazon](https://www.amazon.de/dp/B07Z7BVKXQ?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | - |
 | Heat Shrink Tubing Set | Assorted shrink tubing for cable insulation and strain relief | - | [Amazon](https://www.amazon.de/dp/B071D7LJ31?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | - |
 | Cordless Screwdriver | Battery-powered | - | [Amazon](https://www.amazon.de/dp/B015WGDX6E?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | - |
 | Bit Set | Various sizes | - | [Amazon](https://www.amazon.de/dp/B0097DYZHK?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | - |
+| 6 mm Masonry Drill Bit | Stone/concrete drill bit for anchor hole | - | [Amazon](https://www.amazon.de/dp/B00141B3UA?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Only needed for drilling the hole in the concrete slab; see also the [Concrete Slab Anchoring](#method-2-s2-optional-d2-required-concrete-slab-anchoring) section below for more details |
+| Drill Machine | Power drill for concrete slab hole drilling | - | [Amazon](https://www.amazon.de/dp/B092ZNHV8K?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Only needed for drilling the hole in the concrete slab; see also the [Concrete Slab Anchoring](#method-2-s2-optional-d2-required-concrete-slab-anchoring) section below for more details |
 | Pointed Pliers | Precision work | - | [Amazon](https://www.amazon.de/dp/B0001P0BZS?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | - |
 
 
@@ -44,6 +47,7 @@ Please note:
 | Linear Actuator 250mm 6000N | Elevation axis actuator | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0CWN77CGW?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required |
 | USB-C PD Cable | 60W rated | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0832DC7W8?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required |
 | Waterproof Pushbutton 12mm | Manual controls | 2 | 2 | [Amazon](https://www.amazon.de/dp/B08L49F7DV?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required |
+| BN-220 Dual GPS GLONASS Module | Position/time source | 1 (opt.) | 1 (opt.) | [Amazon](https://www.amazon.de/dp/B07PRDY6DS?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Optional; Datasheet: [BN-220](../docu/datasheets/BN-220_GPS_sensor.pdf) |
 | JGY-370 motor 12V (~5 RPM recommended) | D2 azimuth drive motor | - | 1 | [Amazon](https://www.amazon.de/dp/B0G6MP823F?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | D2 azimuth axis; firmware timing must match motor speed; use a D-shaped 8 mm shaft |
 | Omron V-156-1C25 switch | D2 azimuth endstop switch | - | 2 | [Amazon](https://www.amazon.de/dp/B0BN143PRT?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | D2 azimuth endstop switches |
 
@@ -55,23 +59,31 @@ The following components are the required parts for PCB version 1.4. The require
 | Component | Description | Qty S2 | Qty D2 | Amazon (DE) | Notes |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------- |
 | Control electronics PCB (pcb_control_electronics_V1.0) | Custom control PCB for S2 | 1 | Soon available on Nerdiy.de | - | Required for PCB v1.4 |
-| Seeed Studio XIAO ESP32-S3 | MCU ESP32-S3 | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0BYSB66S5?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required for PCB v1.4 |
-| SD13 2-pin connector | PCB connector | 3 | 3 | [Amazon](https://www.amazon.de/dp/B0893C63BQ?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required for PCB v1.4 |
-| SD13 3-pin connector | PCB connector | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0894RMWRG?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required for PCB v1.4 |
-| SD13 6-pin connector | PCB connector | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0893C6Q86?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required for PCB v1.4 |
-| JST-XH 2-pin plug | PCB/internal connector | 3 | 3 | - | Matching 2-pin JST-XH plug for PCB v1.4 |
-| JST-XH 2-pin socket | PCB/internal connector | 3 | 3 | - | Matching 2-pin JST-XH socket for PCB v1.4 |
-| JST-XH 3-pin plug | PCB/internal connector | 1 | 1 | - | Matching 3-pin JST-XH plug for PCB v1.4 |
-| JST-XH 3-pin socket | PCB/internal connector | 1 | 1 | - | Matching 3-pin JST-XH socket for PCB v1.4 |
-| JST-XH 6-pin plug | PCB/internal connector | 1 | 1 | - | Matching 6-pin JST-XH plug for PCB v1.4 |
-| JST-XH 6-pin socket | PCB/internal connector | 1 | 1 | - | Matching 6-pin JST-XH socket for PCB v1.4 |
-| 2-pin cable | Cable assembly, details TBD | - | - | - | Placeholder entry for later specification |
-| 3-pin cable | Cable assembly, details TBD | - | - | - | Placeholder entry for later specification |
-| 6-pin cable | Cable assembly, details TBD | - | - | - | Placeholder entry for later specification |
+| Seeed Studio XIAO ESP32-S3 | MCU ESP32-S3 | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0BYSB66S5?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required for PCB v1.4; Datasheet: [ESP32-S3](../docu/datasheets/ESP32-S3_mcu.pdf) |
+| DS3231 RTC Module | Real-time clock module | 1 | 1 | [Amazon](https://www.amazon.de/dp/B09KZDD3B9?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required for PCB v1.4; allows the electronics to keep track of the current time even without a network connection; Datasheet: [DS3231](../docu/datasheets/DS3231_real_time_clock.pdf) |
+| INA219 Current/Voltage Sensor | Current and bus-voltage measurement sensor | 2 | 2 | [Amazon](https://www.amazon.de/dp/B0DJX8VPLT?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required for PCB v1.4; used to measure motor currents and voltages; Datasheet: [INA219](../docu/datasheets/INA219_current_voltage_sensor.pdf) |
+| TA6568 H-Bridge Driver | H-bridge motor driver module | 2 | 2 | - | Required for PCB v1.4; Datasheet: [TA6568](../docu/datasheets/TA6568_h-bridge.pdf) |
+| MCP23017 I/O Expander incl. Socket | I2C GPIO expander with matching socket | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0867L1HT6?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required for PCB v1.4 |
+| 8-pin DIP Socket | Through-hole IC socket (DIP-8) | 2 | 2 | [Amazon](https://www.amazon.de/dp/B0DWJHN1K2?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required for PCB v1.4; used to mount the TA6568 H-bridge drivers on the PCB |
+| Step-down Converter 12V to 5V (fixed) | DC-DC converter for fixed 12V to 5V conversion | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0D2XCPNC2?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required for PCB v1.4; generates the 5V supply voltage for the MCU, LEDs, and the PCB from the 12V input voltage |
+| SD13 2-pin connector | PCB connector | 3 | 3 | [Amazon](https://www.amazon.de/dp/B0893C63BQ?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required for PCB v1.4; external connectors for connecting motors, sensors, and switches to the electronics housing |
+| SD13 3-pin connector | PCB connector | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0894RMWRG?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required for PCB v1.4; external connectors for connecting motors, sensors, and switches to the electronics housing |
+| SD13 6-pin connector | PCB connector | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0893C6Q86?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required for PCB v1.4; external connectors for connecting motors, sensors, and switches to the electronics housing |
+| JST-XH 2-pin plug | PCB/internal connector | 5 | 5 | [Amazon](https://www.amazon.de/dp/B07YKHV46N?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Matching 2-pin JST-XH plug for PCB v1.4; pre-assembled with cable, min. 10 cm |
+| JST-XH 2-pin socket | PCB/internal connector | 5 | 5 | [Amazon](https://www.amazon.de/dp/B07YKHV46N?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Matching 2-pin JST-XH socket for PCB v1.4; pre-assembled with cable, min. 10 cm |
+| JST-XH 3-pin plug | PCB/internal connector | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0BPP9L5XG?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Matching 3-pin JST-XH plug for PCB v1.4; pre-assembled with cable, min. 10 cm |
+| JST-XH 3-pin socket | PCB/internal connector | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0BPP9L5XG?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Matching 3-pin JST-XH socket for PCB v1.4; pre-assembled with cable, min. 10 cm |
+| JST-XH 6-pin plug | PCB/internal connector | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0CBX12X62?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Matching 6-pin JST-XH plug for PCB v1.4; pre-assembled with cable, min. 10 cm |
+| JST-XH 6-pin socket | PCB/internal connector | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0CBX12X62?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Matching 6-pin JST-XH socket for PCB v1.4; pre-assembled with cable, min. 10 cm |
+| 2-pin cable (power supply) | 2-core cable, 0.25 mm2 | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0C14MVZ8F?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Cut to installation length; for D2 use at least 2.0 m to allow azimuth-axis rotation. Cable plan: [README](https://github.com/Nerdiyde/Sunchronizer/blob/main/docu/cable_plan/README.md) |
+| 2-pin cable (azimuth motor) | 2-core cable, 0.25 mm2, 1.5 m | - | 1 | [Amazon](https://www.amazon.de/dp/B0C14MVZ8F?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Connects control electronics to azimuth-axis motor. Cable plan: [README](https://github.com/Nerdiyde/Sunchronizer/blob/main/docu/cable_plan/README.md) |
+| 2-pin cable (elevation motor) | 2-core cable, 0.25 mm2, 0.8 m | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0C14MVZ8F?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Connects control electronics to elevation-axis motor. Cable plan: [README](https://github.com/Nerdiyde/Sunchronizer/blob/main/docu/cable_plan/README.md) |
+| 3-pin cable (azimuth endstops) | 3-core cable, 0.25 mm2, 0.75 m | - | 1 | [Amazon](https://www.amazon.de/dp/B0G9251H8S?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Connects control electronics to azimuth endstops. Cable plan: [README](https://github.com/Nerdiyde/Sunchronizer/blob/main/docu/cable_plan/README.md) |
+| 6-pin cable (sensornest) | 6-core cable, 0.25 mm2, 2.3 m | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0CWKZ8CVD?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Connects control electronics to sensornest (BNO085 and optional GPS/GNSS module). Cable plan: [README](https://github.com/Nerdiyde/Sunchronizer/blob/main/docu/cable_plan/README.md) |
 | WS2812 Pixel 20mm | Addressable RGB status pixel | 1 | 1 | - | Required for PCB v1.4 |
-| RF Koaxial Pigtail cable U.FL to RP-SMA | RF connector assembly kit | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0DZ5WM37M?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required for PCB v1.4 |
-| Mini Wifi antenna | Wifi antenna | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0CR5JPMNX?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required for PCB v1.4 |
-| BNO085 9DOF IMU | IMU sensor | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0GHNRV4KD?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required for PCB v1.4 |
+| RF Koaxial Pigtail cable U.FL to RP-SMA | RF connector assembly kit | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0DZ5WM37M?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required for PCB v1.4; together with the mini WiFi antenna, this cable routes the ESP32-S3 internal antenna signal to the outside of the enclosure |
+| Mini Wifi antenna | Wifi antenna | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0CR5JPMNX?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required for PCB v1.4; together with the U.FL pigtail cable, this antenna routes the ESP32-S3 internal antenna signal to the outside of the enclosure |
+| BNO085 9DOF IMU | IMU sensor | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0GHNRV4KD?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required for PCB v1.4; measures the panel elevation angle and detects the panel orientation (compass heading); features built-in self-calibration; Datasheet: [BNO085](../docu/datasheets/BNO085_9_axis_IMU.pdf) |
 
 
 ### Ball Bearings
@@ -147,7 +159,29 @@ Wooden profiles can be used as an alternative to the aluminum profiles above. Ke
 | M5x50 Cylinder Head (DIN 912) | Stainless steel cylinder head screw | 1 | 1 | [Amazon](https://www.amazon.de/dp/B0DQV8ZT82?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) |
 | M5x80 Cylinder Head (DIN 912) | Stainless steel cylinder head screw | 2 | 2 | [Amazon](https://www.amazon.de/dp/B07TD4GKPR?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) |
 | M5x50 Countersunk | Stainless steel countersunk screw | - | 12 | [Amazon](https://www.amazon.de/dp/B0BDZSLHFQ?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) |
-| M5x70 Countersunk | Stainless steel countersunk screw | - | 6 | [Amazon](https://www.amazon.de/dp/B08PNY7Q5T?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) |
+
+
+### Concrete Base Mounting Materials
+
+Two mounting methods are possible for fixing the Sunchronizer to concrete base elements:
+- Method 1 (S2 only): large hose clamp running around the aluminum profile and the concrete weight, using a dedicated 3D-printed holder
+- Method 2 (mandatory for D2): drill into the slab and fix with concrete anchors
+
+For Sunchronizer D2, the concrete-anchor method is the only supported method.
+
+#### Method 1 (S2 only): Hose Clamp Around Aluminum Profile + Concrete Weight
+
+| Component | Description | Qty S2 | Qty D2 | Amazon (DE) | Notes |
+| ----------- | ----------- | ----------- | ----------- | ----------- | ------- |
+| Large hose clamp (for concrete weight mounting) | Endless stainless hose clamp strap for wrapping around aluminum profile and concrete weight | approx. 50 m | - | [Amazon](https://www.amazon.de/dp/B0CQYV4RYJ?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Only suitable for S2 |
+| Dedicated 3D-printed holder for method 1 | Special printed holder guiding/fixing the hose clamp path around profile and weight | 1 set | - | - | Print locally; method-1 specific part |
+
+#### Method 2 (S2 optional, D2 required): Concrete Slab Anchoring
+
+| Component | Description | Qty S2 | Qty D2 | Amazon (DE) | Notes |
+| ----------- | ----------- | ----------- | ----------- | ----------- | ------- |
+| Concrete anchor set (anchor + matching screw/washer) | Fixing through drilled slab hole into concrete | 8 (optional) | 8 (required) | [Amazon](https://www.amazon.de/dp/B0BGJK2B9Z?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Required for D2; mounting on concrete slab/paving stone needs 8 anchors |
+| M5x70 Countersunk | Stainless steel countersunk screw for slab anchoring setup | 8 (optional) | 8 (required) | [Amazon](https://www.amazon.de/dp/B08PNY7Q5T?tag=nerdiyde018-21&linkCode=ogi&th=1&psc=1) | Used with method 2 concrete slab anchoring |
 
 
 ### 3D Printing Filaments

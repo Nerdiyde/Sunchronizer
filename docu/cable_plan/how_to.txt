@@ -1,2 +1,0 @@
-This cable plan is generated using wireviz (https://github.com/wireviz/WireViz)
-Run "wireviz xxx.yaml" to convert the .yaml file to cable plan.

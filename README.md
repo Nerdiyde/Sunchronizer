@@ -94,9 +94,9 @@ STL files and detailed build information available at:
 
 | Variant | Nerdiy.de | Printables.com | Cults3d.com |
 |---------|-----------|------------|--------|
-| ~~**Sunchronizer S1**~~ ⚠️ (single-axis, 1st gen — **deprecated**, use S2) | [NERDIY.DE](https://nerdiy.de/en/product-2/sunchronizer-s1-400w-solartracker-fuer-elevation-achse-3d-druckbar-stl-dateien/) | — | — |
+| ~~**Sunchronizer S1**~~ ⚠️ (single-axis, 1st gen — **deprecated**, use S2) | [Nerdiy.de](https://nerdiy.de/en/product-2/sunchronizer-s1-400w-solartracker-fuer-elevation-achse-3d-druckbar-stl-dateien/) | — | — |
 | **Sunchronizer S2** (single-axis, 2nd gen) | — | [Printables](https://www.printables.com/model/1574048-sunchronizer-s2-400w-module-solartracker-for-eleva) | [Cults](https://cults3d.com/de/modell-3d/gadget/sunchronizer-s2-400w-module-solartracker-for-elevation-axis-by-nerdiy-de-new) |
-| ~~**Sunchronizer D1**~~ ⚠️ (dual-axis, 1st gen — **deprecated**, use D2) | [NERDIY.DE](https://nerdiy.de/en/product-2/sunchronizer-d1-dual-axis-solartracker-fuer-azimut-und-elevation-achse-3d-druckbar-stl-dateien/) | — | — |
+| ~~**Sunchronizer D1**~~ ⚠️ (dual-axis, 1st gen — **deprecated**, use D2) | [Nerdiy.de](https://nerdiy.de/en/product-2/sunchronizer-d1-dual-axis-solartracker-fuer-azimut-und-elevation-achse-3d-druckbar-stl-dateien/) | — | — |
 | **Sunchronizer D2** (dual-axis, 2nd gen) | — | [Printables](https://www.printables.com/model/1574049-sunchronizer-d2-400w-module-solartracker-for-eleva) | [Cults](https://cults3d.com/de/modell-3d/gadget/sunchronizer-d2-400w-module-solartracker-for-elevation-azimuth-axis-by-nerdi) |
 
 ---
@@ -120,13 +120,6 @@ The firmware depends on two ESPHome external components that are fetched from Gi
 - 📋 **[Firmware Configuration Guide](firmware/README.md)** - Comprehensive configuration reference
 - 🔧 **[Firmware Configuration Details](firmware/config/pcb_v1.3/README.md)** - PCB v1.3 configuration specifics
 - 🔧 **[Wiki: Firmware Section](https://github.com/Nerdiyde/Sunchronizer/wiki/4.-Firmware)** - Detailed technical documentation
-
----
-
-# Further Resources
-
-- **Full Documentation:** [GitHub Wiki](https://github.com/Nerdiyde/Sunchronizer/wiki)
-- **Open-Source Firmware:** Configuration in this repository, downloadable binaries via [GitHub Releases](https://github.com/Nerdiyde/Sunchronizer/releases)
 
 ---
 
@@ -217,7 +210,7 @@ All firmware configuration files and software code are licensed under:
 - [BNO085 RVC Component for ESPHome](https://github.com/Nerdiyde/BNO085-RVC-component-for-ESPHome/) - ESPHome external component used by the firmware
 - [ESPHome Official Documentation](https://esphome.io/)
 - [Home Assistant](https://www.home-assistant.io/) - Smart home integration platform
-- [NERDIY.DE Blog](https://nerdiy.de/) - Project blog and store
+- [Nerdiy.de Blog](https://nerdiy.de/) - Project blog and store
 
 ---
 
@@ -227,7 +220,5 @@ For answers to common questions about assembly, firmware, hardware variants, GPS
 
 ---
 
-**Last Updated:** January 2026  
-**Current PCB Version:** v1.3  
-**Firmware:** ESPHome-based (open-source)
+**Last Updated:** April 2026  
 
