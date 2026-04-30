@@ -10,6 +10,24 @@
 
 ---
 
+### Tracking Overview (Video + Testbench)
+
+<table>
+   <tr>
+      <td width="70%" valign="top">
+         <img src="solarCam1_20260303_0720_1710_10s_preview.gif" alt="Sunchronizer tracking timelapse - March 3, 2026" width="100%" />
+         <p><em>10-second timelapse of the daytime tracking period. The Sunchronizer D2 dual-axis tracker continuously reorients the panel to follow the sun across the sky.</em><br />
+         <em>Full-quality video (VP9/WebM): <a href="solarCam1_20260303_0720_1710_10s.webm">solarCam1_20260303_0720_1710_10s.webm</a></em></p>
+      </td>
+      <td width="30%" valign="top">
+         <a href="../../../pictures/testbench/sunchronizer_testbench_%283%29.jpg"><img src="../../../pictures/testbench/sunchronizer_testbench_%283%29.jpg" alt="Sunchronizer testbench setup" width="100%" /></a>
+         <p><em>Physical testbench setup used for this measurement series.</em></p>
+      </td>
+   </tr>
+</table>
+
+---
+
 ## Summary
 
 This measurement demonstrates a direct comparison between four different solar panel mounting configurations under ideal conditions at the test location in Bochum, Germany. The objective was to quantify the benefits of dual-axis tracking (Sunchronizer D2) versus single-axis tracking (Sunchronizer S2) and static mounting methods.

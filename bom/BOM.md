@@ -225,6 +225,18 @@ Each part uses one of two print profiles. The profile is listed in the Strength 
 - Verify slicing output before printing to ensure adherence to part-specific settings in the tables below.
 
 
+### Updating the 3D Previews
+
+The animated GIF previews in the tables below are generated from the `.scad` source files using the PowerShell script [`bom/3d_previews/generate_gifs.ps1`](3d_previews/generate_gifs.ps1). To regenerate them (e.g. after adding or modifying parts):
+
+1. Install [OpenSCAD](https://openscad.org/) and [ImageMagick](https://imagemagick.org/).
+2. Open `bom/3d_previews/generate_gifs.ps1` and set `$InputDir` to the folder containing the `.scad` files and `$OutputDir` to the target preview folder.
+3. Run the script from a PowerShell terminal:
+   ```powershell
+   .\bom\3d_previews\generate_gifs.ps1
+   ```
+4. The generated `.gif` files will appear in the configured output folder and are automatically referenced by the tables below.
+
 ### Sunchronizer S2 - 3D Printed Parts
 
 - **Total print time:** 3 days 20 hours 7 minutes

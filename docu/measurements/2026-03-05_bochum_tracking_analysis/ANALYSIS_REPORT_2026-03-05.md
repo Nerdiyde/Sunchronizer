@@ -10,6 +10,18 @@
 
 ---
 
+### Test Setup Overview
+
+<p align="center">
+   <a href="../../../pictures/testbench/sunchronizer_testbench_%283%29.jpg">
+      <img src="../../../pictures/testbench/sunchronizer_testbench_%283%29.jpg" alt="Sunchronizer testbench setup" width="42%" />
+   </a>
+</p>
+
+*Photo of the physical testbench used for the measurements in this report.*
+
+---
+
 ## Summary
 
 This measurement demonstrates a direct comparison between four different solar panel mounting configurations under ideal conditions at the test location in Bochum, Germany. The objective was to quantify the benefits of dual-axis tracking (Sunchronizer D2) versus single-axis tracking (Sunchronizer S2) and static mounting methods.

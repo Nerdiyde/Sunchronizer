@@ -18,7 +18,7 @@ Wiring diagram preview:
 [![PCB v1.4 wiring plan](pcb_v1.4/sunchronizer_d2_v1.4_wiring_plan.png)](pcb_v1.4/sunchronizer_d2_v1.4_wiring_plan.png)
 
 Files:
-- [pcb_v1.4/sunchronizer_d2_v1.4_wiring_plan.html](pcb_v1.4/sunchronizer_d2_v1.4_wiring_plan.html)
+- [pcb_v1.4/sunchronizer_d2_v1.4_wiring_plan.html](https://htmlpreview.github.io/?https://raw.githubusercontent.com/Nerdiyde/Sunchronizer/main/docu/cable_plan/pcb_v1.4/sunchronizer_d2_v1.4_wiring_plan.html)
 - [pcb_v1.4/sunchronizer_d2_v1.4_wiring_plan.bom.tsv](pcb_v1.4/sunchronizer_d2_v1.4_wiring_plan.bom.tsv)
 - [pcb_v1.4/sunchronizer_d2_v1.4_wiring_plan.yaml](pcb_v1.4/sunchronizer_d2_v1.4_wiring_plan.yaml)
 
@@ -44,7 +44,7 @@ Wiring diagram preview:
 [![PCB v1.3 wiring plan](pcb_v1.3/sunchronizer_d2_v1.3_wiring_plan.png)](pcb_v1.3/sunchronizer_d2_v1.3_wiring_plan.png)
 
 Files:
-- [pcb_v1.3/sunchronizer_d2_v1.3_wiring_plan.html](pcb_v1.3/sunchronizer_d2_v1.3_wiring_plan.html)
+- [pcb_v1.3/sunchronizer_d2_v1.3_wiring_plan.html](https://htmlpreview.github.io/?https://raw.githubusercontent.com/Nerdiyde/Sunchronizer/main/docu/cable_plan/pcb_v1.3/sunchronizer_d2_v1.3_wiring_plan.html)
 - [pcb_v1.3/sunchronizer_d2_v1.3_wiring_plan.bom.tsv](pcb_v1.3/sunchronizer_d2_v1.3_wiring_plan.bom.tsv)
 - [pcb_v1.3/sunchronizer_d2_v1.3_wiring_plan.yaml](pcb_v1.3/sunchronizer_d2_v1.3_wiring_plan.yaml)
 
