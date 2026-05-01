@@ -9,15 +9,21 @@
 
 ---
 
-### Test Setup Overview
+### Tracking Overview (Video + Testbench)
 
-<p align="center">
-	<a href="../../../pictures/testbench/sunchronizer_testbench_%283%29.jpg">
-		<img src="../../../pictures/testbench/sunchronizer_testbench_%283%29.jpg" alt="Sunchronizer testbench setup" width="42%" />
-	</a>
-</p>
-
-*Photo of the physical testbench used for the measurements in this report.*
+<table>
+	<tr>
+		<td width="70%" valign="top">
+			<img src="solarCam1_20260430_0000_1340_10s_preview.gif" alt="Sunchronizer tracking timelapse - April 30, 2026" width="100%" />
+			<p><em>10-second timelapse of the daytime tracking period. The Sunchronizer D2 dual-axis tracker continuously reorients the panel to follow the sun across the sky.</em><br />
+			<em>Full-quality video (VP9/WebM): <a href="solarCam1_20260430_0000_1340_10s.webm">solarCam1_20260430_0000_1340_10s.webm</a></em></p>
+		</td>
+		<td width="30%" valign="top">
+	 <a href="../../../pictures/testbench/sunchronizer_testbench_%283%29.jpg"><img src="../../../pictures/testbench/sunchronizer_testbench_%283%29.jpg" alt="Sunchronizer testbench setup" width="100%" /></a>
+			<p><em>Physical testbench setup used for this measurement series.</em></p>
+		</td>
+	</tr>
+</table>
 
 ---
 
