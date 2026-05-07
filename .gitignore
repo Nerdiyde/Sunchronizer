@@ -1,0 +1,57 @@
+# Python
+*.py[cod]
+*.pyc
+__pycache__/
+*.egg-info/
+*.egg
+dist/
+build/
+.Python
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+*.venv
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS-specific
+Thumbs.db
+*.lnk
+
+# CAD Files (keep source control clean)
+# STEP/IGES parametric CAD models (often large, generated from design tools)
+*.step
+*.stp
+*.iges
+*.igs
+
+# STL/3D model exports (binary, can be regenerated from CAD)
+*.stl
+*.obj
+*.fbx
+*.3ds
+
+# CAD software-specific
+*.blend
+*.scad
+*.dwg
+*.dxf
+
+# Environment files
+.env
+.env.local
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
