@@ -45,14 +45,15 @@ The following photos show the real testbench used for all measurement series and
 | Mar 3 | Clear Sky | 13.2h | 12.1°C | 1,059 | 2,073 | 852 | **2,310** | 233.9 W | 19.40° | 1.56° | [Link](2026-03-03_bochum_tracking_analysis/ANALYSIS_REPORT_2026-03-03.md) |
 | Mar 5 | Clear Sky | 15.1h | 11.4°C | 1,116 | 2,136 | 903 | **2,394** | 242.7 W | 18.88° | 1.60° | [Link](2026-03-05_bochum_tracking_analysis/ANALYSIS_REPORT_2026-03-05.md) |
 | Mar 18 | Clear Sky | 13.7h | 12.7°C | 1,368 | 2,324 | 1,194 | **2,731** | 271.7 W | 14.86° | 1.58° | [Link](2026-03-18_bochum_tracking_analysis/ANALYSIS_REPORT_2026-03-18.md) |
-| **Avg** | - | **13.6h** | **12.1°C** | **1,155** | **2,179** | **954** | **2,474** | **251.4 W** | **18.01°** | **1.58°** | - |
+| Apr 30 | Clear Sky | 14.1h | 15.1°C | 2,308 | 2,825 | 2,032 | **3,237** | 229.6 W | ~18.0° | ~1.6° | [Link](2026-04-30_bochum_tracking_analysis/ANALYSIS_REPORT_2026-04-30.md) |
+| **Avg** | - | **13.7h** | **12.5°C** | **1,386** | **2,308** | **1,189** | **2,827** | **248.0 W** | **18.41°** | **1.58°** | - |
 
 ### Performance Summary
 
 **Sunchronizer D2 (CH4) Advantages:**
-- **vs. Static East/West:** +134.6% average daily energy (2,474 Wh vs. avg 1,054 Wh)
-- **vs. Single-Axis S2:** +13.5% average daily energy (2,474 Wh vs. 2,179 Wh)
-- Average daily yield: **2.47 kWh** (range: 2.31-2.73 kWh)
+- **vs. Static East/West:** +137.5% average daily energy (2,827 Wh vs. avg 1,188 Wh)
+- **vs. Single-Axis S2:** +22.5% average daily energy (2,827 Wh vs. 2,308 Wh)
+- Average daily yield: **2.83 kWh** (range: 2.31-3.24 kWh)
 
 **Interpretation Note (all measurement series):**
 - For elevation-based tracking (especially CH2), the controller cannot always approach the solar-optimal elevation angle further because the tracker is physically constrained by minimum and maximum elevation limits.
