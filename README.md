@@ -48,13 +48,6 @@ The project supports two actively maintained variants:
 - **[Measurement Analysis Overview](docu/measurements/MEASUREMENT_OVERVIEW.md)** - Real daily performance data and reports
 - **[Project Wiki](https://github.com/Nerdiyde/Sunchronizer/wiki)** - Full project documentation
 
-### Typical Paths
-
-- **Flash and run quickly:** [Web Installer](firmware/web-installer/index.html)
-- **Tune for your setup:** [Firmware Documentation](firmware/README.md)
-- **Compare measured performance:** [Measurement Analysis Overview](docu/measurements/MEASUREMENT_OVERVIEW.md)
-- **Check if it fits your scenario:** [In which cases can the Sunchronizer be useful for me?](FAQ.md#q-in-which-cases-can-the-sunchronizer-be-useful-for-me)
-
 ### Additional Resources
 
 - **[Public Web Installer](https://nerdiyde.github.io/Sunchronizer/)**
@@ -94,7 +87,7 @@ Measured multi-day analysis is documented in [Measurement Analysis Overview](doc
 
 ## Available STL Products
 
-STL files and detailed build information available at:
+STL files are offered for purchase on the following platforms:
 
 | Variant | Nerdiy.de | Printables.com | Cults3d.com |
 |---------|-----------|------------|--------|
