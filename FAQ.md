@@ -9,6 +9,7 @@ This document answers common questions from users and developers about the Sunch
 **[General Questions](#general-questions)**
 - [Why should I build a solar tracker? What are the actual advantages?](#q-why-should-i-build-a-solar-tracker-what-are-the-actual-advantages)
 - [What are the disadvantages of a solar tracker?](#q-what-are-the-disadvantages-of-a-solar-tracker)
+- [Can't I just invest in additional panels instead of a tracker?](#q-cant-i-just-invest-in-additional-panels-instead-of-a-tracker)
 - [Can I use this without Home Assistant?](#q-can-i-use-this-without-home-assistant)
 - [What's the difference between S1, S2, D1, and D2?](#q-whats-the-difference-between-s1-s2-d1-and-d2)
 - [Why not just build a polar-aligned single-axis tracker?](#q-why-not-just-build-a-single-axis-tracker-that-rotates-around-an-axis-parallel-to-earths-rotation-axis-polar-aligned-tracker-that-would-track-the-sun-perfectly-with-only-one-motor)
@@ -22,11 +23,14 @@ This document answers common questions from users and developers about the Sunch
 
 **[Hardware & Construction](#hardware--construction)**
 - [How complicated is the maintenance?](#q-how-complicated-is-the-maintenance)
+- [What is the expected lifespan of the system?](#q-what-is-the-expected-lifespan-of-the-system)
 - [What are the space requirements around the tracker?](#q-what-are-the-space-requirements-around-the-tracker)
 - [What are the possible mounting options?](#q-what-are-the-possible-mounting-options-for-fixing-the-tracker-to-concrete-base-weightslabs)
 - [Will the construction support a 500W solar panel?](#q-will-the-construction-support-a-500w-solar-panel)
 - [What about end-of-travel switches?](#q-what-about-end-of-travel-switches-are-they-mandatory)
+- [What safety mechanisms protect the Sunchronizer in high winds?](#q-what-safety-mechanisms-protect-the-sunchronizer-in-high-winds)
 - [Which motor for the azimuth axis?](#q-which-motor-do-you-recommend-for-the-azimuth-axis-on-the-sunchronizer-d2)
+- [How much force does the linear actuator actually have?](#q-how-much-force-does-the-linear-actuator-actually-have-and-why-was-it-chosen)
 - [How much power does the tracker electronics consume?](#q-how-much-power-does-the-tracker-electronics-consume)
 - [Which rotation direction is CW / CCW?](#q-which-rotation-direction-is-cw--ccw)
 
@@ -40,6 +44,7 @@ This document answers common questions from users and developers about the Sunch
 
 **[Technical Details & Algorithms](#technical-details--algorithms)**
 - [How are elevation and azimuth angles calculated?](#q-how-are-elevation-and-azimuth-angles-calculated)
+- [What is Cloudy mode and why does the panel go flatter in indirect light?](#q-what-is-cloudy-mode-and-why-does-the-panel-go-flatter-in-indirect-light)
 
 **[Integration & Connectivity](#integration--connectivity)**
 - [Do I need WiFi for the tracker to work?](#q-do-i-need-wifi-for-the-tracker-to-work)
@@ -96,7 +101,10 @@ By spreading production more evenly across the day, a tracker increases the shar
 **5. Smaller panel for the same daily yield**
 If you have limited installation space or budget, a tracker allows you to achieve the same daily energy output with a smaller (and cheaper) panel compared to a fixed installation. Alternatively: the same panel produces substantially more energy.
 
-**6. Good conscience — a small but real contribution to the energy transition**
+**6. Better use of strict DC limits (e.g. balcony PV / Balkonkraftwerk)**
+In many balcony PV setups, the total PV generator size is capped (for example around **2,000 W DC**, roughly four typical modules). If you cannot simply keep adding more panels because of regulatory, roof, or space limits, tracking helps you get more energy out of that fixed installed DC capacity across the day.
+
+**7. Good conscience — a small but real contribution to the energy transition**
 Every kilowatt-hour generated locally from sunlight is one that doesn't need to come from fossil or nuclear sources. Building and operating a solar tracker means you're actively contributing to the shift toward renewable energy — reducing your household's carbon footprint, cutting your electricity bill, and demonstrating that efficient, DIY-built renewable systems are feasible for private individuals. It may be a small contribution in the grand scheme, but it is a tangible and measurable one.
 
 > **See also:** [What are the disadvantages of a solar tracker?](#q-what-are-the-disadvantages-of-a-solar-tracker)
@@ -130,6 +138,26 @@ A tracker requires a stable foundation (e.g. concrete slab with anchor bolts for
 **Bottom line:** For locations with significant direct sunlight and users comfortable with DIY electronics, these trade-offs are well worth it — the energy gains are substantial and well-documented. For locations with frequent cloud cover, very small panels, or users seeking absolute simplicity, a fixed mount may be the more practical choice.
 
 > **See also:** [Why should I build a solar tracker? What are the actual advantages?](#q-why-should-i-build-a-solar-tracker-what-are-the-actual-advantages)
+
+---
+
+### Q: Can't I just invest in additional panels instead of a tracker?
+
+**A:** Often yes — and in many cases that is the simpler option. But whether it is better depends on your constraints.
+
+If you have enough roof/ground area, no relevant regulatory limits, and can install more modules cheaply, adding panels is usually the lowest-complexity path to more annual energy.
+
+A tracker becomes especially attractive when one or more of these limits apply:
+
+1. **DC capacity is capped** (e.g. balcony PV / Balkonkraftwerk setups around 2,000 W DC)
+2. **Installation area is limited** (balcony, small roof, shading constraints)
+3. **You want better morning/evening production** rather than only a higher noon peak
+4. **Feed-in is weakly compensated**, so maximizing self-consumption during usable hours matters more than absolute peak Wp
+5. **Inverter limits and cost scaling:** More panel power often requires a larger/better inverter (or an additional inverter), which increases system cost and complexity and can itself become the limiting factor.
+
+In short: if you can add panels freely, that is usually simpler. If you cannot add more DC power, a tracker is one of the most effective ways to increase yield from the panel area you are allowed to install.
+
+> **See also:** [When does the system pay for itself?](#q-when-does-the-system-pay-for-itself)
 
 ---
 
@@ -312,6 +340,41 @@ These measures together are intended to keep environmental wear to a minimum and
 
 ---
 
+### Q: What is the expected lifespan of the system?
+
+**A:** No long-term field data is available yet — the Sunchronizer is a relatively young project. However, based on the components used and their typical rated lifespans, a realistic assessment per component group is:
+
+| Component | Expected lifespan | Notes |
+|-----------|-------------------|-------|
+| **3D-printed parts** (UV-resistant filament) | 5–10+ years | Depends on UV exposure, temperature cycles, and filament quality. Outdoor-rated filaments (ASA, PETG) degrade slowly. |
+| **Linear actuator** (elevation axis) | 5–10+ years | Depends on cycle count. Tracker makes only a few small movements per day — very low duty cycle. |
+| **Geared motor** (azimuth, JGY-370) | 5–10 years | Brushed DC motors wear brushes and gears over time, but at the low speeds and low duty cycle of a solar tracker, this is very slow. |
+| **ESP32-S3 microcontroller** | 10+ years | Solid-state electronics, no moving parts. Failure typically from voltage spikes or moisture ingress, not age. |
+| **IMU / GPS / RTC modules** | 10+ years | Very low wear. RTC battery (CR2032) needs replacement every ~5 years. |
+| **Aluminium / stainless steel hardware** | 15+ years | Highly corrosion-resistant under normal outdoor conditions. |
+| **Wiring and connectors** | 5–10 years | UV and moisture exposure degrades insulation over time. Use outdoor-rated cable and weatherproof connectors. |
+| **Solar panel** | 20–30 years | Panels are independently rated; not part of the Sunchronizer BOM. |
+
+**Components most likely to need replacement first:**
+
+1. **RTC battery (CR2032)** — cheapest, easiest swap, every ~5 years. Without it, the RTC loses time on power loss.
+2. **Geared azimuth motor** — brushed motors have a finite brush life. If azimuth tracking becomes erratic or slow, this is the first thing to check.
+3. **3D-printed structural parts** — surface degradation (chalking, minor cracking) will appear after several years outdoors. Non-structural cosmetic changes are normal; structural cracks should be reprinted.
+4. **Wiring / connectors** — inspect annually for cracked insulation or corrosion, especially near ground-level cable runs.
+
+**What is unlikely to fail:**
+- The linear actuator (very low duty cycle, self-contained gearbox)
+- The ESP32 and sensor modules (solid-state, no wear)
+- The aluminium and stainless steel structural parts
+
+**Real-world status (as of May 2026):** The reference system (D2, Bochum, Germany) has been in continuous outdoor operation since **January 2026**. As of May 2026 — four months in — no failures, component replacements, or notable issues have occurred. All future maintenance events will be recorded in the [Maintenance Log](docu/measurements/MAINTENANCE_LOG.md).
+
+**A note on honesty:** The lifespan figures and component assessments above are best-effort estimates based on component datasheets, general engineering experience, and the design choices made in the Sunchronizer. They are not backed by years of field data. Everyone must weigh these uncertainties themselves and decide whether the maintenance risk and effort is acceptable for their situation. The project makes no guarantees about longevity.
+
+**Bottom line:** With routine visual inspections and the occasional small replacement (battery, a printed part, possibly a motor after many years), a realistically expected system lifespan of **5–10+ years** is achievable. Most parts are inexpensive, 3D-printable, or widely available — so if something does wear out, replacing it is straightforward.
+
+---
+
 ### Q: What are the space requirements around the tracker?
 
 **A:** The Sunchronizer D2 is a fully rotating dual-axis tracker. This has direct implications for the installation site:
@@ -407,6 +470,24 @@ See also the [Bill of Materials (BOM)](bom/BOM.md). The required material for bo
 
 Because both are mandatory and already built in, no separate external limit switches need to be sourced or wired — the protection is part of the design.
 
+---
+
+### Q: What safety mechanisms protect the Sunchronizer in high winds?
+
+**A:** The Sunchronizer uses multiple layers of protection for wind events:
+
+1. **Storm position (firmware):** The controller supports a dedicated low-profile storm position (flat/retracted angle) that reduces wind attack area.
+2. **Automatic retract on wind threshold:** If configured, the firmware can automatically move the tracker to storm position when wind speed exceeds a defined limit.
+3. **Manual override:** You can always trigger retract manually via controls/Home Assistant as an additional fallback.
+4. **Self-locking elevation drive:** The worm-gear linear actuator is self-locking, so the panel holds position without being back-driven easily.
+5. **Mechanical limits:** Hard endstops/limit protection prevent travel beyond safe axis ranges.
+6. **Overload/stall detection:** The firmware can stop motor motion if abnormal resistance is detected.
+7. **Weather-coupling effect in practice:** Windy conditions often come with cloud cover. Under diffuse-light conditions, the tracker is typically already running in a flatter, yield-optimized orientation, which usually lowers wind attack area before peak gusts arrive.
+
+**Important:** These mechanisms reduce risk, but do not eliminate it. Severe gusts, delayed sensor response, missing wind sensor data, or hardware faults can still cause damage. For forecast storms, proactive manual retract and site checks are recommended.
+
+**See also:** [What is Cloudy mode and why does the panel go flatter in indirect light?](#q-what-is-cloudy-mode-and-why-does-the-panel-go-flatter-in-indirect-light)
+
 
 ---
 
@@ -415,6 +496,24 @@ Because both are mandatory and already built in, no separate external limit swit
 **A:** For the **Sunchronizer D2**, I recommend a **JGY-370 geared motor with 5 RPM** for the azimuth axis.
 
 Slower motors can also work, but then the parameter `azimuth_measurement_max_wait_time` must be adjusted in the firmware configuration, and the firmware must be compiled manually.
+
+**A note on the azimuth drive in practice:** Getting the azimuth axis working well was one of the more iterative parts of the development. The current design uses the JGY-370 in combination with a **3D-printed reduction gearbox** that further reduces the output speed and increases torque. It was a winding path to get the geometry, gear ratio, and firmware parameters dialled in — but the result works reliably. The 3D-printed gearbox is part of the STL package.
+
+---
+
+### Q: How much force does the linear actuator actually have? And why was it chosen?
+
+**A:** The linear actuator used for the elevation axis is rated at **6,000 N** — which corresponds to roughly **600 kg** of push/pull force. For a 400 W solar panel weighing ~20 kg, this is massively over-dimensioned. The actuator will never come close to its load limit under normal operation.
+
+**So why this one?**
+
+The key reason is the **internal gearbox type**: most affordable linear actuators use a **spur gear** (Stirnradgetriebe) internally, which produces a noticeable whirring noise during operation. This actuator uses a **worm gear** (Schneckengetriebe), which is inherently much quieter. In practice, the actuator is barely audible from 2 metres away — which matters if your tracker is installed near a garden, terrace, or neighbours. 
+
+Additional benefits of the worm gear design:
+- **Self-locking:** A worm gear cannot be back-driven by the load. This means the panel holds its position even with no power applied — no brake or holding current needed.
+- **Smooth motion:** The worm drive produces a very smooth, vibration-free extension and retraction.
+
+The 6,000 N rating also provides a large safety margin for wind loads acting on the panel surface, and means the actuator runs well below its thermal and mechanical limits, which should contribute to a long service life.
 
 ---
 
@@ -591,102 +690,60 @@ If no dashboard is available and no GPS is connected, the firmware falls back to
 
 ### Q: How are elevation and azimuth angles calculated?
 
-**A:** The Sunchronizer uses a **two-layer system** for angle calculations:
+**A:** In simple terms, the tracker does this in a loop:
 
-**Layer 1 — Target Angles (Sun Position)**
-These are **calculated** based on sun position:
-- **Input:** Latitude, Longitude, Current Time
-- **Component:** ESPHome's built-in `sun` component
-- **Algorithm:** Uses astronomical calculations (NORAD SGP4 model approximation)
-- **Output:** Target elevation angle and azimuth angle of the sun
+1. It checks where the sun should be right now (from time + location).
+2. It checks where the panel is currently pointing (from the IMU sensors).
+3. It compares both values.
+4. If there is a difference, it moves a little bit.
+5. A few seconds later, it repeats the same check.
 
-**Example (Bochum, 51.4556°N, 7.0116°E):**
-- At noon on March 11, 2026: Sun at ~45° elevation, 180° azimuth (south)
-- At 3 PM: Sun at ~40° elevation, 220° azimuth (southwest)
-- These values change every minute as the sun moves
+That is all. It is basically a constant "compare and correct" process.
 
-**Layer 2 — Actual/Measured Angles (Panel Orientation)**
-These are **measured** from the hardware:
-- **Elevation Angle:** Measured by BNO085 IMU accelerometer
-  - Detects gravity's pull on the tilted panel
-  - 0° = horizontal panel, 90° = vertical panel
-  - Typical range: -30° to +80° (hardware limits)
-- **Azimuth Angle (Compass Heading):** Measured by BNO085 IMU magnetometer
-  - Detects Earth's magnetic field
-  - 0°/360° = North, 90° = East, 180° = South, 270° = West
-  - Typical range: 0° to 360°
+**What the two angles mean:**
+- **Elevation** = up/down tilt angle of the panel.
+- **Azimuth** = left/right compass direction (north/east/south/west) the panel is facing.
 
-**How It Works Together:**
+**How the sun angles are determined in firmware:**
+- The firmware uses ESPHome's built-in `sun` component.
+- Inputs are: **current time + latitude + longitude**.
+- Time comes from RTC/GPS/Home Assistant (depending on your setup), and coordinates come from GPS, Home Assistant, or manual configuration.
+- From these values, ESPHome performs an astronomical sun-position calculation and outputs the current **sun elevation** and **sun azimuth** as target angles.
 
-```
-┌─────────────────────────────────────────────────────┐
-│ 1. Read Current Time (RTC or GPS)                   │
-│ 2. Calculate Target Sun Position                    │
-│    (Target Elevation, Target Azimuth)               │
-│                                                     │
-│ 3. Measure Current Panel Angle                      │
-│    (Actual Elevation via IMU accelerometer)         │
-│    (Actual Azimuth via IMU magnetometer)            │
-│                                                     │
-│ 4. Compare Target vs Actual                         │
-│    ΔElevation = Target - Actual                     │
-│    ΔAzimuth = Target - Actual                       │
-│                                                     │
-│ 5. Control Motors                                   │
-│    If ΔElevation > threshold → move elevation       │
-│    If ΔAzimuth > threshold → move azimuth           │
-│                                                     │
-│ 6. Loop (every few seconds)                         │
-└─────────────────────────────────────────────────────┘
-```
+**Why this works well:**
+- The sun position math is very accurate.
+- The tracker moves in small, slow steps.
+- Small errors are corrected continuously over the day.
 
-**Data Sources:**
+**What matters most for good tracking:**
+- Correct time
+- Correct location
+- Properly calibrated compass/IMU
 
-| Component | Source | Accuracy |
-|-----------|--------|----------|
-| **Sun Position** | Calculated from Lat/Lon/Time | ±0.5° (excellent) |
-| **Time** | RTC (DS3231) or GPS | ±1 minute (RTC), ±100ms (GPS) |
-| **Location** | Manual hardcode, GPS, or HA | ±10m (GPS), exact if hardcoded |
-| **Elevation Angle** | BNO085 accelerometer | ±1-2° (very good) |
-| **Azimuth Angle** | BNO085 magnetometer | ±3-5° (good, affected by metal) |
-
-**Key Dependencies:**
-
-1. **Accurate Time** — Errors here cause errors in calculated sun position
-   - 1 minute error → ~0.25° azimuth error
-   - Keep RTC battery fresh or sync via GPS
-
-2. **Accurate Location** — Errors affect elevation/azimuth targets
-   - 10 km error → ~1° elevation error
-   - Use GPS or hardcode your exact coordinates
-
-3. **Clean Magnetometer** — Azimuth measurement is sensitive to magnetic interference
-   - Keep tracker away from large metal objects
-   - Calibrate magnetometer if readings are off
-   - Test: If azimuth reads backward or sideways, check for nearby metal
-
-**Verification:**
-
-To verify the system is working correctly:
-- **Elevation should increase** from sunrise (low) to noon (high) to sunset (low)
-- **Azimuth should increase** from sunrise (~90° east) → noon (180° south) → sunset (~270° west)
-- **Time synchronization** (check RTC vs phone — should match within 1 minute)
-- **Magnetometer calibration** (available in web interface — follow instructions)
+If those three are correct, the panel stays very close to the optimal sun-facing angle throughout the day.
 
 **See also:** [Firmware Configuration Guide](firmware/config/pcb_v1.3/README.md) for tuning parameters.
 
 ---
 
-**A:** GPS provides location (latitude/longitude) and time, which are used to **calculate** the sun's position. **GPS accuracy is:**
-- **Location:** ±5-10 meters (typical residential use)
-- **Time:** ±10 milliseconds (accurate enough)
+### Q: What is Cloudy mode and why does the panel go flatter in indirect light?
 
-**Sun Position Calculation is very accurate:**
-- The algorithm uses location + time to compute sun position
-- Typical error: < 0.5° (smaller than the solar disk itself)
-- This is sufficient for optimal panel tracking
+**A:** **Cloudy mode** is a control strategy for conditions where sunlight is mostly diffuse (overcast sky) instead of direct beam sunlight.
 
-**In practice:** GPS alone works very well for autonomous tracking without Home Assistant.
+Under clear sky, tracking the exact sun position gives the best yield. Under heavy cloud cover, this changes: light arrives from a broad portion of the sky dome, so exact pointing has much less benefit.
+
+In that situation, lowering the panel toward a flatter angle can make sense for several reasons:
+
+1. **Better diffuse-light capture in practice:** With scattered light, the gain from exact directional pointing is small. A flatter orientation often performs similarly or better over the full cloudy period.
+2. **Lower mechanical movement:** The tracker avoids unnecessary corrections that bring little yield benefit under diffuse conditions.
+3. **Reduced wind load risk:** Cloudy weather often comes with stronger winds. A flatter panel presents less effective wind area and is mechanically safer.
+4. **Noise and wear reduction:** Fewer corrections mean less actuator runtime and lower long-term wear.
+
+So Cloudy mode is not "giving up" on tracking. It is an optimization: prioritize robust, efficient operation when directional sun tracking is less valuable.
+
+**Important:** Cloudy mode behavior and thresholds depend on firmware settings. You can tune when the system switches behavior and how aggressively it flattens.
+
+**See also:** [What safety mechanisms protect the Sunchronizer in high winds?](#q-what-safety-mechanisms-protect-the-sunchronizer-in-high-winds)
 
 ---
 
