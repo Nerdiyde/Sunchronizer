@@ -1,10 +1,15 @@
-# 🌞 Sunchronizer
+# 🌞 Sunchronizer - 3D printable dual-axis solar tracker
+
 
 [![Licensing](https://img.shields.io/badge/licensing-multi--license-blue.svg)](#-license) [![Firmware License](https://img.shields.io/badge/firmware-AGPL%20v3.0-3DA639.svg)](https://www.gnu.org/licenses/agpl-3.0.en.html) [![Release](https://img.shields.io/github/release/Nerdiyde/Sunchronizer.svg)](https://github.com/Nerdiyde/Sunchronizer/releases)
 
-**A 3D printable dual-axis solar tracker for maximizing photovoltaic energy yield**
 
-> Sunchronizer automatically tracks the sun's position throughout the day to keep your solar panels optimally aligned, with measured gains of about [+12% vs. single-axis tracking and +144%](docu/measurements/MEASUREMENT_OVERVIEW.md)     vs. static east/west references.
+> Sunchronizer tracks the sun automatically to keep your panel aligned throughout the day. Current field measurements show about [+13.8% vs. single-axis tracking and +90.7% vs. the average static east/west references](docu/measurements/MEASUREMENT_OVERVIEW.md).
+
+- **What it is:** A 3D-printable solar tracker platform with single-axis (**S2**) and dual-axis (**D2**) variants.
+- **Who it is for:** DIY builders who want higher yield from limited panel area (for example balcony PV or space-constrained installs).
+- **Why it matters:** Better morning/evening generation, higher self-consumption, and measurable real-world yield gains.
+- **Start now:** [FAQ](FAQ.md) | [Is Sunchronizer useful for my use case?](FAQ.md#q-in-which-cases-can-the-sunchronizer-be-useful-for-me) | [Firmware Documentation](firmware/README.md) | [Web Installer](firmware/web-installer/index.html)
 
 <p align="center">
 	<img src="https://github.com/Nerdiyde/Sunchronizer/blob/main/pictures/S1/GIFs/sunchronizer_timelapse_smaller_5mb.gif" width="49%" />
@@ -15,11 +20,13 @@
 
 ---
 
-## 🎯 Introduction
+## Overview
 
-Working with balcony power plants in Germany, I wondered how to maximize solar panel efficiency. The solution: **Sunchronizer** – a fully automated, 3D-printable solar tracker available in single-axis and dual-axis configurations.
+Sunchronizer is a fully automated, 3D-printable solar tracker for balcony and small-scale PV systems. It continuously adjusts elevation (and optionally azimuth) using a linear actuator and a geared motor to improve real-world daily yield.
 
-The system uses a **linear actuator** and **geared motor** to continuously orient your solar panels toward the sun, significantly improving daily energy yield.
+The project supports two actively maintained variants:
+- **S2:** single-axis (elevation)
+- **D2:** dual-axis (elevation + azimuth)
 
 ### Key Specifications
 
@@ -29,79 +36,85 @@ The system uses a **linear actuator** and **geared motor** to continuously orien
 - **Flexibility:** Works with HomeAssistant or standalone via GPS receiver
 - **Power:** 12V/3A supply (USB-C Power Delivery recommended)
 
-### 📊 Sunchronizer Variants
+---
+
+## Quick Start
+
+### Essential Links
+
+- **[FAQ](FAQ.md)** - Assembly, operation, troubleshooting, and practical decisions
+- **[Web Installer](firmware/web-installer/index.html)** - Flash firmware from a Chromium-based browser
+- **[Firmware Documentation](firmware/README.md)** - Configuration and firmware details
+- **[Measurement Analysis Overview](docu/measurements/MEASUREMENT_OVERVIEW.md)** - Real daily performance data and reports
+- **[Project Wiki](https://github.com/Nerdiyde/Sunchronizer/wiki)** - Full project documentation
+
+### Typical Paths
+
+- **Flash and run quickly:** [Web Installer](firmware/web-installer/index.html)
+- **Tune for your setup:** [Firmware Documentation](firmware/README.md)
+- **Compare measured performance:** [Measurement Analysis Overview](docu/measurements/MEASUREMENT_OVERVIEW.md)
+- **Check if it fits your scenario:** [In which cases can the Sunchronizer be useful for me?](FAQ.md#q-in-which-cases-can-the-sunchronizer-be-useful-for-me)
+
+### Additional Resources
+
+- **[Public Web Installer](https://nerdiyde.github.io/Sunchronizer/)**
+- **[Latest Firmware Release](https://github.com/Nerdiyde/Sunchronizer/releases/latest)**
+- **[Prototype Development History](docu/development_history/DEVELOPMENT_HISTORY.md)**
+- **[Materials and BOM](https://github.com/Nerdiyde/Sunchronizer/wiki/1.-Preparations)**
+
+---
+
+## Variants
 
 | Model | Capability | Best For |
 |-------|-----------|----------|
-| ~~**S1**~~ ⚠️ (deprecated) | ~~Elevation angle tracking (single-axis, 1st generation)~~ | ~~Simpler installations, fixed azimuth~~ — **deprecated**, use **S2** instead |
 | **S2** | Elevation angle tracking (single-axis, 2nd generation) | Refined single-axis builds with lower complexity |
-| ~~**D1**~~ ⚠️ (deprecated) | ~~Elevation + azimuth tracking (dual-axis, 1st generation)~~ | ~~Full dual-axis tracking for flexible installations~~ — **deprecated**, use **D2** instead |
 | **D2** | Elevation + azimuth tracking (dual-axis, 2nd generation) | Maximum efficiency, most refined dual-axis variant |
 
 ---
 
-## 🚀 Getting Started
+## Hardware At A Glance
 
-### Quick Links
+- **ESP32-S3 XIAO** for control and connectivity
+- **Dual H-Bridge** for elevation and azimuth motor control
+- **BNO085 IMU** for orientation feedback
+- **DS3231 RTC** for robust timekeeping
+- **Optional GPS** for standalone location and time
+- **12V/3A supply** (USB-C Power Delivery recommended)
 
-- **[Firmware & Configuration](firmware/)** - Detailed firmware configuration guide and pre-built binaries
-- **[Web Installer](firmware/web-installer/index.html)** - Flash the latest release directly from a Chromium browser
-- **[Public Web Installer](https://nerdiyde.github.io/Sunchronizer/)** - Browser-based installer hosted on GitHub Pages
-- **[Latest Firmware Release](https://github.com/Nerdiyde/Sunchronizer/releases/latest)** - Download current firmware binaries from release assets
-- **[Firmware Documentation](firmware/README.md)** - Comprehensive ESPHome firmware documentation
-- **[Prototype Development History](docu/development_history/DEVELOPMENT_HISTORY.md)** - Photo gallery and timeline of mark1-mark4 plus PCB v1.3
-- **[Measurement Analysis Overview](docu/measurements/MEASUREMENT_OVERVIEW.md)** - Daily performance results with links to detailed analysis reports
-- **[FAQ](FAQ.md)** - Frequently asked questions about assembly, firmware, performance, and operation
-- **[Full Wiki](https://github.com/Nerdiyde/Sunchronizer/wiki)** - Complete project documentation
-- **[Material List](https://github.com/Nerdiyde/Sunchronizer/wiki/1.-Preparations)** - Components and BOM
-
-### For Different Needs
-
-- **Want to flash immediately?** → Use the [Web Installer](firmware/web-installer/index.html) or download from [Latest Release Assets](https://github.com/Nerdiyde/Sunchronizer/releases/latest)
-- **Want to customize configuration?** → Review [firmware configuration guide](firmware/README.md)
-- **Need detailed setup instructions?** → Check [Wiki: Firmware Section](https://github.com/Nerdiyde/Sunchronizer/wiki/4.-Firmware)
-- **Want real measurement data and performance comparisons?** → Open [Measurement Analysis Overview](docu/measurements/MEASUREMENT_OVERVIEW.md)
+For wiring, electronics details, and build-specific hardware notes, see [Electronics Documentation](https://github.com/Nerdiyde/Sunchronizer/wiki/3.-Electronics).
 
 ---
 
-## 🔧 Hardware Components
+## Performance Data
 
-### Main Controller
-- **ESP32-S3 XIAO** - Dual-core processor with WiFi
-- **Dual H-Bridge** - Controls elevation and azimuth motors
-- **12V/3A Power Supply** - USB-C Power Delivery compatible
-
-### Sensors
-
-| Sensor | Purpose | Details |
-|--------|---------|---------|
-| **BNO085 IMU** | Elevation & Heading angle measurement | 9-DOF accelerometer, gyro, magnetometer |
-| **DS3231 RTC** | Precise timekeeping | Independent of network connection |
-| **GPS Module** (optional) | Position & time retrieval | Enables standalone operation |
-
-### Controls
-- **UP/CCW Button** - Lift panel or rotate counter-clockwise
-- **DOWN/CW Button** - Lower panel or rotate clockwise
-- Additional controls via web interface and HomeAssistant
-
-📖 [Full Electronics Documentation](https://github.com/Nerdiyde/Sunchronizer/wiki/3.-Electronics)
+Measured multi-day analysis is documented in [Measurement Analysis Overview](docu/measurements/MEASUREMENT_OVERVIEW.md), including day-by-day reports and setup details.
 
 ---
 
-## 📦 Available Products
+## Available STL Products
 
 STL files and detailed build information available at:
 
 | Variant | Nerdiy.de | Printables.com | Cults3d.com |
 |---------|-----------|------------|--------|
-| ~~**Sunchronizer S1**~~ ⚠️ (single-axis, 1st gen — **deprecated**, use S2) | [Nerdiy.de](https://nerdiy.de/en/product-2/sunchronizer-s1-400w-solartracker-fuer-elevation-achse-3d-druckbar-stl-dateien/) | — | — |
 | **Sunchronizer S2** (single-axis, 2nd gen) | — | [Printables](https://www.printables.com/model/1574048-sunchronizer-s2-400w-module-solartracker-for-eleva) | [Cults](https://cults3d.com/de/modell-3d/gadget/sunchronizer-s2-400w-module-solartracker-for-elevation-axis-by-nerdiy-de-new) |
-| ~~**Sunchronizer D1**~~ ⚠️ (dual-axis, 1st gen — **deprecated**, use D2) | [Nerdiy.de](https://nerdiy.de/en/product-2/sunchronizer-d1-dual-axis-solartracker-fuer-azimut-und-elevation-achse-3d-druckbar-stl-dateien/) | — | — |
 | **Sunchronizer D2** (dual-axis, 2nd gen) | — | [Printables](https://www.printables.com/model/1574049-sunchronizer-d2-400w-module-solartracker-for-eleva) | [Cults](https://cults3d.com/de/modell-3d/gadget/sunchronizer-d2-400w-module-solartracker-for-elevation-azimuth-axis-by-nerdi) |
 
 ---
 
-## 🛠️ Firmware & Configuration
+## Legacy Variants
+
+S1 and D1 are first-generation variants and are no longer recommended for new builds.
+
+- **Legacy S1:** [Nerdiy.de](https://nerdiy.de/en/product-2/sunchronizer-s1-400w-solartracker-fuer-elevation-achse-3d-druckbar-stl-dateien/)
+- **Legacy D1:** [Nerdiy.de](https://nerdiy.de/en/product-2/sunchronizer-d1-dual-axis-solartracker-fuer-azimut-und-elevation-achse-3d-druckbar-stl-dateien/)
+
+Use **S2** or **D2** for all new installations.
+
+---
+
+## Firmware
 
 ### Technology Stack
 
@@ -117,13 +130,19 @@ The firmware depends on two ESPHome external components that are fetched from Gi
 
 ### Documentation
 
-- 📋 **[Firmware Configuration Guide](firmware/README.md)** - Comprehensive configuration reference
-- 🔧 **[Firmware Configuration Details](firmware/config/pcb_v1.3/README.md)** - PCB v1.3 configuration specifics
-- 🔧 **[Wiki: Firmware Section](https://github.com/Nerdiyde/Sunchronizer/wiki/4.-Firmware)** - Detailed technical documentation
+- **[Firmware Documentation](firmware/README.md)** - Configuration reference
+- **[Firmware Config Details](firmware/config/pcb_v1.3/README.md)** - PCB v1.3 specifics
+- **[Wiki Firmware Section](https://github.com/Nerdiyde/Sunchronizer/wiki/4.-Firmware)** - Additional implementation details
 
 ---
 
-## 🎁 Support This Project
+## FAQ
+
+For answers to common questions about assembly, firmware, variants, GPS setup, reliability, and operation, see [FAQ](FAQ.md).
+
+---
+
+## Support
 
 If you find this project valuable, consider supporting its development:
 
@@ -133,7 +152,7 @@ Every coffee helps fund research, development, and documentation! ☕
 
 ---
 
-## 📸 Gallery
+## Gallery
 
 <details>
 <summary><strong>~~Sunchronizer S1 (Single-Axis)~~ ⚠️ deprecated — use S2 instead</strong></summary>
@@ -171,13 +190,24 @@ Every coffee helps fund research, development, and documentation! ☕
 
 ---
 
-## 📄 License
+## License
 
-This project uses **three separate licenses** depending on the type of content:
+This project uses separate licenses by content type:
+
+| Content Type | License | Practical Summary |
+|---|---|---|
+| 3D print files (STL) | [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/) | Personal use and sharing with attribution; no commercial use or derivatives |
+| Documentation and content | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) | Attribution required; non-commercial; share alike |
+| Firmware and software | [GNU AGPL v3.0](https://www.gnu.org/licenses/agpl-3.0.en.html) | Use/modify allowed; distributed modifications must remain AGPL |
+
+> See [FAQ](FAQ.md) for a plain-language explanation.
+
+<details>
+<summary><strong>License Details</strong></summary>
 
 ### 3D Print Files (STL)
-All STL files are licensed under:
-**[CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/)** (Attribution – Non-Commercial – No Derivatives)
+
+All STL files are licensed under [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/).
 
 - ✅ Print for personal use
 - ✅ Share photos of your build with attribution
@@ -186,25 +216,25 @@ All STL files are licensed under:
 - ❌ Publish modified/remixed versions of the STL files
 
 ### Documentation & Content
-All documentation, guides, diagrams, and written content are licensed under:
-**[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)** (Attribution – Non-Commercial – Share Alike)
+
+All documentation, guides, diagrams, and written content are licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 
 ### Firmware & Software
-All firmware configuration files and software code are licensed under:
-**[GNU Affero General Public License v3.0](https://www.gnu.org/licenses/agpl-3.0.en.html)**
+
+All firmware configuration files and software code are licensed under [GNU Affero General Public License v3.0](https://www.gnu.org/licenses/agpl-3.0.en.html).
 
 - ✅ Use, study, and modify freely
 - ✅ Commercial use allowed
 - ❌ Modifications must be published under AGPL v3.0
 
-> See [FAQ.md](FAQ.md) for a plain-language explanation of what you can and cannot do.
-
 - [AGPL Summary (TLDR)](https://tldrlegal.com/license/gnu-affero-general-public-license-v3-(agpl-3.0)#summary)
 - [AGPL Full Legal Text (German)](https://www.gnu.org/licenses/agpl-3.0.de.html)
 
+</details>
+
 ---
 
-## 🔗 Related Projects & Resources
+## Related Projects & Resources
 
 - [DS3231 RTC Component for ESPHome](https://github.com/Nerdiyde/DS3231-RTC-component-for-ESPHome/) - ESPHome external component used by the firmware
 - [BNO085 RVC Component for ESPHome](https://github.com/Nerdiyde/BNO085-RVC-component-for-ESPHome/) - ESPHome external component used by the firmware
@@ -214,11 +244,5 @@ All firmware configuration files and software code are licensed under:
 
 ---
 
-## ❓ FAQ
-
-For answers to common questions about assembly, firmware, hardware variants, GPS setup, and more, see the **[FAQ](FAQ.md)**.
-
----
-
-**Last Updated:** April 2026  
+**Last Updated:** May 2026  
 

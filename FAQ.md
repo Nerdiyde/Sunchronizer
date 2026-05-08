@@ -9,6 +9,7 @@ This document answers common questions from users and developers about the Sunch
 **[General Questions](#general-questions)**
 - [Why should I build a solar tracker? What are the actual advantages?](#q-why-should-i-build-a-solar-tracker-what-are-the-actual-advantages)
 - [What are the disadvantages of a solar tracker?](#q-what-are-the-disadvantages-of-a-solar-tracker)
+- [In which cases can the Sunchronizer be useful for me?](#q-in-which-cases-can-the-sunchronizer-be-useful-for-me)
 - [Can't I just invest in additional panels instead of a tracker?](#q-cant-i-just-invest-in-additional-panels-instead-of-a-tracker)
 - [Can I use this without Home Assistant?](#q-can-i-use-this-without-home-assistant)
 - [What's the difference between S1, S2, D1, and D2?](#q-whats-the-difference-between-s1-s2-d1-and-d2)
@@ -107,7 +108,8 @@ In many balcony PV setups, the total PV generator size is capped (for example ar
 **7. Good conscience — a small but real contribution to the energy transition**
 Every kilowatt-hour generated locally from sunlight is one that doesn't need to come from fossil or nuclear sources. Building and operating a solar tracker means you're actively contributing to the shift toward renewable energy — reducing your household's carbon footprint, cutting your electricity bill, and demonstrating that efficient, DIY-built renewable systems are feasible for private individuals. It may be a small contribution in the grand scheme, but it is a tangible and measurable one.
 
-> **See also:** [What are the disadvantages of a solar tracker?](#q-what-are-the-disadvantages-of-a-solar-tracker)
+**8. The system pays for itself**
+With a total material cost of around 150 € and measurable additional yield of several hundred kilowatt-hours per year, the Sunchronizer typically pays for itself within **1–3 years** in central European conditions — and then generates free additional energy for years to come. → See [When does the system pay for itself?](#q-when-does-the-system-pay-for-itself) for detailed scenarios and a payback calculation.
 
 **Bottom line:** In clear-sky or mixed conditions at mid-latitudes, a dual-axis tracker like the Sunchronizer D2 reliably produces **50–80% more energy per day** than a comparably sized static panel. For a 400 W panel in central Europe, this translates to a meaningful real-world gain in daily yield.
 
@@ -138,6 +140,30 @@ A tracker requires a stable foundation (e.g. concrete slab with anchor bolts for
 **Bottom line:** For locations with significant direct sunlight and users comfortable with DIY electronics, these trade-offs are well worth it — the energy gains are substantial and well-documented. For locations with frequent cloud cover, very small panels, or users seeking absolute simplicity, a fixed mount may be the more practical choice.
 
 > **See also:** [Why should I build a solar tracker? What are the actual advantages?](#q-why-should-i-build-a-solar-tracker-what-are-the-actual-advantages)
+
+---
+
+### Q: In which cases can the Sunchronizer be useful for me?
+
+**A:** The Sunchronizer is especially useful when one or more of these conditions apply:
+
+- **Your install area is limited** (balcony, small roof, shading constraints)
+- **You cannot increase DC size freely** (for example balcony PV limits)
+- **You want better morning/evening production** instead of only a midday peak
+- **You care about self-consumption** and want less grid import during daytime
+- **Electricity prices are high enough** that additional yield has meaningful value
+- **You are comfortable with DIY mechanics/electronics** and basic maintenance
+
+It is usually **less useful** if most of the following are true:
+
+- You can easily add more static panel area at low cost
+- Your location has mostly diffuse/overcast conditions year-round
+- You want a zero-maintenance, maximum-simplicity setup
+- Your site has extreme wind exposure and no suitable sheltered mounting location
+
+**Quick decision rule:** If panel area or DC capacity is your bottleneck, tracking is often one of the most effective ways to increase yield. If area and inverter capacity are not constrained, adding fixed panels is often simpler.
+
+> **See also:** [Can't I just invest in additional panels instead of a tracker?](#q-cant-i-just-invest-in-additional-panels-instead-of-a-tracker) | [When does the system pay for itself?](#q-when-does-the-system-pay-for-itself) | [What are the disadvantages of a solar tracker?](#q-what-are-the-disadvantages-of-a-solar-tracker)
 
 ---
 
