@@ -610,7 +610,7 @@ if tracking_error_data is not None and len(tracking_error_data) > 0:
 else:
     print("  - Graph 7 skipped: No valid tracking angle overlap data")
 
-print("  ✓ All graphs created!")
+print("  OK: All graphs created!")
 
 # ============================================================================
 # CREATE MARKDOWN REPORT
@@ -630,6 +630,35 @@ two_panel_additional_kwh_day = two_panel_additional_wh / 1000
 two_panel_additional_kwh_year = two_panel_additional_kwh_day * 250
 two_panel_additional_revenue_year = two_panel_additional_kwh_year * 0.25
 
+# Additional reference metrics for the Daily Energy Yield table.
+ch4_reference = final_yields.get('ch4', np.nan)
+worst_panel_yield = min(final_yields.values()) if final_yields else np.nan
+east_west_sum_yield = final_yields.get('ch1', 0) + final_yields.get('ch3', 0)
+
+def _fmt_gain(val):
+    """Format a percentage gain with explicit +/- sign."""
+    if not np.isfinite(val):
+        return 'n/a'
+    return f"+{val:.1f}%" if val > 0 else f"{val:.1f}%"
+
+rel_to_ch4 = {}
+rel_to_worst = {}
+rel_to_east_west_sum = {}
+worst_panel_key = min(final_yields, key=final_yields.get) if final_yields else None
+
+for ch in ['ch1', 'ch2', 'ch3', 'ch4']:
+    val = final_yields.get(ch, np.nan)
+    rel_to_ch4[ch] = ((val - ch4_reference) / ch4_reference * 100) if (np.isfinite(val) and np.isfinite(ch4_reference) and ch4_reference != 0) else np.nan
+    rel_to_worst[ch] = ((val - worst_panel_yield) / worst_panel_yield * 100) if (np.isfinite(val) and np.isfinite(worst_panel_yield) and worst_panel_yield != 0) else np.nan
+    rel_to_east_west_sum[ch] = ((val - east_west_sum_yield) / east_west_sum_yield * 100) if (np.isfinite(val) and east_west_sum_yield != 0) else np.nan
+
+display_rel_to_worst = {}
+for ch in ['ch1', 'ch2', 'ch3', 'ch4']:
+    if ch == worst_panel_key:
+        display_rel_to_worst[ch] = "Reference"
+    else:
+        display_rel_to_worst[ch] = _fmt_gain(rel_to_worst.get(ch, float('nan')))
+
 report = f"""# Measurement Report: Solar Panel Tracking Systems
 ## Comparison of Different Mounting Methods Under Ideal Conditions
 
@@ -639,6 +668,41 @@ report = f"""# Measurement Report: Solar Panel Tracking Systems
 **Test Location:** Laboratory setup with different mounting systems  
 **Recording Duration:** {duration_hours:.1f} hours (05:40 UTC to 17:42 UTC)  
 **Outside Temperature:** {temp_stats['min']:.1f}°C to {temp_stats['max']:.1f}°C (Average: {temp_stats['mean']:.1f}°C)
+
+---
+
+### Tracking Overview (Video + Testbench)
+
+<table>
+   <tr>
+      <td width="70%" valign="top">
+         <img src="solarCam1_20260303_0720_1710_10s_preview.gif" alt="Sunchronizer tracking timelapse - March 3, 2026" width="100%" />
+         <p><em>10-second timelapse of the daytime tracking period. The Sunchronizer D2 dual-axis tracker continuously reorients the panel to follow the sun across the sky.</em><br />
+         <em>Full-quality video (VP9/WebM): <a href="solarCam1_20260303_0720_1710_10s.webm">solarCam1_20260303_0720_1710_10s.webm</a></em></p>
+      </td>
+      <td width="30%" valign="top">
+         <a href="../../../pictures/testbench/sunchronizer_testbench_%283%29.jpg"><img src="../../../pictures/testbench/sunchronizer_testbench_%283%29.jpg" alt="Sunchronizer testbench setup" width="100%" /></a>
+         <p><em>Physical testbench setup used for this measurement series.</em></p>
+      </td>
+   </tr>
+</table>
+
+### Quick Graph Gallery (Click to Enlarge)
+
+<p><em>Quick visual overview of all analysis charts. Each graph is discussed in more detail in the Graphical Analysis section below.</em></p>
+
+<p>
+   <a href="graph_1_power_profile.png"><img src="graph_1_power_profile.png" alt="Graph 1: Power Profile During the Day" width="24%" /></a>
+   <a href="graph_2_cumulative_yield.png"><img src="graph_2_cumulative_yield.png" alt="Graph 2: Cumulative Energy Yield" width="24%" /></a>
+   <a href="graph_3_comparison_bars.png"><img src="graph_3_comparison_bars.png" alt="Graph 3: Daily Final Energy Output" width="24%" /></a>
+   <a href="graph_4_advantage_analysis.png"><img src="graph_4_advantage_analysis.png" alt="Graph 4: Advantage Analysis" width="24%" /></a>
+</p>
+<p>
+   <a href="graph_5_performance_area.png"><img src="graph_5_performance_area.png" alt="Graph 5: Power Profile Smoothed" width="24%" /></a>
+   <a href="graph_6_temperature_progression.png"><img src="graph_6_temperature_progression.png" alt="Graph 6: Outside Temperature Progression" width="24%" /></a>
+   <a href="graph_7_tracking_deviation.png"><img src="graph_7_tracking_deviation.png" alt="Graph 7: Tracking Angle Deviation" width="24%" /></a>
+   <a href="graph_8_performance_ratio_vs_east_west_sum.png"><img src="graph_8_performance_ratio_vs_east_west_sum.png" alt="Graph 8: Performance Ratio vs East+West Sum" width="24%" /></a>
+</p>
 
 ---
 
@@ -667,30 +731,32 @@ This measurement demonstrates a direct comparison between four different solar p
 
 ### 1. Daily Energy Yield (Cumulative Maximum during Day)
 
-| Channel | System | Panel | Yield (Wh) | Yield (kWh) | Difference to CH4 |
-|---------|--------|-------|------------|------------|------------------|
-| **CH1** | West 30° (Static) | CHSM54M-HC-405 | 1078 | 1.08 | -128.3% |
-| **CH2** | Sunchronizer S2 (1-Axis) | CHSM54M-HC-405 | 2183 | 2.18 | **-12.7%** |
-| **CH3** | East 30° (Static) | JAM54S31-395 | 866 | 0.87 | -184.2% |
-| **CH4** | Sunchronizer D2 (2-Axis) | JAM54S31-395 | **2461** | **2.46** | **Reference** |
+| Channel | System | Panel | Yield (Wh) | Yield (kWh) | Rel. to Best Panel | Rel. to Worst Panel | Rel. to CH1+CH3 (East+West Sum) |
+|---------|--------|-------|------------|------------|---------------------|---------------------|----------------------------------|
+| **CH1** | West 30° (Static) | CHSM54M-HC-405 | {final_yields.get('ch1', 0):.0f} | {final_yields.get('ch1', 0)/1000:.2f} | {rel_to_ch4.get('ch1', np.nan):.1f}% | {display_rel_to_worst.get('ch1', 'n/a')} | {_fmt_gain(rel_to_east_west_sum.get('ch1', float('nan')))} |
+| **CH2** | Sunchronizer S2 (1-Axis) | CHSM54M-HC-405 | {final_yields.get('ch2', 0):.0f} | {final_yields.get('ch2', 0)/1000:.2f} | {rel_to_ch4.get('ch2', np.nan):.1f}% | {display_rel_to_worst.get('ch2', 'n/a')} | {_fmt_gain(rel_to_east_west_sum.get('ch2', float('nan')))} |
+| **CH3** | East 30° (Static) | JAM54S31-395 | {final_yields.get('ch3', 0):.0f} | {final_yields.get('ch3', 0)/1000:.2f} | {rel_to_ch4.get('ch3', np.nan):.1f}% | {display_rel_to_worst.get('ch3', 'n/a')} | {_fmt_gain(rel_to_east_west_sum.get('ch3', float('nan')))} |
+| **CH4** | Sunchronizer D2 (2-Axis) | JAM54S31-395 | **{final_yields.get('ch4', 0):.0f}** | **{final_yields.get('ch4', 0)/1000:.2f}** | **Reference** | **{_fmt_gain(rel_to_worst.get('ch4', float('nan')))}** | **{_fmt_gain(rel_to_east_west_sum.get('ch4', float('nan')))}** |
+| **CH1+CH3** | Combined Static Baseline | CH1 + CH3 | {east_west_sum_yield:.0f} | {east_west_sum_yield/1000:.2f} | - | - | Reference |
 
 **Important Note on Table Interpretation:** 
-- The negative percentages indicate how much LESS energy the alternative systems produce compared to CH4 (the reference).
-- CH2 produces 12.7% LESS than CH4, not more.
-- For example: CH2 = 2183 Wh vs. CH4 = 2461 Wh → Difference = (2183 - 2461)/2461 = -12.7%
+- **Bold values** indicate the best result in each column.
+- **Rel. to Best Panel**: percentage gain/loss relative to the best-performing channel (CH4, marked **Reference**). Negative values indicate how much less energy a channel produces compared to CH4. E.g. CH2 = {final_yields.get('ch2', 0):.0f} Wh vs. CH4 = {final_yields.get('ch4', 0):.0f} Wh → ({final_yields.get('ch2', 0):.0f} - {final_yields.get('ch4', 0):.0f})/{final_yields.get('ch4', 0):.0f} = {rel_to_ch4.get('ch2', np.nan):.1f}%
+- **Rel. to Worst Panel**: percentage gain relative to the weakest channel (marked **Reference**). E.g. +184.2% means this channel produced 184.2% more energy than the worst panel.
+- **Rel. to CH1+CH3 (East+West Sum)**: percentage gain/loss relative to the combined East+West static baseline (marked **Reference**). Values above 0% mean the channel outperforms both static panels combined.
 
 ### 2. Power Statistics
 
 | Channel | System | Panel | Min (W) | Max (W) | Average (W) | Std Dev | Measurements |
 |---------|--------|-------|---------|---------|-------------|---------|--------------|
-| **CH1** | West 30° (Static) | CHSM54M-HC-405 | 0.0 | 238.2 | 117.4 | 89.8 | 4967 |
-| **CH2** | Sunchronizer S2 (1-Axis) | CHSM54M-HC-405 | 0.0 | 372.9 | 232.2 | 129.2 | 5653 |
-| **CH3** | East 30° (Static) | JAM54S31-395 | 0.0 | 196.9 | 102.1 | 69.1 | 4307 |
-| **CH4** | Sunchronizer D2 (2-Axis) | JAM54S31-395 | 0.0 | **350.3** | **257.3** | **110.9** | 5659 |
+| **CH1** | West 30° (Static) | CHSM54M-HC-405 | {power_summary['ch1']['min']:.1f} | {power_summary['ch1']['max']:.1f} | {power_summary['ch1']['mean']:.1f} | {power_summary['ch1']['std']:.1f} | {power_summary['ch1']['count']} |
+| **CH2** | Sunchronizer S2 (1-Axis) | CHSM54M-HC-405 | {power_summary['ch2']['min']:.1f} | {power_summary['ch2']['max']:.1f} | {power_summary['ch2']['mean']:.1f} | {power_summary['ch2']['std']:.1f} | {power_summary['ch2']['count']} |
+| **CH3** | East 30° (Static) | JAM54S31-395 | {power_summary['ch3']['min']:.1f} | {power_summary['ch3']['max']:.1f} | {power_summary['ch3']['mean']:.1f} | {power_summary['ch3']['std']:.1f} | {power_summary['ch3']['count']} |
+| **CH4** | Sunchronizer D2 (2-Axis) | JAM54S31-395 | {power_summary['ch4']['min']:.1f} | **{power_summary['ch4']['max']:.1f}** | **{power_summary['ch4']['mean']:.1f}** | **{power_summary['ch4']['std']:.1f}** | {power_summary['ch4']['count']} |
 
 **Observations:**
-- CH2 reaches higher peak power (372.9 W) than CH4 (350.3 W) because it has a higher-rated panel with lower losses at that specific moment
-- However, CH4 maintains better average power (257.3 W vs. 232.2 W), demonstrating superior tracking throughout the day
+- CH2 reaches higher peak power ({power_summary['ch2']['max']:.1f} W) than CH4 ({power_summary['ch4']['max']:.1f} W) because it has a higher-rated panel with lower losses at that specific moment
+- However, CH4 maintains better average power ({power_summary['ch4']['mean']:.1f} W vs. {power_summary['ch2']['mean']:.1f} W), demonstrating superior tracking throughout the day
 - CH2's higher peak is a momentary event; CH4's sustained higher average is the key metric for daily yield
 
 ---
@@ -730,20 +796,20 @@ The moderate temperature (~15°C) during this early spring day provided ideal co
 ![Final Yield](graph_3_comparison_bars.png)
 
 **Daily Energy Production Summary:**
-- **CH1** (West 30°): **1078 Wh** (1.08 kWh)
-- **CH2** (Elevation 1-Axis): **2183 Wh** (2.18 kWh)
-- **CH3** (East 30°): **866 Wh** (0.87 kWh)
-- **CH4** (2-Axis Sunchronizer): **2461 Wh** (2.46 kWh) ⭐
+- **CH1** (West 30°): **{final_yields.get('ch1', 0):.0f} Wh** ({final_yields.get('ch1', 0)/1000:.2f} kWh)
+- **CH2** (Elevation 1-Axis): **{final_yields.get('ch2', 0):.0f} Wh** ({final_yields.get('ch2', 0)/1000:.2f} kWh)
+- **CH3** (East 30°): **{final_yields.get('ch3', 0):.0f} Wh** ({final_yields.get('ch3', 0)/1000:.2f} kWh)
+- **CH4** (2-Axis Sunchronizer): **{final_yields.get('ch4', 0):.0f} Wh** ({final_yields.get('ch4', 0)/1000:.2f} kWh) ⭐
 
 ### Graph 4: Advantage Analysis - 2-Axis Tracking Benefit
 ![Advantage Analysis](graph_4_advantage_analysis.png)
 
 **Energy Advantage of Sunchronizer (CH4 vs. Alternatives):**
-- vs. CH2 (1-Axis Elevation): **+12.7%** more energy
-- vs. CH1 (West Static): **+128.3%** more energy (2.3× higher)
-- vs. CH3 (East Static): **+184.2%** more energy (2.8× higher)
+- vs. CH2 (1-Axis Elevation): **+{ch4_vs_ch2:.1f}%** more energy
+- vs. CH1 (West Static): **+{ch4_vs_ch1:.1f}%** more energy ({final_yields.get('ch4', 0)/final_yields.get('ch1', 1):.1f}× higher)
+- vs. CH3 (East Static): **+{ch4_vs_ch3:.1f}%** more energy ({final_yields.get('ch4', 0)/final_yields.get('ch3', 1):.1f}× higher)
 
-**Practical significance:** The 2-axis system produces at least 128% more energy than static systems and still beats the best alternative single-axis system by 12.7%.
+**Practical significance:** The 2-axis system produces at least {min(ch4_vs_ch1, ch4_vs_ch3):.0f}% more energy than static systems and still beats the best alternative single-axis system by {ch4_vs_ch2:.1f}%.
 
 ### Graph 5: Power Profile (Smoothed)
 ![Performance Area](graph_5_performance_area.png)
@@ -755,7 +821,7 @@ The moderate temperature (~15°C) during this early spring day provided ideal co
 - **S2 ratio** = CH2 / (CH1 + CH3)
 - **D2 ratio** = CH4 / (CH1 + CH3)
 
-**How to read this chart (plain language):**
+**How to read this chart:**
 - The x-axis is the time of day, the y-axis is the ratio in percent.
 - The denominator **(CH1 + CH3)** is the combined output of both fixed reference modules (West + East).
 - A value of **100%** means the tracking channel produces exactly the same power as both static modules together at that moment.
@@ -812,10 +878,10 @@ This rubric compares the measured panel orientation against solar-optimal angles
 **Performance Characteristics:**
 - ✅ Optimal sun tracking in both azimuth AND elevation
 - ✅ Maximum solar irradiance throughout the day
-- ✅ Peak power: 350.3 W (88.7% of panel rating)
-- ✅ Average power: 257.3 W (65.1% of panel rating)
+- ✅ Peak power: {power_summary['ch4']['max']:.1f} W ({power_summary['ch4']['max']/395*100:.1f}% of panel rating)
+- ✅ Average power: {power_summary['ch4']['mean']:.1f} W ({power_summary['ch4']['mean']/395*100:.1f}% of panel rating)
 - ✅ Excellent performance even during marginal hours (early/late)
-- ✅ Energy yield: 2461 Wh/day
+- ✅ Energy yield: {final_yields.get('ch4', 0):.0f} Wh/day
 
 **Advantages:**
 - ✅ Continuous sun tracking ensures optimal angle at all times
@@ -830,9 +896,9 @@ This rubric compares the measured panel orientation against solar-optimal angles
 ### 1-Axis Elevation Tracking (CH2) - **CHSM54M-HC-405 (405W)**
 
 **Performance Characteristics:**
-- Peak power: 372.9 W (92.1% of panel rating) ← Higher peak than CH4
-- Average power: 232.2 W (57.3% of panel rating)
-- Energy yield: 2183 Wh/day
+- Peak power: {power_summary['ch2']['max']:.1f} W ({power_summary['ch2']['max']/405*100:.1f}% of panel rating) ← Higher peak than CH4
+- Average power: {power_summary['ch2']['mean']:.1f} W ({power_summary['ch2']['mean']/405*100:.1f}% of panel rating)
+- Energy yield: {final_yields.get('ch2', 0):.0f} Wh/day
 
 **Why Peak is Higher but Yield is Lower:**
 The higher peak in CH2 is momentary—it occurs at one specific instant when the sun is at optimal elevation angle and the panel happens to be well-positioned azimuthally. However, as the sun moves in azimuth (east to west), the elevation-only system cannot compensate, causing rapid power drop.
@@ -848,22 +914,22 @@ In addition, the elevation angle cannot always be further approximated to the so
 - ❌ Azimuth not optimized throughout day
 - ❌ Less efficient during morning and evening hours
 - ❌ Peak power is momentary, not sustained
-- ❌ Produces 12.7% less energy than 2-axis system
+- ❌ Produces {ch4_vs_ch2:.1f}% less energy than 2-axis system
 
 **Performance vs. CH4:** {ch4_vs_ch2:.1f}% less yield
 
 ### Static Systems (CH1 West & CH3 East)
 
 **CH1 - West 30° Static - CHSM54M-HC-405 (405W):**
-- Peak: 238.2 W (58.8% of panel rating)
-- Average: 117.4 W (29.0% of panel rating)
-- Yield: 1078 Wh/day
+- Peak: {power_summary['ch1']['max']:.1f} W ({power_summary['ch1']['max']/405*100:.1f}% of panel rating)
+- Average: {power_summary['ch1']['mean']:.1f} W ({power_summary['ch1']['mean']/405*100:.1f}% of panel rating)
+- Yield: {final_yields.get('ch1', 0):.0f} Wh/day
 - Only produces power during afternoon (west-facing)
 
 **CH3 - East 30° Static - JAM54S31-395 (395W):**
-- Peak: 196.9 W (49.8% of panel rating)
-- Average: 102.1 W (25.8% of panel rating)
-- Yield: 866 Wh/day
+- Peak: {power_summary['ch3']['max']:.1f} W ({power_summary['ch3']['max']/395*100:.1f}% of panel rating)
+- Average: {power_summary['ch3']['mean']:.1f} W ({power_summary['ch3']['mean']/395*100:.1f}% of panel rating)
+- Yield: {final_yields.get('ch3', 0):.0f} Wh/day
 - Only produces power during morning (east-facing)
 
 **Advantages:**
@@ -892,13 +958,13 @@ This is an important observation that highlights the difference between **peak p
 
 1. **CH2's panel (CHSM54M-HC-405) is rated at 405W** and can reach very high momentary power under optimal geometry
 2. **CH4's panel (JAM54S31-395) is rated at 395W** but benefits strongly from dual-axis tracking across the full day
-3. The momentary peak of 372.9W in CH2 occurs at a specific instant when:
+3. The momentary peak of {power_summary['ch2']['max']:.1f}W in CH2 occurs at a specific instant when:
    - Sun elevation is optimal for the fixed elevation angle
    - The sun happens to be in the south (within the field of view)
    - Temperature and irradiance conditions are perfect
 4. However, this peak lasts only minutes because the sun continues moving azimuthally
 5. The elevation angle cannot always be driven closer to the solar-optimal value due to mechanical min/max elevation limits
-6. **CH4, despite not reaching as high a peak, sustains higher power longer**, resulting in **12.7% more total daily energy**
+6. **CH4, despite not reaching as high a peak, sustains higher power longer**, resulting in **{ch4_vs_ch2:.1f}% more total daily energy**
 
 **This demonstrates that sustained performance is more important than momentary peaks for practical energy production.**
 
@@ -906,9 +972,9 @@ This is an important observation that highlights the difference between **peak p
 
 | Metric | Winner | Value | Advantage |
 |--------|--------|-------|-----------|
-| Peak Power | CH2 | 372.9 W | +6.4% |
-| Average Power | CH4 | 257.3 W | +10.8% |
-| Daily Yield | CH4 | 2461 Wh | +12.7% |
+| Peak Power | CH2 | {power_summary['ch2']['max']:.1f} W | +{(power_summary['ch2']['max']-power_summary['ch4']['max'])/power_summary['ch4']['max']*100:.1f}% |
+| Average Power | CH4 | {power_summary['ch4']['mean']:.1f} W | +{(power_summary['ch4']['mean']-power_summary['ch2']['mean'])/power_summary['ch2']['mean']*100:.1f}% |
+| Daily Yield | CH4 | {final_yields.get('ch4', 0):.0f} Wh | +{ch4_vs_ch2:.1f}% |
 | Efficiency | CH4 | Sustained | Consistent |
 
 ---
@@ -980,17 +1046,17 @@ with open(measurement_dir / 'ANALYSIS_REPORT_2026-03-03.md', 'w', encoding='utf-
     f.write(report)
 
 print("\n" + "=" * 80)
-print("✅ ANALYSIS COMPLETED!")
+print("ANALYSIS COMPLETED!")
 print("=" * 80)
 print(f"\nGenerated Files:")
-print(f"  📄 ANALYSIS_REPORT_2026-03-03.md")
-print(f"  📊 graph_1_power_profile.png")
-print(f"  📊 graph_2_cumulative_yield.png")
-print(f"  📊 graph_3_comparison_bars.png")
-print(f"  📊 graph_4_advantage_analysis.png")
-print(f"  📊 graph_5_performance_area.png")
-print(f"  📊 graph_6_temperature_progression.png")
-print(f"  📊 graph_7_tracking_deviation.png")
-print(f"  📊 graph_8_performance_ratio_vs_east_west_sum.png")
+print(f"  ANALYSIS_REPORT_2026-03-03.md")
+print(f"  graph_1_power_profile.png")
+print(f"  graph_2_cumulative_yield.png")
+print(f"  graph_3_comparison_bars.png")
+print(f"  graph_4_advantage_analysis.png")
+print(f"  graph_5_performance_area.png")
+print(f"  graph_6_temperature_progression.png")
+print(f"  graph_7_tracking_deviation.png")
+print(f"  graph_8_performance_ratio_vs_east_west_sum.png")
 print(f"\nAll files in directory:")
 print(f"  docu/measurements/")

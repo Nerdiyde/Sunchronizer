@@ -11,19 +11,44 @@
 
 ### Tracking Overview (Video + Testbench)
 
-<table>
-	<tr>
-		<td width="70%" valign="top">
-			<img src="solarCam1_20260430_0000_1340_10s_preview.gif" alt="Sunchronizer tracking timelapse - April 30, 2026" width="100%" />
-			<p><em>10-second timelapse of the daytime tracking period. The Sunchronizer D2 dual-axis tracker continuously reorients the panel to follow the sun across the sky.</em><br />
-			<em>Full-quality video (VP9/WebM): <a href="solarCam1_20260430_0000_1340_10s.webm">solarCam1_20260430_0000_1340_10s.webm</a></em></p>
-		</td>
-		<td width="30%" valign="top">
-	 <a href="../../../pictures/testbench/sunchronizer_testbench_%283%29.jpg"><img src="../../../pictures/testbench/sunchronizer_testbench_%283%29.jpg" alt="Sunchronizer testbench setup" width="100%" /></a>
-			<p><em>Physical testbench setup used for this measurement series.</em></p>
-		</td>
-	</tr>
+<table style="width:100%; border-collapse:collapse;">
+<tr>
+<td style="width:70%; padding:6px; vertical-align:top;">
+
+**Time-lapse footage of the tracking system (April 30, 2026):**
+
+<video width="100%" controls style="border-radius:6px">
+  <source src="solarCam1_20260430_0000_1340_10s.webm" type="video/webm">
+</video>
+
+*Preview GIF (click video above for full playback):*
+<img src="solarCam1_20260430_0000_1340_10s_preview.gif" width="100%" style="border-radius:6px">
+
+</td>
+<td style="width:30%; padding:6px; vertical-align:top;">
+
+**Testbench setup:**
+<img src="../../../pictures/testbench/testbench_v1.jpg" width="100%" style="border-radius:6px">
+
+</td>
+</tr>
 </table>
+
+---
+
+### Quick Graph Gallery (Click to Enlarge)
+
+<table style="width:100%; border-collapse:collapse;"><tr>
+<td style="width:24%; padding:4px; text-align:center;"><a href="graph_1_power_profile.png"><img src="graph_1_power_profile.png" width="100%" style="border-radius:4px"></a><br><small>Graph 1: Power Profile</small></td>
+<td style="width:24%; padding:4px; text-align:center;"><a href="graph_2_cumulative_yield.png"><img src="graph_2_cumulative_yield.png" width="100%" style="border-radius:4px"></a><br><small>Graph 2: Cumulative Yield</small></td>
+<td style="width:24%; padding:4px; text-align:center;"><a href="graph_3_comparison_bars.png"><img src="graph_3_comparison_bars.png" width="100%" style="border-radius:4px"></a><br><small>Graph 3: Daily Output</small></td>
+<td style="width:24%; padding:4px; text-align:center;"><a href="graph_4_advantage_analysis.png"><img src="graph_4_advantage_analysis.png" width="100%" style="border-radius:4px"></a><br><small>Graph 4: Advantage</small></td>
+</tr><tr>
+<td style="width:24%; padding:4px; text-align:center;"><a href="graph_5_performance_area.png"><img src="graph_5_performance_area.png" width="100%" style="border-radius:4px"></a><br><small>Graph 5: Smoothed Profile</small></td>
+<td style="width:24%; padding:4px; text-align:center;"><a href="graph_6_temperature_progression.png"><img src="graph_6_temperature_progression.png" width="100%" style="border-radius:4px"></a><br><small>Graph 6: Temperature</small></td>
+<td style="width:24%; padding:4px; text-align:center;"><a href="graph_7_tracking_deviation.png"><img src="graph_7_tracking_deviation.png" width="100%" style="border-radius:4px"></a><br><small>Graph 7: Tracking Deviation</small></td>
+<td style="width:24%; padding:4px; text-align:center;"><a href="graph_8_performance_ratio_vs_east_west_sum.png"><img src="graph_8_performance_ratio_vs_east_west_sum.png" width="100%" style="border-radius:4px"></a><br><small>Graph 8: Performance Ratio</small></td>
+</tr></table>
 
 ---
 
@@ -39,14 +64,21 @@ This analysis compares four mounting concepts using synchronized power and yield
 
 ## Measurement Results
 
-### 1. Daily Energy Yield
+### 1. Daily Energy Yield (Cumulative Maximum during Day)
 
-| Channel | System | Panel | Yield (Wh) | Yield (kWh) | Difference to CH4 |
-|---------|--------|-------|------------|-------------|-------------------|
-| **CH1** | West 30 deg (Static, CHSM54M-HC-405) | CHSM54M-HC-405 | 2308 | 2.31 | -28.7% |
-| **CH2** | Sunchronizer S2 (1-Axis Elevation, CHSM54M-HC-405) | CHSM54M-HC-405 | 2825 | 2.83 | -12.7% |
-| **CH3** | East 30 deg (Static, JAM54S31-395) | JAM54S31-395 | 2032 | 2.03 | -37.2% |
-| **CH4** | Sunchronizer D2 (2-Axis, JAM54S31-395) | JAM54S31-395 | 3237 | 3.24 | Reference |
+| Channel | System | Panel | Yield (Wh) | Yield (kWh) | Rel. to Best Panel | Rel. to Worst Panel | Rel. to CH1+CH3 (East+West Sum) |
+|---------|--------|-------|------------|------------|---------------------|---------------------|----------------------------------|
+| **CH1** | West 30° (Static) | CHSM54M-HC-405 | 2308 | 2.31 | -28.7% | +13.6% | -46.8% |
+| **CH2** | Sunchronizer S2 (1-Axis) | CHSM54M-HC-405 | 2825 | 2.83 | -12.7% | +39.0% | -34.9% |
+| **CH3** | East 30° (Static) | JAM54S31-395 | 2032 | 2.03 | -37.2% | Reference | -53.2% |
+| **CH4** | Sunchronizer D2 (2-Axis) | JAM54S31-395 | **3237** | **3.24** | **Reference** | **+59.3%** | **-25.4%** |
+| **CH1+CH3** | Combined Static Baseline | CH1 + CH3 | 4340 | 4.34 | - | - | Reference |
+
+**Important Note on Table Interpretation:** 
+- **Bold values** indicate the best result in each column.
+- **Rel. to Best Panel**: percentage gain/loss relative to the best-performing channel (CH4, marked **Reference**). Negative values indicate how much less energy a channel produces compared to CH4. E.g. CH2 = 2825 Wh vs. CH4 = 3237 Wh → (2825 - 3237)/3237 = -12.7%
+- **Rel. to Worst Panel**: percentage gain relative to the weakest channel (marked **Reference**). E.g. +184.2% means this channel produced 184.2% more energy than the worst panel.
+- **Rel. to CH1+CH3 (East+West Sum)**: percentage gain/loss relative to the combined East+West static baseline (marked **Reference**). Values above 0% mean the channel outperforms both static panels combined.
 
 ### 2. Power Statistics
 
@@ -94,4 +126,4 @@ This analysis compares four mounting concepts using synchronized power and yield
 
 ---
 
-*Report generated: April 30, 2026*
+*Report generated: May 08, 2026*

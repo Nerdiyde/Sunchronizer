@@ -26,6 +26,23 @@
    </tr>
 </table>
 
+### Quick Graph Gallery (Click to Enlarge)
+
+<p><em>Quick visual overview of all analysis charts. Each graph is discussed in more detail in the Graphical Analysis section below.</em></p>
+
+<p>
+   <a href="graph_1_power_profile.png"><img src="graph_1_power_profile.png" alt="Graph 1: Power Profile During the Day" width="24%" /></a>
+   <a href="graph_2_cumulative_yield.png"><img src="graph_2_cumulative_yield.png" alt="Graph 2: Cumulative Energy Yield" width="24%" /></a>
+   <a href="graph_3_comparison_bars.png"><img src="graph_3_comparison_bars.png" alt="Graph 3: Daily Final Energy Output" width="24%" /></a>
+   <a href="graph_4_advantage_analysis.png"><img src="graph_4_advantage_analysis.png" alt="Graph 4: Advantage Analysis" width="24%" /></a>
+</p>
+<p>
+   <a href="graph_5_performance_area.png"><img src="graph_5_performance_area.png" alt="Graph 5: Power Profile Smoothed" width="24%" /></a>
+   <a href="graph_6_temperature_progression.png"><img src="graph_6_temperature_progression.png" alt="Graph 6: Outside Temperature Progression" width="24%" /></a>
+   <a href="graph_7_tracking_deviation.png"><img src="graph_7_tracking_deviation.png" alt="Graph 7: Tracking Angle Deviation" width="24%" /></a>
+   <a href="graph_8_performance_ratio_vs_east_west_sum.png"><img src="graph_8_performance_ratio_vs_east_west_sum.png" alt="Graph 8: Performance Ratio vs East+West Sum" width="24%" /></a>
+</p>
+
 ---
 
 ## Summary
@@ -53,30 +70,32 @@ This measurement demonstrates a direct comparison between four different solar p
 
 ### 1. Daily Energy Yield (Cumulative Maximum during Day)
 
-| Channel | System | Panel | Yield (Wh) | Yield (kWh) | Difference to CH4 |
-|---------|--------|-------|------------|------------|------------------|
-| **CH1** | West 30° (Static) | CHSM54M-HC-405 | 1078 | 1.08 | -128.3% |
-| **CH2** | Sunchronizer S2 (1-Axis) | CHSM54M-HC-405 | 2183 | 2.18 | **-12.7%** |
-| **CH3** | East 30° (Static) | JAM54S31-395 | 866 | 0.87 | -184.2% |
-| **CH4** | Sunchronizer D2 (2-Axis) | JAM54S31-395 | **2461** | **2.46** | **Reference** |
+| Channel | System | Panel | Yield (Wh) | Yield (kWh) | Rel. to Best Panel | Rel. to Worst Panel | Rel. to CH1+CH3 (East+West Sum) |
+|---------|--------|-------|------------|------------|---------------------|---------------------|----------------------------------|
+| **CH1** | West 30° (Static) | CHSM54M-HC-405 | 1059 | 1.06 | -54.2% | +24.3% | -44.6% |
+| **CH2** | Sunchronizer S2 (1-Axis) | CHSM54M-HC-405 | 2073 | 2.07 | -10.3% | +143.3% | +8.5% |
+| **CH3** | East 30° (Static) | JAM54S31-395 | 852 | 0.85 | -63.1% | Reference | -55.4% |
+| **CH4** | Sunchronizer D2 (2-Axis) | JAM54S31-395 | **2310** | **2.31** | **Reference** | **+171.1%** | **+20.9%** |
+| **CH1+CH3** | Combined Static Baseline | CH1 + CH3 | 1911 | 1.91 | - | - | Reference |
 
 **Important Note on Table Interpretation:** 
-- The negative percentages indicate how much LESS energy the alternative systems produce compared to CH4 (the reference).
-- CH2 produces 12.7% LESS than CH4, not more.
-- For example: CH2 = 2183 Wh vs. CH4 = 2461 Wh → Difference = (2183 - 2461)/2461 = -12.7%
+- **Bold values** indicate the best result in each column.
+- **Rel. to Best Panel**: percentage gain/loss relative to the best-performing channel (CH4, marked **Reference**). Negative values indicate how much less energy a channel produces compared to CH4. E.g. CH2 = 2073 Wh vs. CH4 = 2310 Wh → (2073 - 2310)/2310 = -10.3%
+- **Rel. to Worst Panel**: percentage gain relative to the weakest channel (marked **Reference**). E.g. +184.2% means this channel produced 184.2% more energy than the worst panel.
+- **Rel. to CH1+CH3 (East+West Sum)**: percentage gain/loss relative to the combined East+West static baseline (marked **Reference**). Values above 0% mean the channel outperforms both static panels combined.
 
 ### 2. Power Statistics
 
 | Channel | System | Panel | Min (W) | Max (W) | Average (W) | Std Dev | Measurements |
 |---------|--------|-------|---------|---------|-------------|---------|--------------|
-| **CH1** | West 30° (Static) | CHSM54M-HC-405 | 0.0 | 238.2 | 117.4 | 89.8 | 4967 |
-| **CH2** | Sunchronizer S2 (1-Axis) | CHSM54M-HC-405 | 0.0 | 372.9 | 232.2 | 129.2 | 5653 |
-| **CH3** | East 30° (Static) | JAM54S31-395 | 0.0 | 196.9 | 102.1 | 69.1 | 4307 |
-| **CH4** | Sunchronizer D2 (2-Axis) | JAM54S31-395 | 0.0 | **350.3** | **257.3** | **110.9** | 5659 |
+| **CH1** | West 30° (Static) | CHSM54M-HC-405 | 0.0 | 231.4 | 112.5 | 85.3 | 5064 |
+| **CH2** | Sunchronizer S2 (1-Axis) | CHSM54M-HC-405 | 0.0 | 357.0 | 215.7 | 123.3 | 5670 |
+| **CH3** | East 30° (Static) | JAM54S31-395 | 0.0 | 189.5 | 91.6 | 65.8 | 4158 |
+| **CH4** | Sunchronizer D2 (2-Axis) | JAM54S31-395 | 0.0 | **333.6** | **233.9** | **107.5** | 5635 |
 
 **Observations:**
-- CH2 reaches higher peak power (372.9 W) than CH4 (350.3 W) because it has a higher-rated panel with lower losses at that specific moment
-- However, CH4 maintains better average power (257.3 W vs. 232.2 W), demonstrating superior tracking throughout the day
+- CH2 reaches higher peak power (357.0 W) than CH4 (333.6 W) because it has a higher-rated panel with lower losses at that specific moment
+- However, CH4 maintains better average power (233.9 W vs. 215.7 W), demonstrating superior tracking throughout the day
 - CH2's higher peak is a momentary event; CH4's sustained higher average is the key metric for daily yield
 
 ---
@@ -116,20 +135,20 @@ The moderate temperature (~15°C) during this early spring day provided ideal co
 ![Final Yield](graph_3_comparison_bars.png)
 
 **Daily Energy Production Summary:**
-- **CH1** (West 30°): **1078 Wh** (1.08 kWh)
-- **CH2** (Elevation 1-Axis): **2183 Wh** (2.18 kWh)
-- **CH3** (East 30°): **866 Wh** (0.87 kWh)
-- **CH4** (2-Axis Sunchronizer): **2461 Wh** (2.46 kWh) ⭐
+- **CH1** (West 30°): **1059 Wh** (1.06 kWh)
+- **CH2** (Elevation 1-Axis): **2073 Wh** (2.07 kWh)
+- **CH3** (East 30°): **852 Wh** (0.85 kWh)
+- **CH4** (2-Axis Sunchronizer): **2310 Wh** (2.31 kWh) ⭐
 
 ### Graph 4: Advantage Analysis - 2-Axis Tracking Benefit
 ![Advantage Analysis](graph_4_advantage_analysis.png)
 
 **Energy Advantage of Sunchronizer (CH4 vs. Alternatives):**
-- vs. CH2 (1-Axis Elevation): **+12.7%** more energy
-- vs. CH1 (West Static): **+128.3%** more energy (2.3× higher)
-- vs. CH3 (East Static): **+184.2%** more energy (2.8× higher)
+- vs. CH2 (1-Axis Elevation): **+11.4%** more energy
+- vs. CH1 (West Static): **+118.1%** more energy (2.2× higher)
+- vs. CH3 (East Static): **+171.1%** more energy (2.7× higher)
 
-**Practical significance:** The 2-axis system produces at least 128% more energy than static systems and still beats the best alternative single-axis system by 12.7%.
+**Practical significance:** The 2-axis system produces at least 118% more energy than static systems and still beats the best alternative single-axis system by 11.4%.
 
 ### Graph 5: Power Profile (Smoothed)
 ![Performance Area](graph_5_performance_area.png)
@@ -141,7 +160,7 @@ The moderate temperature (~15°C) during this early spring day provided ideal co
 - **S2 ratio** = CH2 / (CH1 + CH3)
 - **D2 ratio** = CH4 / (CH1 + CH3)
 
-**How to read this chart (plain language):**
+**How to read this chart:**
 - The x-axis is the time of day, the y-axis is the ratio in percent.
 - The denominator **(CH1 + CH3)** is the combined output of both fixed reference modules (West + East).
 - A value of **100%** means the tracking channel produces exactly the same power as both static modules together at that moment.
@@ -198,10 +217,10 @@ This rubric compares the measured panel orientation against solar-optimal angles
 **Performance Characteristics:**
 - ✅ Optimal sun tracking in both azimuth AND elevation
 - ✅ Maximum solar irradiance throughout the day
-- ✅ Peak power: 350.3 W (88.7% of panel rating)
-- ✅ Average power: 257.3 W (65.1% of panel rating)
+- ✅ Peak power: 333.6 W (84.5% of panel rating)
+- ✅ Average power: 233.9 W (59.2% of panel rating)
 - ✅ Excellent performance even during marginal hours (early/late)
-- ✅ Energy yield: 2461 Wh/day
+- ✅ Energy yield: 2310 Wh/day
 
 **Advantages:**
 - ✅ Continuous sun tracking ensures optimal angle at all times
@@ -216,9 +235,9 @@ This rubric compares the measured panel orientation against solar-optimal angles
 ### 1-Axis Elevation Tracking (CH2) - **CHSM54M-HC-405 (405W)**
 
 **Performance Characteristics:**
-- Peak power: 372.9 W (92.1% of panel rating) ← Higher peak than CH4
-- Average power: 232.2 W (57.3% of panel rating)
-- Energy yield: 2183 Wh/day
+- Peak power: 357.0 W (88.1% of panel rating) ← Higher peak than CH4
+- Average power: 215.7 W (53.3% of panel rating)
+- Energy yield: 2073 Wh/day
 
 **Why Peak is Higher but Yield is Lower:**
 The higher peak in CH2 is momentary—it occurs at one specific instant when the sun is at optimal elevation angle and the panel happens to be well-positioned azimuthally. However, as the sun moves in azimuth (east to west), the elevation-only system cannot compensate, causing rapid power drop.
@@ -234,22 +253,22 @@ In addition, the elevation angle cannot always be further approximated to the so
 - ❌ Azimuth not optimized throughout day
 - ❌ Less efficient during morning and evening hours
 - ❌ Peak power is momentary, not sustained
-- ❌ Produces 12.7% less energy than 2-axis system
+- ❌ Produces 11.4% less energy than 2-axis system
 
 **Performance vs. CH4:** 11.4% less yield
 
 ### Static Systems (CH1 West & CH3 East)
 
 **CH1 - West 30° Static - CHSM54M-HC-405 (405W):**
-- Peak: 238.2 W (58.8% of panel rating)
-- Average: 117.4 W (29.0% of panel rating)
-- Yield: 1078 Wh/day
+- Peak: 231.4 W (57.1% of panel rating)
+- Average: 112.5 W (27.8% of panel rating)
+- Yield: 1059 Wh/day
 - Only produces power during afternoon (west-facing)
 
 **CH3 - East 30° Static - JAM54S31-395 (395W):**
-- Peak: 196.9 W (49.8% of panel rating)
-- Average: 102.1 W (25.8% of panel rating)
-- Yield: 866 Wh/day
+- Peak: 189.5 W (48.0% of panel rating)
+- Average: 91.6 W (23.2% of panel rating)
+- Yield: 852 Wh/day
 - Only produces power during morning (east-facing)
 
 **Advantages:**
@@ -278,13 +297,13 @@ This is an important observation that highlights the difference between **peak p
 
 1. **CH2's panel (CHSM54M-HC-405) is rated at 405W** and can reach very high momentary power under optimal geometry
 2. **CH4's panel (JAM54S31-395) is rated at 395W** but benefits strongly from dual-axis tracking across the full day
-3. The momentary peak of 372.9W in CH2 occurs at a specific instant when:
+3. The momentary peak of 357.0W in CH2 occurs at a specific instant when:
    - Sun elevation is optimal for the fixed elevation angle
    - The sun happens to be in the south (within the field of view)
    - Temperature and irradiance conditions are perfect
 4. However, this peak lasts only minutes because the sun continues moving azimuthally
 5. The elevation angle cannot always be driven closer to the solar-optimal value due to mechanical min/max elevation limits
-6. **CH4, despite not reaching as high a peak, sustains higher power longer**, resulting in **12.7% more total daily energy**
+6. **CH4, despite not reaching as high a peak, sustains higher power longer**, resulting in **11.4% more total daily energy**
 
 **This demonstrates that sustained performance is more important than momentary peaks for practical energy production.**
 
@@ -292,9 +311,9 @@ This is an important observation that highlights the difference between **peak p
 
 | Metric | Winner | Value | Advantage |
 |--------|--------|-------|-----------|
-| Peak Power | CH2 | 372.9 W | +6.4% |
-| Average Power | CH4 | 257.3 W | +10.8% |
-| Daily Yield | CH4 | 2461 Wh | +12.7% |
+| Peak Power | CH2 | 357.0 W | +7.0% |
+| Average Power | CH4 | 233.9 W | +8.4% |
+| Daily Yield | CH4 | 2310 Wh | +11.4% |
 | Efficiency | CH4 | Sustained | Consistent |
 
 ---
@@ -355,7 +374,7 @@ Based on this measurement:
 
 ---
 
-*Report generated: March 22, 2026*  
+*Report generated: May 08, 2026*  
 *Location: Bochum, North Rhine-Westphalia, Germany*  
 *System: Sunchronizer Test Setup with HMS 1600-4T Monitoring*  
 *Temperature during test: 12.1°C average*

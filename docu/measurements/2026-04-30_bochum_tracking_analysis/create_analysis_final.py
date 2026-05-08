@@ -275,20 +275,30 @@ def main() -> int:
             plt.savefig(path, dpi=120)
             plt.close()
 
-    ch4 = final_yields.get("ch4", 0.0)
-    diff_to_ch4 = {}
-    for ch in ch_order:
-        if ch4 > 0 and final_yields.get(ch, 0) > 0:
-            diff_to_ch4[ch] = ((final_yields[ch] - ch4) / ch4) * 100.0
-        else:
-            diff_to_ch4[ch] = float("nan")
-
-    def diff_str(ch: str) -> str:
-        if ch == "ch4":
-            return "Reference"
-        if np.isnan(diff_to_ch4[ch]):
+    def _fmt_gain(val: float) -> str:
+        if not np.isfinite(val):
             return "n/a"
-        return f"{diff_to_ch4[ch]:+.1f}%"
+        return f"+{val:.1f}%" if val > 0 else f"{val:.1f}%"
+
+    ch4_reference = final_yields.get("ch4", float("nan"))
+    worst_panel_yield = min(final_yields.values()) if final_yields else float("nan")
+    east_west_sum_yield = final_yields.get("ch1", 0) + final_yields.get("ch3", 0)
+    worst_panel_key = min(final_yields, key=final_yields.get) if final_yields else None
+
+    rel_to_ch4: dict[str, float] = {}
+    rel_to_worst: dict[str, float] = {}
+    rel_to_east_west_sum: dict[str, float] = {}
+    display_rel_to_worst: dict[str, str] = {}
+    for _ch in ["ch1", "ch2", "ch3", "ch4"]:
+        _v = final_yields.get(_ch, float("nan"))
+        rel_to_ch4[_ch] = ((_v - ch4_reference) / ch4_reference * 100) if (np.isfinite(_v) and np.isfinite(ch4_reference) and ch4_reference != 0) else float("nan")
+        rel_to_worst[_ch] = ((_v - worst_panel_yield) / worst_panel_yield * 100) if (np.isfinite(_v) and np.isfinite(worst_panel_yield) and worst_panel_yield != 0) else float("nan")
+        rel_to_east_west_sum[_ch] = ((_v - east_west_sum_yield) / east_west_sum_yield * 100) if (np.isfinite(_v) and east_west_sum_yield != 0) else float("nan")
+        display_rel_to_worst[_ch] = "Reference" if _ch == worst_panel_key else _fmt_gain(rel_to_worst.get(_ch, float("nan")))
+
+    ch4_vs_ch1 = rel_to_ch4.get("ch1", float("nan")) * -1 if np.isfinite(rel_to_ch4.get("ch1", float("nan"))) else float("nan")
+    ch4_vs_ch2 = rel_to_ch4.get("ch2", float("nan")) * -1 if np.isfinite(rel_to_ch4.get("ch2", float("nan"))) else float("nan")
+    ch4_vs_ch3 = rel_to_ch4.get("ch3", float("nan")) * -1 if np.isfinite(rel_to_ch4.get("ch3", float("nan"))) else float("nan")
 
     power_rows = []
     for ch in ch_order:
@@ -299,14 +309,6 @@ def main() -> int:
                 f"| **{ch.upper()}** | {ch_descriptions[ch]} | {model} | {s['min']:.1f} | {s['max']:.1f} | {s['mean']:.1f} | {s['std']:.1f} | {s['count']} |"
             )
 
-    yield_rows = []
-    for ch in ch_order:
-        model, _ = ch_models[ch]
-        y = final_yields.get(ch, 0.0)
-        yield_rows.append(
-            f"| **{ch.upper()}** | {ch_descriptions[ch]} | {model} | {y:.0f} | {y/1000:.2f} | {diff_str(ch)} |"
-        )
-
     report = f"""# Measurement Report: Solar Panel Tracking Systems
 ## Comparison of Different Mounting Methods Under Ideal Conditions
 
@@ -315,6 +317,49 @@ def main() -> int:
 **Conditions:** Based on recorded field data
 **Recording Duration:** {duration_hours:.1f} hours ({t_start.strftime('%H:%M')} UTC to {t_end.strftime('%H:%M')} UTC)
 **Outside Temperature:** {temp_stats['min']:.1f} degC to {temp_stats['max']:.1f} degC (Average: {temp_stats['mean']:.1f} degC)
+
+---
+
+### Tracking Overview (Video + Testbench)
+
+<table style="width:100%; border-collapse:collapse;">
+<tr>
+<td style="width:70%; padding:6px; vertical-align:top;">
+
+**Time-lapse footage of the tracking system (April 30, 2026):**
+
+<video width="100%" controls style="border-radius:6px">
+  <source src="solarCam1_20260430_0000_1340_10s.webm" type="video/webm">
+</video>
+
+*Preview GIF (click video above for full playback):*
+<img src="solarCam1_20260430_0000_1340_10s_preview.gif" width="100%" style="border-radius:6px">
+
+</td>
+<td style="width:30%; padding:6px; vertical-align:top;">
+
+**Testbench setup:**
+<img src="../../../pictures/testbench/testbench_v1.jpg" width="100%" style="border-radius:6px">
+
+</td>
+</tr>
+</table>
+
+---
+
+### Quick Graph Gallery (Click to Enlarge)
+
+<table style="width:100%; border-collapse:collapse;"><tr>
+<td style="width:24%; padding:4px; text-align:center;"><a href="graph_1_power_profile.png"><img src="graph_1_power_profile.png" width="100%" style="border-radius:4px"></a><br><small>Graph 1: Power Profile</small></td>
+<td style="width:24%; padding:4px; text-align:center;"><a href="graph_2_cumulative_yield.png"><img src="graph_2_cumulative_yield.png" width="100%" style="border-radius:4px"></a><br><small>Graph 2: Cumulative Yield</small></td>
+<td style="width:24%; padding:4px; text-align:center;"><a href="graph_3_comparison_bars.png"><img src="graph_3_comparison_bars.png" width="100%" style="border-radius:4px"></a><br><small>Graph 3: Daily Output</small></td>
+<td style="width:24%; padding:4px; text-align:center;"><a href="graph_4_advantage_analysis.png"><img src="graph_4_advantage_analysis.png" width="100%" style="border-radius:4px"></a><br><small>Graph 4: Advantage</small></td>
+</tr><tr>
+<td style="width:24%; padding:4px; text-align:center;"><a href="graph_5_performance_area.png"><img src="graph_5_performance_area.png" width="100%" style="border-radius:4px"></a><br><small>Graph 5: Smoothed Profile</small></td>
+<td style="width:24%; padding:4px; text-align:center;"><a href="graph_6_temperature_progression.png"><img src="graph_6_temperature_progression.png" width="100%" style="border-radius:4px"></a><br><small>Graph 6: Temperature</small></td>
+<td style="width:24%; padding:4px; text-align:center;"><a href="graph_7_tracking_deviation.png"><img src="graph_7_tracking_deviation.png" width="100%" style="border-radius:4px"></a><br><small>Graph 7: Tracking Deviation</small></td>
+<td style="width:24%; padding:4px; text-align:center;"><a href="graph_8_performance_ratio_vs_east_west_sum.png"><img src="graph_8_performance_ratio_vs_east_west_sum.png" width="100%" style="border-radius:4px"></a><br><small>Graph 8: Performance Ratio</small></td>
+</tr></table>
 
 ---
 
@@ -330,11 +375,21 @@ This analysis compares four mounting concepts using synchronized power and yield
 
 ## Measurement Results
 
-### 1. Daily Energy Yield
+### 1. Daily Energy Yield (Cumulative Maximum during Day)
 
-| Channel | System | Panel | Yield (Wh) | Yield (kWh) | Difference to CH4 |
-|---------|--------|-------|------------|-------------|-------------------|
-{chr(10).join(yield_rows)}
+| Channel | System | Panel | Yield (Wh) | Yield (kWh) | Rel. to Best Panel | Rel. to Worst Panel | Rel. to CH1+CH3 (East+West Sum) |
+|---------|--------|-------|------------|------------|---------------------|---------------------|----------------------------------|
+| **CH1** | West 30° (Static) | CHSM54M-HC-405 | {final_yields.get('ch1', 0):.0f} | {final_yields.get('ch1', 0)/1000:.2f} | {rel_to_ch4.get('ch1', float('nan')):.1f}% | {display_rel_to_worst.get('ch1', 'n/a')} | {_fmt_gain(rel_to_east_west_sum.get('ch1', float('nan')))} |
+| **CH2** | Sunchronizer S2 (1-Axis) | CHSM54M-HC-405 | {final_yields.get('ch2', 0):.0f} | {final_yields.get('ch2', 0)/1000:.2f} | {rel_to_ch4.get('ch2', float('nan')):.1f}% | {display_rel_to_worst.get('ch2', 'n/a')} | {_fmt_gain(rel_to_east_west_sum.get('ch2', float('nan')))} |
+| **CH3** | East 30° (Static) | JAM54S31-395 | {final_yields.get('ch3', 0):.0f} | {final_yields.get('ch3', 0)/1000:.2f} | {rel_to_ch4.get('ch3', float('nan')):.1f}% | {display_rel_to_worst.get('ch3', 'n/a')} | {_fmt_gain(rel_to_east_west_sum.get('ch3', float('nan')))} |
+| **CH4** | Sunchronizer D2 (2-Axis) | JAM54S31-395 | **{final_yields.get('ch4', 0):.0f}** | **{final_yields.get('ch4', 0)/1000:.2f}** | **Reference** | **{_fmt_gain(rel_to_worst.get('ch4', float('nan')))}** | **{_fmt_gain(rel_to_east_west_sum.get('ch4', float('nan')))}** |
+| **CH1+CH3** | Combined Static Baseline | CH1 + CH3 | {east_west_sum_yield:.0f} | {east_west_sum_yield/1000:.2f} | - | - | Reference |
+
+**Important Note on Table Interpretation:** 
+- **Bold values** indicate the best result in each column.
+- **Rel. to Best Panel**: percentage gain/loss relative to the best-performing channel (CH4, marked **Reference**). Negative values indicate how much less energy a channel produces compared to CH4. E.g. CH2 = {final_yields.get('ch2', 0):.0f} Wh vs. CH4 = {final_yields.get('ch4', 0):.0f} Wh → ({final_yields.get('ch2', 0):.0f} - {final_yields.get('ch4', 0):.0f})/{final_yields.get('ch4', 0):.0f} = {rel_to_ch4.get('ch2', float('nan')):.1f}%
+- **Rel. to Worst Panel**: percentage gain relative to the weakest channel (marked **Reference**). E.g. +184.2% means this channel produced 184.2% more energy than the worst panel.
+- **Rel. to CH1+CH3 (East+West Sum)**: percentage gain/loss relative to the combined East+West static baseline (marked **Reference**). Values above 0% mean the channel outperforms both static panels combined.
 
 ### 2. Power Statistics
 

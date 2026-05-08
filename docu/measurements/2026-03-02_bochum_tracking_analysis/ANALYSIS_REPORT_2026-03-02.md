@@ -26,6 +26,23 @@
    </tr>
 </table>
 
+### Quick Graph Gallery (Click to Enlarge)
+
+<p><em>Quick visual overview of all analysis charts. Each graph is discussed in more detail in the Graphical Analysis section below.</em></p>
+
+<p>
+   <a href="graph_1_power_profile.png"><img src="graph_1_power_profile.png" alt="Graph 1: Power Profile During the Day" width="24%" /></a>
+   <a href="graph_2_cumulative_yield.png"><img src="graph_2_cumulative_yield.png" alt="Graph 2: Cumulative Energy Yield" width="24%" /></a>
+   <a href="graph_3_comparison_bars.png"><img src="graph_3_comparison_bars.png" alt="Graph 3: Daily Final Energy Output" width="24%" /></a>
+   <a href="graph_4_advantage_analysis.png"><img src="graph_4_advantage_analysis.png" alt="Graph 4: Advantage Analysis" width="24%" /></a>
+</p>
+<p>
+   <a href="graph_5_performance_area.png"><img src="graph_5_performance_area.png" alt="Graph 5: Power Profile Smoothed" width="24%" /></a>
+   <a href="graph_6_temperature_progression.png"><img src="graph_6_temperature_progression.png" alt="Graph 6: Outside Temperature Progression" width="24%" /></a>
+   <a href="graph_7_tracking_deviation.png"><img src="graph_7_tracking_deviation.png" alt="Graph 7: Tracking Angle Deviation" width="24%" /></a>
+   <a href="graph_8_performance_ratio_vs_east_west_sum.png"><img src="graph_8_performance_ratio_vs_east_west_sum.png" alt="Graph 8: Performance Ratio vs East+West Sum" width="24%" /></a>
+</p>
+
 ---
 
 ## Summary
@@ -53,17 +70,19 @@ This measurement demonstrates a direct comparison between four different solar p
 
 ### 1. Daily Energy Yield (Cumulative Maximum during Day)
 
-| Channel | System | Panel | Yield (Wh) | Yield (kWh) | Difference to CH4 |
-|---------|--------|-------|------------|------------|------------------|
-| **CH1** | West 30° (Static) | CHSM54M-HC-405 | 1078 | 1.08 | -128.3% |
-| **CH2** | Sunchronizer S2 (1-Axis) | CHSM54M-HC-405 | 2183 | 2.18 | **-12.7%** |
-| **CH3** | East 30° (Static) | JAM54S31-395 | 866 | 0.87 | -184.2% |
-| **CH4** | Sunchronizer D2 (2-Axis) | JAM54S31-395 | **2461** | **2.46** | **Reference** |
+| Channel | System | Panel | Yield (Wh) | Yield (kWh) | Rel. to Best Panel | Rel. to Worst Panel | Rel. to CH1+CH3 (East+West Sum) |
+|---------|--------|-------|------------|------------|---------------------|---------------------|----------------------------------|
+| **CH1** | West 30° (Static) | CHSM54M-HC-405 | 1078 | 1.08 | -56.2% | +24.5% | -44.5% |
+| **CH2** | Sunchronizer S2 (1-Axis) | CHSM54M-HC-405 | 2183 | 2.18 | -11.3% | +152.1% | +12.3% |
+| **CH3** | East 30° (Static) | JAM54S31-395 | 866 | 0.87 | -64.8% | Reference | -55.5% |
+| **CH4** | Sunchronizer D2 (2-Axis) | JAM54S31-395 | **2461** | **2.46** | **Reference** | **+184.2%** | **+26.6%** |
+| **CH1+CH3** | Combined Static Baseline | CH1 + CH3 | 1944 | 1.94 | - | - | Reference |
 
 **Important Note on Table Interpretation:** 
-- The negative percentages indicate how much LESS energy the alternative systems produce compared to CH4 (the reference).
-- CH2 produces 12.7% LESS than CH4, not more.
-- For example: CH2 = 2183 Wh vs. CH4 = 2461 Wh → Difference = (2183 - 2461)/2461 = -12.7%
+- **Bold values** indicate the best result in each column.
+- **Rel. to Best Panel**: percentage gain/loss relative to the best-performing channel (CH4, marked **Reference**). Negative values indicate how much less energy a channel produces compared to CH4. E.g. CH2 = 2183 Wh vs. CH4 = 2461 Wh → (2183 - 2461)/2461 = -11.3%
+- **Rel. to Worst Panel**: percentage gain relative to the weakest channel (marked **Reference**). E.g. +184.2% means this channel produced 184.2% more energy than the worst panel.
+- **Rel. to CH1+CH3 (East+West Sum)**: percentage gain/loss relative to the combined East+West static baseline (marked **Reference**). Values above 0% mean the channel outperforms both static panels combined. E.g. +26.6% means the tracker produced 26.6% more than CH1+CH3 together.
 
 ### 2. Power Statistics
 
@@ -353,7 +372,7 @@ Based on this measurement:
 
 ---
 
-*Report generated: March 22, 2026*  
+*Report generated: May 08, 2026*  
 *Location: Bochum, North Rhine-Westphalia, Germany*  
 *System: Sunchronizer Test Setup with HMS 1600-4T Monitoring*  
 *Temperature during test: 12.3°C average*

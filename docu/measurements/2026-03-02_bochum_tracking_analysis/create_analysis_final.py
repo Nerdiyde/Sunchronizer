@@ -616,7 +616,7 @@ if tracking_error_data is not None and len(tracking_error_data) > 0:
 else:
     print("  - Graph 7 skipped: No valid tracking angle overlap data")
 
-print("  ✓ All graphs created!")
+print("  OK: All graphs created!")
 
 # ============================================================================
 # CREATE MARKDOWN REPORT
@@ -627,6 +627,35 @@ print("\n[5/5] Creating Markdown report...")
 ch4_vs_ch1 = (((final_yields['ch4'] - final_yields['ch1'])/final_yields['ch1']) * 100) if 'ch1' in final_yields else 0
 ch4_vs_ch2 = (((final_yields['ch4'] - final_yields['ch2'])/final_yields['ch2']) * 100) if 'ch2' in final_yields else 0
 ch4_vs_ch3 = (((final_yields['ch4'] - final_yields['ch3'])/final_yields['ch3']) * 100) if 'ch3' in final_yields else 0
+
+# Additional reference metrics for the Daily Energy Yield table.
+ch4_reference = final_yields.get('ch4', np.nan)
+worst_panel_yield = min(final_yields.values()) if final_yields else np.nan
+east_west_sum_yield = final_yields.get('ch1', 0) + final_yields.get('ch3', 0)
+
+def _fmt_gain(val):
+    """Format a percentage gain with explicit +/- sign."""
+    if not np.isfinite(val):
+        return 'n/a'
+    return f"+{val:.1f}%" if val > 0 else f"{val:.1f}%"
+
+rel_to_ch4 = {}
+rel_to_worst = {}
+rel_to_east_west_sum = {}
+worst_panel_key = min(final_yields, key=final_yields.get) if final_yields else None
+
+for ch in ['ch1', 'ch2', 'ch3', 'ch4']:
+    val = final_yields.get(ch, np.nan)
+    rel_to_ch4[ch] = ((val - ch4_reference) / ch4_reference * 100) if (np.isfinite(val) and np.isfinite(ch4_reference) and ch4_reference != 0) else np.nan
+    rel_to_worst[ch] = ((val - worst_panel_yield) / worst_panel_yield * 100) if (np.isfinite(val) and np.isfinite(worst_panel_yield) and worst_panel_yield != 0) else np.nan
+    rel_to_east_west_sum[ch] = ((val - east_west_sum_yield) / east_west_sum_yield * 100) if (np.isfinite(val) and east_west_sum_yield != 0) else np.nan
+
+display_rel_to_worst = {}
+for ch in ['ch1', 'ch2', 'ch3', 'ch4']:
+    if ch == worst_panel_key:
+        display_rel_to_worst[ch] = "Reference"
+    else:
+        display_rel_to_worst[ch] = _fmt_gain(rel_to_worst.get(ch, float('nan')))
 
 # Cost-benefit scenario: 2 panels on dual-axis vs 2 static panels (East + West)
 two_panel_dual_axis_wh = (2 * final_yields.get('ch4', 0)) if 'ch4' in final_yields else 0
@@ -645,6 +674,41 @@ report = f"""# Measurement Report: Solar Panel Tracking Systems
 **Test Location:** Laboratory setup with different mounting systems  
 **Recording Duration:** {duration_hours:.1f} hours (05:40 UTC to 17:42 UTC)  
 **Outside Temperature:** {temp_stats['min']:.1f}°C to {temp_stats['max']:.1f}°C (Average: {temp_stats['mean']:.1f}°C)
+
+---
+
+### Tracking Overview (Video + Testbench)
+
+<table>
+   <tr>
+      <td width="70%" valign="top">
+         <img src="solarCam1_20260302_1020_2000_10s_preview.gif" alt="Sunchronizer tracking timelapse - March 2, 2026" width="100%" />
+         <p><em>10-second timelapse of the daytime tracking period. The Sunchronizer D2 dual-axis tracker continuously reorients the panel to follow the sun across the sky.</em><br />
+         <em>Full-quality video (VP9/WebM): <a href="solarCam1_20260302_1020_2000_10s.webm">solarCam1_20260302_1020_2000_10s.webm</a></em></p>
+      </td>
+      <td width="30%" valign="top">
+         <a href="../../../pictures/testbench/sunchronizer_testbench_%283%29.jpg"><img src="../../../pictures/testbench/sunchronizer_testbench_%283%29.jpg" alt="Sunchronizer testbench setup" width="100%" /></a>
+         <p><em>Physical testbench setup used for this measurement series.</em></p>
+      </td>
+   </tr>
+</table>
+
+### Quick Graph Gallery (Click to Enlarge)
+
+<p><em>Quick visual overview of all analysis charts. Each graph is discussed in more detail in the Graphical Analysis section below.</em></p>
+
+<p>
+   <a href="graph_1_power_profile.png"><img src="graph_1_power_profile.png" alt="Graph 1: Power Profile During the Day" width="24%" /></a>
+   <a href="graph_2_cumulative_yield.png"><img src="graph_2_cumulative_yield.png" alt="Graph 2: Cumulative Energy Yield" width="24%" /></a>
+   <a href="graph_3_comparison_bars.png"><img src="graph_3_comparison_bars.png" alt="Graph 3: Daily Final Energy Output" width="24%" /></a>
+   <a href="graph_4_advantage_analysis.png"><img src="graph_4_advantage_analysis.png" alt="Graph 4: Advantage Analysis" width="24%" /></a>
+</p>
+<p>
+   <a href="graph_5_performance_area.png"><img src="graph_5_performance_area.png" alt="Graph 5: Power Profile Smoothed" width="24%" /></a>
+   <a href="graph_6_temperature_progression.png"><img src="graph_6_temperature_progression.png" alt="Graph 6: Outside Temperature Progression" width="24%" /></a>
+   <a href="graph_7_tracking_deviation.png"><img src="graph_7_tracking_deviation.png" alt="Graph 7: Tracking Angle Deviation" width="24%" /></a>
+   <a href="graph_8_performance_ratio_vs_east_west_sum.png"><img src="graph_8_performance_ratio_vs_east_west_sum.png" alt="Graph 8: Performance Ratio vs East+West Sum" width="24%" /></a>
+</p>
 
 ---
 
@@ -673,17 +737,19 @@ This measurement demonstrates a direct comparison between four different solar p
 
 ### 1. Daily Energy Yield (Cumulative Maximum during Day)
 
-| Channel | System | Panel | Yield (Wh) | Yield (kWh) | Difference to CH4 |
-|---------|--------|-------|------------|------------|------------------|
-| **CH1** | West 30° (Static) | CHSM54M-HC-405 | 1078 | 1.08 | -128.3% |
-| **CH2** | Sunchronizer S2 (1-Axis) | CHSM54M-HC-405 | 2183 | 2.18 | **-12.7%** |
-| **CH3** | East 30° (Static) | JAM54S31-395 | 866 | 0.87 | -184.2% |
-| **CH4** | Sunchronizer D2 (2-Axis) | JAM54S31-395 | **2461** | **2.46** | **Reference** |
+| Channel | System | Panel | Yield (Wh) | Yield (kWh) | Rel. to Best Panel | Rel. to Worst Panel | Rel. to CH1+CH3 (East+West Sum) |
+|---------|--------|-------|------------|------------|---------------------|---------------------|----------------------------------|
+| **CH1** | West 30° (Static) | CHSM54M-HC-405 | {final_yields.get('ch1', 0):.0f} | {final_yields.get('ch1', 0)/1000:.2f} | {rel_to_ch4.get('ch1', np.nan):.1f}% | {display_rel_to_worst.get('ch1', 'n/a')} | {_fmt_gain(rel_to_east_west_sum.get('ch1', float('nan')))} |
+| **CH2** | Sunchronizer S2 (1-Axis) | CHSM54M-HC-405 | {final_yields.get('ch2', 0):.0f} | {final_yields.get('ch2', 0)/1000:.2f} | {rel_to_ch4.get('ch2', np.nan):.1f}% | {display_rel_to_worst.get('ch2', 'n/a')} | {_fmt_gain(rel_to_east_west_sum.get('ch2', float('nan')))} |
+| **CH3** | East 30° (Static) | JAM54S31-395 | {final_yields.get('ch3', 0):.0f} | {final_yields.get('ch3', 0)/1000:.2f} | {rel_to_ch4.get('ch3', np.nan):.1f}% | {display_rel_to_worst.get('ch3', 'n/a')} | {_fmt_gain(rel_to_east_west_sum.get('ch3', float('nan')))} |
+| **CH4** | Sunchronizer D2 (2-Axis) | JAM54S31-395 | **{final_yields.get('ch4', 0):.0f}** | **{final_yields.get('ch4', 0)/1000:.2f}** | **Reference** | **{_fmt_gain(rel_to_worst.get('ch4', float('nan')))}** | **{_fmt_gain(rel_to_east_west_sum.get('ch4', float('nan')))}** |
+| **CH1+CH3** | Combined Static Baseline | CH1 + CH3 | {east_west_sum_yield:.0f} | {east_west_sum_yield/1000:.2f} | - | - | Reference |
 
 **Important Note on Table Interpretation:** 
-- The negative percentages indicate how much LESS energy the alternative systems produce compared to CH4 (the reference).
-- CH2 produces 12.7% LESS than CH4, not more.
-- For example: CH2 = 2183 Wh vs. CH4 = 2461 Wh → Difference = (2183 - 2461)/2461 = -12.7%
+- **Bold values** indicate the best result in each column.
+- **Rel. to Best Panel**: percentage gain/loss relative to the best-performing channel (CH4, marked **Reference**). Negative values indicate how much less energy a channel produces compared to CH4. E.g. CH2 = {final_yields.get('ch2', 0):.0f} Wh vs. CH4 = {final_yields.get('ch4', 0):.0f} Wh → ({final_yields.get('ch2', 0):.0f} - {final_yields.get('ch4', 0):.0f})/{final_yields.get('ch4', 0):.0f} = {rel_to_ch4.get('ch2', np.nan):.1f}%
+- **Rel. to Worst Panel**: percentage gain relative to the weakest channel (marked **Reference**). E.g. +184.2% means this channel produced 184.2% more energy than the worst panel.
+- **Rel. to CH1+CH3 (East+West Sum)**: percentage gain/loss relative to the combined East+West static baseline (marked **Reference**). Values above 0% mean the channel outperforms both static panels combined. E.g. +26.6% means the tracker produced 26.6% more than CH1+CH3 together.
 
 ### 2. Power Statistics
 
@@ -761,7 +827,7 @@ The moderate temperature (~15°C) during this early spring day provided ideal co
 - **S2 ratio** = CH2 / (CH1 + CH3)
 - **D2 ratio** = CH4 / (CH1 + CH3)
 
-**How to read this chart (plain language):**
+**How to read this chart:**
 - The x-axis is the time of day, the y-axis is the ratio in percent.
 - The denominator **(CH1 + CH3)** is the combined output of both fixed reference modules (West + East).
 - A value of **100%** means the tracking channel produces exactly the same power as both static modules together at that moment.
@@ -984,17 +1050,17 @@ with open(measurement_dir / 'ANALYSIS_REPORT_2026-03-02.md', 'w', encoding='utf-
     f.write(report)
 
 print("\n" + "=" * 80)
-print("✅ ANALYSIS COMPLETED!")
+print("ANALYSIS COMPLETED!")
 print("=" * 80)
 print(f"\nGenerated Files:")
-print(f"  📄 ANALYSIS_REPORT_2026-03-02.md")
-print(f"  📊 graph_1_power_profile.png")
-print(f"  📊 graph_2_cumulative_yield.png")
-print(f"  📊 graph_3_comparison_bars.png")
-print(f"  📊 graph_4_advantage_analysis.png")
-print(f"  📊 graph_5_performance_area.png")
-print(f"  📊 graph_6_temperature_progression.png")
-print(f"  📊 graph_7_tracking_deviation.png")
-print(f"  📊 graph_8_performance_ratio_vs_east_west_sum.png")
+print(f"  ANALYSIS_REPORT_2026-03-02.md")
+print(f"  graph_1_power_profile.png")
+print(f"  graph_2_cumulative_yield.png")
+print(f"  graph_3_comparison_bars.png")
+print(f"  graph_4_advantage_analysis.png")
+print(f"  graph_5_performance_area.png")
+print(f"  graph_6_temperature_progression.png")
+print(f"  graph_7_tracking_deviation.png")
+print(f"  graph_8_performance_ratio_vs_east_west_sum.png")
 print(f"\nAll files in directory:")
 print(f"  docu/measurements/")
