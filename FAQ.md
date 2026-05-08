@@ -4,7 +4,130 @@ This document answers common questions from users and developers about the Sunch
 
 ---
 
+## Table of Contents
+
+**[General Questions](#general-questions)**
+- [Why should I build a solar tracker? What are the actual advantages?](#q-why-should-i-build-a-solar-tracker-what-are-the-actual-advantages)
+- [Can I use this without Home Assistant?](#q-can-i-use-this-without-home-assistant)
+- [What's the difference between S1, S2, D1, and D2?](#q-whats-the-difference-between-s1-s2-d1-and-d2)
+- [Why not just build a polar-aligned single-axis tracker?](#q-why-not-just-build-a-single-axis-tracker-that-rotates-around-an-axis-parallel-to-earths-rotation-axis-polar-aligned-tracker-that-would-track-the-sun-perfectly-with-only-one-motor)
+- [Why does CH2 (S2) sometimes show higher peak power than CH4 (D2)?](#q-why-does-ch2-sunchronizer-s2-sometimes-show-higher-peak-power-than-ch4-sunchronizer-d2-even-though-d2-uses-full-dual-axis-tracking)
+- [What are the disadvantages of a solar tracker?](#q-what-are-the-disadvantages-of-a-solar-tracker)
+- [Can I modify the firmware?](#q-can-i-modify-the-firmware)
+- [Where can I get the 3D models (STLs)?](#q-where-can-i-get-the-3d-models-stls)
+- [What if I have problems?](#q-what-if-i-have-problems)
+
+**[Assembly & Getting Started](#assembly--getting-started)**
+- [What do the STL files include?](#q-im-interested-in-building-the-sunchronizer-d2-what-do-the-stl-files-include-do-i-get-assembly-instructions-component-lists-and-pdfs)
+
+**[Hardware & Construction](#hardware--construction)**
+- [What are the possible mounting options?](#q-what-are-the-possible-mounting-options-for-fixing-the-tracker-to-concrete-base-weightslabs)
+- [Will the construction support a 500W solar panel?](#q-will-the-construction-support-a-500w-solar-panel)
+- [What about end-of-travel switches?](#q-what-about-end-of-travel-switches-are-they-mandatory)
+- [Which motor for the azimuth axis?](#q-which-motor-do-you-recommend-for-the-azimuth-axis-on-the-sunchronizer-d2)
+- [Which rotation direction is CW / CCW?](#q-which-rotation-direction-is-cw--ccw)
+
+**[Firmware & Software](#firmware--software)**
+- [Where are the binary files to flash the ESP?](#q-where-are-the-binary-files-to-flash-the-esp)
+- [What ESPHome external components are used?](#q-what-are-the-esphome-external-components-used-by-the-firmware)
+- [Can I use a different microcontroller?](#q-can-i-use-a-different-microcontroller)
+
+**[GPS & Position Data](#gps--position-data)**
+- [Do I need a GPS module? Can I run without GPS?](#q-do-i-need-a-gps-module-can-i-run-the-sunchronizer-without-gps)
+
+**[Technical Details & Algorithms](#technical-details--algorithms)**
+- [How are elevation and azimuth angles calculated?](#q-how-are-elevation-and-azimuth-angles-calculated)
+
+**[Integration & Connectivity](#integration--connectivity)**
+- [Do I need WiFi for the tracker to work?](#q-do-i-need-wifi-for-the-tracker-to-work)
+- [How does Home Assistant integration work?](#q-how-does-home-assistant-integration-work)
+
+**[Performance & Reliability](#performance--reliability)**
+- [How much energy does the Sunchronizer produce?](#q-how-much-energy-does-the-sunchronizer-produce)
+
+**[Support & Community](#support--community)**
+- [Is there a community or forum?](#q-is-there-a-community-or-forum)
+- [How can I contribute or request features?](#q-how-can-i-contribute-or-request-features)
+
+**[Licensing & Legal](#licensing--legal)**
+- [What license is this project under?](#q-what-license-is-this-project-under)
+- [Can I use this commercially?](#q-can-i-use-this-commercially)
+
+**[Troubleshooting](#troubleshooting)**
+- [The motor isn't moving. What's wrong?](#q-the-motor-isnt-moving-whats-wrong)
+- [WiFi connection is unstable or disconnects frequently.](#q-wifi-connection-is-unstable-or-disconnects-frequently)
+- [The tracker moves but doesn't face the sun accurately.](#q-the-tracker-moves-but-doesnt-face-the-sun-accurately)
+
+---
+
 ## General Questions
+
+### Q: Why should I build a solar tracker? What are the actual advantages?
+
+**A:** A solar tracker keeps a solar panel continuously pointed toward the sun as it moves across the sky throughout the day. Compared to a fixed, statically mounted panel, this yields several concrete benefits:
+
+**1. Significantly more energy per day**
+A static panel is only optimally oriented toward the sun for a short time around solar noon. In the morning and evening hours, the angle of incidence is poor and output drops sharply. A tracker eliminates this loss by following the sun from sunrise to sunset.
+
+Based on field measurements in Bochum, Germany (51.4°N latitude, clear-sky days):
+
+| Configuration | Avg. Daily Yield | vs. Best Static Panel |
+|---------------|------------------|-----------------------|
+| Static West 30° (CH1) | ~1,586 Wh | baseline |
+| Static East 30° (CH3) | ~1,169 Wh | baseline |
+| **Sunchronizer S2** (1-axis elevation, CH2) | ~2,308 Wh | **+46%** vs. CH1 |
+| **Sunchronizer D2** (2-axis, CH4) | ~2,627 Wh | **+66%** vs. CH1 |
+
+> *See [Measurement Analysis Overview](docu/measurements/MEASUREMENT_OVERVIEW.md) for full per-day data.*
+
+**2. More usable energy at the times you need it**
+A tracker extends the period of high power output into the morning and afternoon hours, which better matches typical household consumption patterns. A static panel produces most of its energy in a narrow midday window, which often exceeds local consumption and must be exported to the grid at lower compensation rates.
+
+**3. Better use of the panel's rated capacity**
+Solar panels are sold by their peak power (Wp), which is only reached under ideal perpendicular irradiance. A static panel rarely reaches this rated value in practice because the angle of incidence is almost never optimal. A dual-axis tracker keeps the panel near perpendicular to the sun for the majority of daylight hours, making far better use of the panel's rated capacity.
+
+**4. Higher self-consumption / reduced grid dependence**
+By spreading production more evenly across the day, a tracker increases the share of solar energy consumed directly in the household (self-consumption), which reduces grid draw and improves the economics of the system — especially relevant where feed-in tariffs are low.
+
+**5. Smaller panel for the same daily yield**
+If you have limited installation space or budget, a tracker allows you to achieve the same daily energy output with a smaller (and cheaper) panel compared to a fixed installation. Alternatively: the same panel produces substantially more energy.
+
+**6. Good conscience — a small but real contribution to the energy transition**
+Every kilowatt-hour generated locally from sunlight is one that doesn't need to come from fossil or nuclear sources. Building and operating a solar tracker means you're actively contributing to the shift toward renewable energy — reducing your household's carbon footprint, cutting your electricity bill, and demonstrating that efficient, DIY-built renewable systems are feasible for private individuals. It may be a small contribution in the grand scheme, but it is a tangible and measurable one.
+
+> **See also:** [What are the disadvantages of a solar tracker?](#q-what-are-the-disadvantages-of-a-solar-tracker)
+
+**Bottom line:** In clear-sky or mixed conditions at mid-latitudes, a dual-axis tracker like the Sunchronizer D2 reliably produces **50–80% more energy per day** than a comparably sized static panel. For a 400 W panel in central Europe, this translates to a meaningful real-world gain in daily yield.
+
+---
+
+### Q: What are the disadvantages of a solar tracker?
+
+**A:** A solar tracker is not always the right choice for every situation. Here are the most relevant drawbacks to consider before building one:
+
+**1. Mechanical complexity and maintenance**
+Unlike a fixed panel, a tracker has moving parts — motors, actuators, gears, bearings, and 3D-printed structural components. These are subject to wear over time and require periodic inspection and occasional maintenance. Outdoor exposure to rain, UV radiation, temperature cycles, and wind loads accelerates ageing of plastic parts in particular.
+
+**2. Higher initial cost and build effort**
+The components required for a tracker (motors, motor drivers, microcontroller, IMU, GPS, actuator, wiring) add meaningful cost compared to a simple fixed mount. The build also takes more time, skill, and tooling. For small panels or short usage periods, the additional energy yield may not offset this investment.
+
+**3. Reduced benefit under diffuse/overcast conditions**
+A tracker primarily helps with **direct (beam) irradiance** — sunlight arriving in a clear, defined direction. On heavily overcast days, sunlight is scattered diffusely across the entire sky dome, and pointing the panel at the (invisible) sun position yields little additional gain. In climates with persistently cloudy weather, the benefit of tracking is significantly reduced compared to sunny or mixed-sky locations.
+
+**4. Single point of failure**
+If a motor, controller, or sensor fails, the tracker may stop moving — or worse, move to an unfavorable position. A fixed panel, by contrast, continues producing energy without any active components. For critical applications, this reliability difference matters.
+
+**5. Wind load and storm risk**
+A vertically or steeply tilted tracking panel presents a larger effective surface to wind than a low-angle fixed panel. In strong wind events, this increases mechanical stress. The Sunchronizer firmware includes a configurable **storm position** (flat/retracted angle) to mitigate this. It also includes a function to **automatically fold the tracker to the storm position when wind speed exceeds a configurable threshold** — provided the feature is enabled in the firmware configuration. Nevertheless, a **residual risk remains**: wind gusts can be sudden and exceed sensor response time, and a sensor or firmware failure could prevent automatic retraction. The tracker should not be left unattended during forecasted storm conditions without ensuring the storm position function is properly set up and tested.
+
+**6. Complexity of installation**
+A tracker requires a stable foundation (e.g. concrete slab with anchor bolts for D2), correct wiring, firmware configuration, GPS or manual location setup, and initial calibration. This is more involved than simply mounting a panel at a fixed angle.
+
+**Bottom line:** For locations with significant direct sunlight and users comfortable with DIY electronics, these trade-offs are well worth it — the energy gains are substantial and well-documented. For locations with frequent cloud cover, very small panels, or users seeking absolute simplicity, a fixed mount may be the more practical choice.
+
+> **See also:** [Why should I build a solar tracker? What are the actual advantages?](#q-why-should-i-build-a-solar-tracker-what-are-the-actual-advantages)
+
+---
 
 ### Q: Can I use this without Home Assistant?
 
@@ -47,6 +170,49 @@ However, Home Assistant integration adds convenience and monitoring capabilities
 - **Simpler build:** S2 — lower complexity, still very effective
 
 **See also:** [Measurement Analysis Overview](docu/measurements/MEASUREMENT_OVERVIEW.md) for real performance data comparing S2 vs D2.
+
+---
+
+### Q: Why not just build a single-axis tracker that rotates around an axis parallel to Earth's rotation axis (polar-aligned tracker)? That would track the sun perfectly with only one motor!
+
+**A:** You're absolutely right — a polar-aligned single-axis tracker is an elegant solution from a purely astronomical standpoint. By tilting the rotation axis to match the local latitude, the sun's apparent daily arc can be followed with a single rotational motion and very little error throughout the year.
+
+However, this approach comes with a set of practical trade-offs that make it less suitable as a modular, reproducible, and low-cost DIY system:
+
+- **Foundation and post requirements:** A polar-aligned tracker needs a rigid vertical post or mast with its axis precisely tilted to the local latitude angle. This typically requires a concrete foundation designed to handle the resulting torque and wind loads — a significantly more complex and site-specific installation than placing a slab on the ground.
+- **Wind load geometry:** Rotating the panel around a tilted axis means the panel face sweeps through a wide range of orientations over the day. At certain times (especially early morning or late evening), the panel presents a large surface area nearly perpendicular to wind gusts, which substantially increases the mechanical stress on the structure compared to a tracker that keeps the panel closer to a horizontal rest position.
+- **Complexity vs. reproducibility:** Precise polar alignment requires accurate setup at the installation site, which adds calibration effort and reduces plug-and-play simplicity.
+
+That said — as with most engineering problems, there is no single "correct" solution. Polar-aligned trackers are widely used in professional and amateur astronomy setups, and they work very well for the right context.
+
+The Sunchronizer's design philosophy is a deliberate compromise: **easy to set up, affordable, 3D-printable, and reproducible** across different locations without site-specific engineering. The elevation + azimuth dual-axis approach (D2) achieves near-optimal solar alignment without requiring a post, a foundation, or precise polar alignment.
+
+*As the saying goes: all solar trackers are beautiful — it just depends on what you're optimizing for.* 😄
+
+---
+
+### Q: Why does CH2 (Sunchronizer S2) sometimes show higher peak power than CH4 (Sunchronizer D2), even though D2 uses full dual-axis tracking?
+
+**A:** This is a common point of confusion — and it comes down to **different solar panels**, not tracking performance.
+
+The two trackers are intentionally paired with different panels:
+
+| Channel | System | Panel Model | Rated Power |
+|---------|--------|-------------|-------------|
+| CH2 | Sunchronizer S2 (1-axis elevation) | CHSM54M-HC-405 | **405 W** |
+| CH4 | Sunchronizer D2 (2-axis) | JAM54S31-395 | **395 W** |
+
+CH2's panel has a **10 W higher nameplate rating** than CH4's panel. Under ideal momentary conditions — when the sun's elevation angle happens to align perfectly with the S2's fixed tilt and the sun is roughly south-facing — CH2 can briefly reach a slightly higher instantaneous power output simply because its panel has a higher peak capacity.
+
+**However, this momentary peak does not reflect sustained tracking quality.** There are two key reasons why CH4 wins over a full day despite this:
+
+1. **Dual-axis tracking maintains optimal alignment throughout the day.** As the sun moves both in elevation and azimuth, CH4 continuously corrects both angles. CH2 can only adjust elevation — the azimuth angle is fixed — so it deviates from the solar optimum for most of the day.
+
+2. **Average power matters more than peak power for daily yield.** A brief peak at one instant contributes very little to total energy. CH4 consistently maintains a higher average power across all daylight hours, which accumulates into a significantly higher daily yield (typically **~12–15% more than CH2** across our measurements).
+
+**In short:** The higher momentary peak of CH2 is an artifact of its slightly larger panel rating, not a sign of superior tracking. The daily energy yield — not the peak — is the relevant metric for practical solar performance.
+
+**See also:** [Measurement Analysis Overview](docu/measurements/MEASUREMENT_OVERVIEW.md) for real-world yield comparisons across multiple days.
 
 ---
 
