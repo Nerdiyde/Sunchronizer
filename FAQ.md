@@ -8,11 +8,11 @@ This document answers common questions from users and developers about the Sunch
 
 **[General Questions](#general-questions)**
 - [Why should I build a solar tracker? What are the actual advantages?](#q-why-should-i-build-a-solar-tracker-what-are-the-actual-advantages)
+- [What are the disadvantages of a solar tracker?](#q-what-are-the-disadvantages-of-a-solar-tracker)
 - [Can I use this without Home Assistant?](#q-can-i-use-this-without-home-assistant)
 - [What's the difference between S1, S2, D1, and D2?](#q-whats-the-difference-between-s1-s2-d1-and-d2)
 - [Why not just build a polar-aligned single-axis tracker?](#q-why-not-just-build-a-single-axis-tracker-that-rotates-around-an-axis-parallel-to-earths-rotation-axis-polar-aligned-tracker-that-would-track-the-sun-perfectly-with-only-one-motor)
 - [Why does CH2 (S2) sometimes show higher peak power than CH4 (D2)?](#q-why-does-ch2-sunchronizer-s2-sometimes-show-higher-peak-power-than-ch4-sunchronizer-d2-even-though-d2-uses-full-dual-axis-tracking)
-- [What are the disadvantages of a solar tracker?](#q-what-are-the-disadvantages-of-a-solar-tracker)
 - [Can I modify the firmware?](#q-can-i-modify-the-firmware)
 - [Where can I get the 3D models (STLs)?](#q-where-can-i-get-the-3d-models-stls)
 - [What if I have problems?](#q-what-if-i-have-problems)
@@ -21,10 +21,13 @@ This document answers common questions from users and developers about the Sunch
 - [What do the STL files include?](#q-im-interested-in-building-the-sunchronizer-d2-what-do-the-stl-files-include-do-i-get-assembly-instructions-component-lists-and-pdfs)
 
 **[Hardware & Construction](#hardware--construction)**
+- [How complicated is the maintenance?](#q-how-complicated-is-the-maintenance)
+- [What are the space requirements around the tracker?](#q-what-are-the-space-requirements-around-the-tracker)
 - [What are the possible mounting options?](#q-what-are-the-possible-mounting-options-for-fixing-the-tracker-to-concrete-base-weightslabs)
 - [Will the construction support a 500W solar panel?](#q-will-the-construction-support-a-500w-solar-panel)
 - [What about end-of-travel switches?](#q-what-about-end-of-travel-switches-are-they-mandatory)
 - [Which motor for the azimuth axis?](#q-which-motor-do-you-recommend-for-the-azimuth-axis-on-the-sunchronizer-d2)
+- [How much power does the tracker electronics consume?](#q-how-much-power-does-the-tracker-electronics-consume)
 - [Which rotation direction is CW / CCW?](#q-which-rotation-direction-is-cw--ccw)
 
 **[Firmware & Software](#firmware--software)**
@@ -44,6 +47,7 @@ This document answers common questions from users and developers about the Sunch
 
 **[Performance & Reliability](#performance--reliability)**
 - [How much energy does the Sunchronizer produce?](#q-how-much-energy-does-the-sunchronizer-produce)
+- [When does the system pay for itself?](#q-when-does-the-system-pay-for-itself)
 
 **[Support & Community](#support--community)**
 - [Is there a community or forum?](#q-is-there-a-community-or-forum)
@@ -288,6 +292,66 @@ You will have **everything needed** to successfully assemble your tracker! 🚀
 
 ## Hardware & Construction
 
+### Q: How complicated is the maintenance?
+
+**A:** The Sunchronizer is designed to be as low-maintenance as possible. Several design decisions specifically aim to minimise wear and the effects of outdoor exposure:
+
+- **Encapsulated gearboxes:** The drive gears are enclosed in a way that prevents water ingress under normal operating conditions — no periodic regreasing or sealing is required.
+- **Automatic retract in bad weather:** The firmware automatically folds the panel into its retracted (flat) storm position when bad weather is detected. In this position, the solar panel itself covers and shields nearly all of the tracker's mechanics and electronics from direct rain.
+- **UV-resistant filament:** All 3D-printed structural components are printed in UV-resistant filament to slow degradation from sunlight exposure.
+- **Corrosion-resistant materials:** Metal parts use stainless steel or aluminium wherever possible, minimising rust and corrosion over time.
+
+These measures together are intended to keep environmental wear to a minimum and extend the service life of all components without requiring frequent intervention.
+
+**What maintenance is still expected over time:**
+- Visual inspection of printed parts (cracks, UV discolouration) — recommended annually
+- Check that all screws and cable connections remain tight — recommended after the first winter
+- Cleaning the solar panel surface — as needed depending on local conditions (dust, bird droppings, pollen)
+
+**Bottom line:** Under normal conditions, the Sunchronizer should require little more than an occasional visual check and panel cleaning. There are no consumables, no lubrication points, and no wear parts that need scheduled replacement.
+
+---
+
+### Q: What are the space requirements around the tracker?
+
+**A:** The Sunchronizer D2 is a fully rotating dual-axis tracker. This has direct implications for the installation site:
+
+**1. Rotation sweep radius (mechanical clearance)**
+The D2 panel rotates continuously around the azimuth axis. The panel (typically ~1722 × 1134 mm for a 400 W module) sweeps a circle as it tracks the sun throughout the day. No fixed objects (walls, fences, furniture, other panels) should be within this radius, otherwise the tracker will collide with them.
+
+- **Minimum clear radius from the center post:** ~1.2–1.5 m (depends on exact mounting geometry)
+- **Safe rule of thumb:** Keep a ~1.5 m radius around the center post free of any obstacles
+- **Movement speed:** The tracker moves **very slowly** — tracking adjustments are barely perceptible. There is no risk of sudden, fast movements.
+- **Overload detection:** The firmware includes an **overload / stall detection** function that stops the motor if unexpected resistance is detected, which helps prevent trapping of living beings. Nevertheless, the area within the sweep radius should be treated with caution — do not leave unsupervised children or animals in direct contact with the moving structure.
+
+**2. Shading clearance (solar access)**
+For maximum energy yield, the tracker needs an **unobstructed view of the sky arc from east to west through south** (for installations in the northern hemisphere). Obstacles such as buildings, trees, or fences that cast shadows onto the panel significantly reduce output.
+
+The minimum distance from a shading obstacle depends on its height and your latitude. A useful rule of thumb for central Europe (≈ 50°N):
+
+| Obstacle height | Minimum distance (winter, ~15° sun elevation) | Minimum distance (summer, ~60° sun elevation) |
+|-----------------|-----------------------------------------------|-----------------------------------------------|
+| 0.5 m | ~1.9 m | ~0.3 m |
+| 1.0 m | ~3.7 m | ~0.6 m |
+| 2.0 m | ~7.5 m | ~1.2 m |
+
+> *Formula: distance = height ÷ tan(sun elevation angle)*
+
+For year-round operation, **dimension the clearance based on the lowest winter sun elevation** (~15° at 50°N around the December solstice).
+
+**3. Required surface area**
+For a typical D2 installation with a 400 W panel on a concrete slab:
+- **Minimum footprint:** roughly 2 × 2 m of usable, level surface (including the slab and sweep clearance)
+- **Recommended:** 2.5 × 2.5 m or more, to allow for comfortable maintenance access from all sides
+
+**4. Ground conditions**
+Both S2 and D2 are mounted on concrete slabs or paving stones that are simply placed on the ground — no permanent foundation is required. The concrete base provides weight and stability, and can be positioned on any reasonably flat and stable surface (lawn, gravel, patio, soil). The surface does not need to be concreted over:
+- **D2:** Fixed to the slab with anchor bolts (drilling required)
+- **S2:** Fixed with either a hose clamp (no drilling) or anchor bolts (optional)
+
+
+---
+
 ### Q: What are the possible mounting options for fixing the tracker to concrete base weight/slabs?
 
 **A:** There are two supported mounting methods for concrete-based installations:
@@ -351,6 +415,24 @@ Because both are mandatory and already built in, no separate external limit swit
 **A:** For the **Sunchronizer D2**, I recommend a **JGY-370 geared motor with 5 RPM** for the azimuth axis.
 
 Slower motors can also work, but then the parameter `azimuth_measurement_max_wait_time` must be adjusted in the firmware configuration, and the firmware must be compiled manually.
+
+---
+
+### Q: How much power does the tracker electronics consume?
+
+**A:** The Sunchronizer D2 consists of two 12 V motors (a linear actuator and a geared motor) plus the ESP32-S3 microcontroller, motor drivers, IMU, GPS module, and supporting electronics. The motors only run briefly during each tracking correction — the panel is repositioned in small steps as the sun moves, not continuously. The microcontroller and sensors run continuously but consume very little power at idle.
+
+The total system power consumption (measured AC-side via a smart plug, covering all electronics including motors, controller, and sensors) is:
+
+| Metric | Value |
+|--------|-------|
+| **Average daily consumption** | ~0.04 kWh |
+| **Cost per day** (at 0.30 €/kWh) | ~0.012 € (1.2 ct) |
+| **Cost per year** | **~4.38 €/year** |
+
+For comparison: the D2 tracker produces on average ~2.6 kWh of solar energy per day (on measured clear-sky days), meaning the **operating cost is less than 2% of the daily yield value** — completely negligible.
+
+> *Measurement note: The daily consumption figure was recorded using a smart plug on the AC supply side and represents a real-world average across multiple tracking days in Bochum, Germany. Per-day system consumption values will also be included in future measurement analysis reports.*
 
 ---
 
@@ -651,6 +733,47 @@ Without Home Assistant, the system still operates fully — WiFi integration is 
 - Location (latitude affects sun angle)
 - Weather (cloud cover, seasons)
 - Panel size & orientation
+
+---
+
+### Q: When does the system pay for itself?
+
+**A:** This depends heavily on your location, local electricity price, and how much direct sunlight your site receives. A precise universal answer is not possible — but the following worked examples give a realistic range.
+
+**Key assumptions for the calculation:**
+
+| Parameter | Value |
+|-----------|-------|
+| Sunchronizer D2 system cost (target price) | ~150 € |
+| Annual operating cost (electricity for electronics) | ~4.40 €/year |
+| Panel rated power | 400 W |
+| Yield gain from tracking vs. best static panel | +35% to +65% (annual average) |
+
+The tracking gain depends strongly on climate: the measured +66% (clear-sky days, Bochum) reduces to a lower annual average once overcast days are included. Conservative estimates use +35%, moderate +50%, optimistic +65%.
+
+**Example scenarios — annual additional yield and payback period:**
+
+| Scenario | Base static yield | Tracking gain | Extra yield/year | Net gain @ 0.25 €/kWh | Net gain @ 0.30 €/kWh | Net gain @ 0.35 €/kWh |
+|----------|-------------------|---------------|------------------|------------------------|------------------------|------------------------|
+| Conservative (north/cloudy, e.g. Hamburg) | ~300 kWh | +35% | ~105 kWh | ~22 €/yr | ~27 €/yr | ~32 €/yr |
+| Moderate (central EU, e.g. Bochum/Cologne) | ~400 kWh | +50% | ~200 kWh | ~46 €/yr | ~56 €/yr | ~66 €/yr |
+| Optimistic (south EU, e.g. Munich/Vienna/Switzerland) | ~520 kWh | +65% | ~338 kWh | ~81 €/yr | ~97 €/yr | ~114 €/yr |
+
+*Net gain = (extra yield × electricity price) − 4.40 € operating cost*
+
+**Estimated payback period (150 € system cost ÷ net annual gain):**
+
+| Scenario | @ 0.25 €/kWh | @ 0.30 €/kWh | @ 0.35 €/kWh |
+|----------|--------------|--------------|---------------|
+| Conservative | ~7 years | ~5.5 years | ~4.7 years |
+| Moderate | ~3.3 years | ~2.7 years | ~2.3 years |
+| Optimistic | ~1.9 years | ~1.5 years | ~1.3 years |
+
+> *These figures assume the tracker gain is applied to self-consumed electricity only (i.e., the additional yield displaces grid purchases at the full electricity price). If surplus energy is exported to the grid at a lower feed-in tariff, the effective gain per kWh is lower and payback takes longer.*
+
+**Bottom line:** In central European conditions with typical German electricity prices (~0.30 €/kWh), a payback period of **2–3 years** is a realistic expectation. In sunnier locations or with higher electricity prices, the system can pay for itself within a year or two. In persistently cloudy climates, expect 5–7 years.
+
+> **See also:** [How much energy does the Sunchronizer produce?](#q-how-much-energy-does-the-sunchronizer-produce)
 
 ---
 
