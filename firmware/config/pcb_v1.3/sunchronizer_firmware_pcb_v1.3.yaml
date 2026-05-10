@@ -227,11 +227,14 @@ substitutions:
 
   # intervals, delays and time settings
   owm_data_retrieval_check_period: "60s"        # Check interval to see if OWM data needs refreshing - Example: "60s"
+  open_meteo_data_retrieval_check_period: "60s" # Check interval to see if Open-Meteo data needs refreshing - Example: "60s"
   status_text_sensor_update_interval: "60s"     # Update interval for status text sensors - Example: "60s"
   status_led_update_interval: "1s"              # Update interval for status LED colors - Example: "1s"
   internet_connection_test_interval: "300s"     # How often to test internet connectivity - Example: "300s" (5 minutes)
   owm_data_expiration_time: "360"               # OWM data max age in seconds before considered old - Example: "360" (6 minutes)
   owm_data_expiration_shutdown_time: "720"      # OWM data max age in seconds before safety shutdown (stand by mode) - Example: "720" (12 minutes)
+  open_meteo_data_expiration_time: "360"        # Open-Meteo data max age in seconds before considered old - Example: "360" (6 minutes)
+  open_meteo_data_expiration_shutdown_time: "720" # Open-Meteo data max age in seconds before safety shutdown (stand by mode) - Example: "720" (12 minutes)
   panel_movement_plausible_check_delay: "5000"  # Delay in ms before checking if panel movement is plausible - Example: "2000" (2 seconds)
   azimuth_motor_direction_change_threshold: "1.0"  # Minimum heading change in degrees to detect azimuth motor direction - Example: "1.0" (1 degree)
   elevation_motor_direction_detection_tolerance: "2.0"  # Tolerance in degrees for elevation motor direction detection (accounts for sensor accuracy) - Example: "1.0" (±1°)
@@ -254,6 +257,26 @@ substitutions:
   weather_hysteresis:
     cloudy_mode_activation_threshold: "90"         # Cloud coverage percentage to activate cloudy mode - Activation point (higher value) - Example: "90" (90%)
     cloudy_mode_deactivation_threshold: "70"       # Cloud coverage percentage to deactivate cloudy mode - Deactivation point (lower value prevents oscillation) - Example: "70" (70%)
+    open_meteo_diffuse_ratio_activation_threshold: "0.70"      # Threshold for activating Cloudy-Mode based on diffuse solar radiation ratio. When 70% of solar radiation 
+                                                                # is diffuse (scattered light from entire sky, not direct from sun disc), Cloudy-Mode activates and panel 
+                                                                # lowers to horizontal position. Rationale: On overcast days, diffuse radiation is more effective than sun 
+                                                                # tracking. At 0.70, the system avoids lowering the panel unnecessarily during light clouds (which wastes 
+                                                                # energy). Only significant diffuse dominance triggers the mode switch. Range: 0.0 (0% diffuse) to 1.0 (100% 
+                                                                # diffuse). Example: "0.70"
+                                                                # EFFECT OF VALUE CHANGES:
+                                                                # - INCREASE (e.g., 0.80): Panel lowers only during very heavy cloud cover. Fewer mode switches, more sun tracking. 
+                                                                #   Risk: May miss energy gains on moderately overcast days.
+                                                                # - DECREASE (e.g., 0.60): Panel lowers sooner during lighter clouds. More mode switches, faster response. 
+                                                                #   Risk: May lower unnecessarily on partly cloudy days, wasting positioning energy.
+    open_meteo_diffuse_ratio_deactivation_threshold: "0.55"    # Threshold for deactivating Cloudy-Mode (hysteresis band). When diffuse ratio drops to 55%, Cloudy-Mode 
+                                                                # deactivates and panel resumes sun tracking. Hysteresis (0.70 activation, 0.55 deactivation) prevents 
+                                                                # constant back-and-forth switching if diffuse ratio hovers near 0.70. Energy-efficient: Panel stays 
+                                                                # horizontal until conditions improve by ~15%. Prevents motor wear from rapid mode changes. Example: "0.55"
+                                                                # EFFECT OF VALUE CHANGES:
+                                                                # - INCREASE (e.g., 0.65): Hysteresis band widens (0.70→0.65). Panel stays horizontal longer, conditions 
+                                                                #   must improve more before returning to tracking. More stability, less oscillation risk.
+                                                                # - DECREASE (e.g., 0.45): Hysteresis band narrows (0.70→0.45). Panel returns to tracking sooner. 
+                                                                #   Risk: Smaller buffer increases oscillation chance if diffuse ratio fluctuates near 0.70.
     wind_speed_activation_threshold: "40"          # Wind speed in m/s to activate stand by mode for protection - Activation point (higher value) - Example: "40" m/s
     wind_speed_deactivation_threshold: "30"        # Wind speed in m/s to deactivate stand by mode - Deactivation point (lower value, typically 70-75% of activation) - Example: "30" m/s
     wind_gusts_activation_threshold: "55"          # Wind gust peak in m/s to activate stand by mode for protection - Activation point (higher value) - Example: "55" m/s
@@ -270,6 +293,15 @@ substitutions:
     panel_azimuth_angle_min: "10"                 # Minimum allowed azimuth angle when properly aligned - Example: "10"
     panel_azimuth_auto_soft_endstop_margin: "5.0" # Soft safety margin in degrees used only for automatic azimuth control
     panel_elev_target_angle_tolerance: "2"        # Acceptable elevation angle deviation from target in degrees - Example: "2"
+    azimuth_elevation_override_zone1_min: "0.0"   # Azimuth start angle for elevation override zone 1 in degrees - Example: "120.0"
+    azimuth_elevation_override_zone1_max: "0.0"   # Azimuth end angle for elevation override zone 1 in degrees - Example: "150.0"
+    azimuth_elevation_override_zone1_target: "0.0" # Fixed elevation target angle for override zone 1 in degrees - Example: "35.0"
+    azimuth_elevation_override_zone2_min: "0.0"   # Azimuth start angle for elevation override zone 2 in degrees - Example: "200.0"
+    azimuth_elevation_override_zone2_max: "0.0"   # Azimuth end angle for elevation override zone 2 in degrees - Example: "230.0"
+    azimuth_elevation_override_zone2_target: "0.0" # Fixed elevation target angle for override zone 2 in degrees - Example: "20.0"
+    azimuth_elevation_override_zone3_min: "0.0"   # Azimuth start angle for elevation override zone 3 in degrees - Example: "300.0"
+    azimuth_elevation_override_zone3_max: "0.0"   # Azimuth end angle for elevation override zone 3 in degrees - Example: "330.0"
+    azimuth_elevation_override_zone3_target: "0.0" # Fixed elevation target angle for override zone 3 in degrees - Example: "45.0"
     panel_azimuth_target_angle_tolerance: "2"     # Acceptable azimuth angle deviation from target in degrees - Example: "2"
     panel_azimuth_orientation: "180"              # Initial panel azimuth orientation (compass heading) in degrees - Example: "180" (South)
     number: "123.456"                             # Test/placeholder number value - Used for testing sensor formatting
@@ -422,6 +454,91 @@ substitutions:
       display_status: 15                        # Display settings group - LED brightness and display rotation
       buttons: 16                               # Physical button controls group - Manual button states
       invert_panel_pitch_angle_switch: 17       # Panel inversion toggle group - Manually flip elevation angle if mounted inverted
+
+    status_overview:
+      azimuth_motor_status_text: 1
+      elevation_motor_status_text: 2
+      azimuth_motor_sensor_status_text: 3
+      elevation_motor_sensor_status_text: 4
+      imu_status_text: 5
+      elevation_axis_status_text: 6
+      azimuth_axis_status_text: 7
+      owm_status_text: 8
+      network_and_internet_status_text: 9
+      gnss_status_text: 10
+
+    network_and_internet:
+      id_ip_address: 1
+      id_connected_ssid: 2
+      id_connected_bssid: 3
+      id_mac_wifi_address: 4
+      id_latest_wifi_scan_results: 5
+      connection_test_url: 6
+      test_internet_connection: 7
+      wifi_signal_db: 8
+      wifi_signal_percent: 9
+      wifi_connected_binary_sensor: 10
+      internet_connection_available: 11
+
+    gnss_sensor_status:
+      gnss_reception_rating: 1
+      gnss_latitude: 2
+      gnss_longitude: 3
+      gnss_altitude: 4
+      gnss_satelites: 5
+      gnss_hdop: 6
+      device_latitude: 7
+      device_longitude: 8
+      gnss_reception_quality: 9
+      gnss_sensor_ready: 10
+      gnss_position_valid: 11
+
+    motor_status:
+      azimuth_motor_blocked_current_threshold: 1
+      elevation_motor_blocked_current_threshold: 2
+      motor_elevation_supply_current: 3
+      motor_elevation_supply_power: 4
+      motor_elevation_supply_voltage: 5
+      motor_elevation_shunt_voltage: 6
+      motor_azimuth_supply_current: 7
+      motor_azimuth_supply_power: 8
+      motor_azimuth_supply_voltage: 9
+      motor_azimuth_shunt_voltage: 10
+      elevation_motor_sensor_ready: 11
+      azimuth_motor_sensor_ready: 12
+      elevation_motor_is_blocked_binary_sensor: 13
+      elevation_motor_voltage_is_valid: 14
+      elevation_motor_is_running_binary_sensor: 15
+      elevation_motor_is_idle: 16
+      azimuth_motor_is_blocked_binary_sensor: 17
+      azimuth_motor_voltage_is_valid: 18
+      azimuth_motor_is_running_binary_sensor: 19
+      azimuth_motor_is_idle: 20
+
+    fault_and_measurements_detection:
+      azimuth_axis_not_calibrated: 1
+      elevation_axis_not_calibrated: 2
+      azimuth_motor_blocked_current: 3
+      azimuth_motor_not_connected_low_current: 4
+      azimuth_motor_no_angle_change_cw: 5
+      azimuth_motor_no_angle_change_ccw: 6
+      elevation_motor_blocked_current: 7
+      elevation_motor_not_connected_low_current: 8
+      elevation_motor_no_angle_change_lift: 9
+      elevation_motor_no_angle_change_lowering: 10
+      magnetic_declination_calibration_fault_detected: 11
+      azimuth_angle_calculation_fault_detected: 12
+      elevation_angle_calculation_fault_detected: 13
+      measurement_or_calibration_active: 14
+      elev_angle_boundaries_measurement_active: 15
+      azimuth_angle_boundaries_measurement_active: 16
+      magnetic_declination_calibration_active: 17
+      elevation_angle_max_min_not_estimated: 18
+      azimuth_angle_max_min_not_estimated: 19
+
+    buttons:
+      button_up_cw_physical: 1
+      button_up_ccw_physical: 2
       
     # Sub-group organization within safety features
     safety_features_and_automations:
@@ -437,121 +554,18 @@ substitutions:
       auto_stand_by_mode_via_sun_elevation_control: 10      # Auto stand by mode by sun elevation enable/disable
       auto_wind_protection_control: 11                      # Auto wind protection control enable/disable
       auto_owm_data_retrieval: 12                           # Auto OWM data retrieval enable/disable
-      auto_control_elevation_angle_activation_at_boot: 13   # Auto control elevation angle activation at boot
-      auto_control_elevation_angle: 14                      # Auto control elevation angle enable/disable
-      auto_control_azimuth_angle_activation_at_boot: 15     # Auto control azimuth angle activation at boot
-      auto_control_azimuth_angle: 16                        # Auto control azimuth angle enable/disable
-      auto_set_panel_elev_target_to_sun_elev: 17            # Auto calculate elevation angle enable/disable
-      auto_set_panel_azimuth_target_to_sun_azimuth: 18      # Auto calculate azimuth angle enable/disable
-      auto_set_gnss_coordinates_to_device_coordinates: 19    # Auto set GNSS coordinates to device coordinates enable/disable
-      auto_set_compass_heading_to_device_azimuth_orientation: 20  # Auto device azimuth orientation retrieval
-      auto_stand_by_mode_if_owm_data_expired_control: 21  # Auto stand by mode if OWM data expired enable/disable
-      axis_control_mode: 22                                 # Axis control mode selection (single/dual axis)
+      auto_open_meteo_data_retrieval: 13                    # Auto Open-Meteo data retrieval enable/disable
+      auto_control_elevation_angle_activation_at_boot: 14   # Auto control elevation angle activation at boot
+      auto_control_elevation_angle: 15                      # Auto control elevation angle enable/disable
+      auto_control_azimuth_angle_activation_at_boot: 16     # Auto control azimuth angle activation at boot
+      auto_control_azimuth_angle: 17                        # Auto control azimuth angle enable/disable
+      auto_set_panel_elev_target_to_sun_elev: 18            # Auto calculate elevation angle enable/disable
+      auto_set_panel_azimuth_target_to_sun_azimuth: 19      # Auto calculate azimuth angle enable/disable
+      auto_set_gnss_coordinates_to_device_coordinates: 20    # Auto set GNSS coordinates to device coordinates enable/disable
+      auto_set_compass_heading_to_device_azimuth_orientation: 21  # Auto device azimuth orientation retrieval
+      auto_stand_by_mode_if_owm_data_expired_control: 22    # Auto stand by mode if weather data expired enable/disable
+      axis_control_mode: 23                                 # Axis control mode selection (single/dual axis)
     
-    # Motor status entity grouping and ordering
-    motor_status:
-      auto_motor_connection_error_detection_on_off: 1
-      auto_motor_block_detection_on_off: 2
-      auto_panel_block_detection_by_angle_on_off: 3
-      auto_motor_direction_detection_on_off: 4
-
-      elevation_motor_sensor_ready: 4
-      motor_elevation_supply_current: 4
-      motor_elevation_supply_power: 5
-      motor_elevation_supply_voltage: 6
-      motor_elevation_shunt_voltage:  7
-
-      elevation_motor_blocked_current_threshold: 8
-      elevation_motor_voltage_is_valid: 8 
-      elevation_motor_is_blocked_binary_sensor: 9
-      elevation_motor_is_running_binary_sensor: 10
-      elevation_motor_is_idle: 11
-
-      azimuth_motor_sensor_ready: 12
-      motor_azimuth_supply_current: 12
-      motor_azimuth_supply_power: 13
-      motor_azimuth_supply_voltage: 14
-      motor_azimuth_shunt_voltage: 15
-
-      azimuth_motor_blocked_current_threshold: 16
-      azimuth_motor_voltage_is_valid: 16
-      azimuth_motor_is_running_binary_sensor: 17
-      azimuth_motor_is_idle: 18
-      azimuth_motor_is_blocked_binary_sensor: 19  
-      
-    # Physical button control grouping
-    buttons:
-      button_up_cw_physical: 1                  # Up/Clockwise physical button
-      button_up_ccw_physical: 2                 # Down/Counter-clockwise physical button
-      
-    # Fault detection and measurement status grouping
-    fault_and_measurements_detection:
-      measurement_or_calibration_active: 1
-      elev_angle_boundaries_measurement_active: 2
-      azimuth_angle_boundaries_measurement_active: 3
-      magnetic_declination_calibration_active: 4
-      elevation_axis_not_calibrated: 5
-      elevation_angle_max_min_not_estimated: 6
-      elevation_angle_calculation_fault_detected: 7
-      elevation_motor_blocked_current: 8
-      elevation_motor_not_connected_low_current: 9
-      elevation_motor_no_angle_change_lift: 10
-      elevation_motor_no_angle_change_lowering: 11
-      elevation_motor_wrong_direction_detected: 12
-      elevation_target_angle_timeout_detected: 13
-      azimuth_axis_not_calibrated: 14
-      azimuth_angle_max_min_not_estimated: 15
-      azimuth_angle_calculation_fault_detected: 16
-      azimuth_motor_blocked_current: 17
-      azimuth_motor_not_connected_low_current: 18
-      azimuth_motor_no_angle_change_cw: 19
-      azimuth_motor_no_angle_change_ccw: 20
-      azimuth_motor_wrong_direction_detected: 21
-      azimuth_target_angle_timeout_detected: 22
-      magnetic_declination_calibration_fault_detected: 23
-      
-    # System status overview group - High-level status text for each major subsystem
-    status_overview:
-      elevation_motor_sensor_status_text: 1
-      azimuth_motor_sensor_status_text: 2
-      elevation_motor_status_text: 3
-      azimuth_motor_status_text: 4
-      elevation_axis_status_text: 5
-      azimuth_axis_status_text: 6
-      imu_status_text: 7
-      owm_status_text: 8
-      network_and_internet_status_text: 9
-      gnss_status_text: 10
-      
-    # Network and internet connectivity grouping
-    network_and_internet:
-      id_ip_address: 1
-      id_connected_ssid: 2
-      id_connected_bssid: 3
-      id_mac_wifi_address: 4
-      wifi_signal_db: 5
-      wifi_signal_percent: 6
-      wifi_connected_binary_sensor: 7
-      connection_test_url: 8
-      test_internet_connection: 9
-      internet_connection_available: 10
-      id_latest_wifi_scan_results: 11
-      
-    # GNSS/GPS position and quality grouping
-    gnss_sensor_status:
-      gnss_sensor_ready: 1
-      gnss_position_valid: 2
-      gnss_reception_rating: 3
-      gnss_reception_quality: 4
-      gnss_satelites: 5
-      gnss_hdop: 6
-      gnss_latitude: 7
-      gnss_longitude: 8
-      gnss_altitude: 9
-      device_latitude: 10
-      device_longitude: 11
-      auto_set_gnss_coordinates_to_device_coordinates: 12
-      
     # Time source synchronization grouping
     time_sensor_status:
       ds3231_sensor_ready: 1
@@ -585,6 +599,17 @@ substitutions:
       owm_wind_speed_above_threshold: 21
       owm_wind_gusts_above_threshold: 22
       auto_wind_protection_control: 23
+      cloudy_mode_weather_service_select: 24
+      wind_protection_weather_service_select: 25
+      open_meteo_wind_speed_current: 26
+      open_meteo_wind_gusts_current: 27
+      open_meteo_direct_normal_irradiance_current: 28
+      open_meteo_diffuse_radiation_current: 29
+      open_meteo_total_radiation_current: 30
+      open_meteo_data_is_old: 31
+      open_meteo_data_is_expired: 32
+      get_open_meteo_data: 33
+      auto_open_meteo_data_retrieval: 34
       
     # System-wide settings and diagnostics grouping
     system:
@@ -799,6 +824,7 @@ esphome:
 
         # do an initial weather data retrieval after boot 
         - script.execute: perform_openweathermap_data_retrieval 
+        - script.execute: perform_open_meteo_data_retrieval 
 
 esp32:
   board: seeed_xiao_esp32s3
@@ -922,6 +948,14 @@ interval:
           if (id(auto_owm_data_retrieval).state)
           {
             id(perform_openweathermap_data_retrieval_if_owm_data_is_old).execute();
+          }
+
+  - interval: ${open_meteo_data_retrieval_check_period}
+    then:
+      - lambda: |-
+          if (id(auto_open_meteo_data_retrieval).state)
+          {
+            id(perform_open_meteo_data_retrieval_if_open_meteo_data_is_old).execute();
           }
 
   - interval: ${status_text_sensor_update_interval}
@@ -1203,7 +1237,7 @@ text_sensor:
     update_interval: never
     web_server:
       sorting_group_id: sorting_group_status_overview
-      sorting_weight: ${sorting_groups.status_overview.elevation_motor_sensor_status_text}
+      sorting_weight: ${sorting_groups.status_overview.azimuth_motor_sensor_status_text}
     on_value:
       - lambda: |-
           ESP_LOGE("Azimuth Motor sensor status:", "Changed to: %s", id(azimuth_motor_sensor_status_text).state.c_str());
@@ -2117,6 +2151,18 @@ button:
             id(perform_openweathermap_data_retrieval).execute();        
 
   - platform: template
+    name: "Retrieve Open-Meteo data"
+    id: get_open_meteo_data
+    icon: "mdi:cloud-download-outline"
+    web_server:
+      sorting_group_id: sorting_group_weather_settings
+      sorting_weight: ${sorting_groups.weather_settings.get_open_meteo_data}
+    on_press:
+      then:
+        - lambda: |-
+            id(perform_open_meteo_data_retrieval).execute();
+
+  - platform: template
     name: "Test internet connection"
     id: test_internet_connection
     icon: "mdi:lan-connect"
@@ -2245,6 +2291,7 @@ switch:
           id(perform_sun_elevation_target_angle_calculation).execute();
           id(perform_sun_azimuth_target_angle_calculation).execute();
           id(perform_openweathermap_data_retrieval_if_owm_data_is_old).execute();   // in case the standby mode was inactive for long time (and therefore the data retrieval) this triggers a new data retrieval
+          id(perform_open_meteo_data_retrieval_if_open_meteo_data_is_old).execute();
       - script.execute: check_if_magnetic_declination_calibration_is_needed    # in case there was no magnetic declination calibration today it will be executed now
       - script.wait: check_if_magnetic_declination_calibration_is_needed
 
@@ -2496,6 +2543,23 @@ switch:
       - script.execute: perform_openweathermap_data_retrieval
 
   - platform: template
+    name: "Auto Open-Meteo data retrieval"
+    id: auto_open_meteo_data_retrieval
+    icon: "mdi:cable-data"
+    optimistic: True
+    restore_mode: RESTORE_DEFAULT_ON
+    web_server:
+      sorting_group_id: sorting_group_safety_features_and_automations
+      sorting_weight: ${sorting_groups.safety_features_and_automations.auto_open_meteo_data_retrieval}
+    on_turn_off:
+      - lambda: |-       
+            ESP_LOGE("Switches", "\"Auto Open-Meteo data retrieval\" disabled.");  
+    on_turn_on:
+      - lambda: |-       
+            ESP_LOGE("Switches", "\"Auto Open-Meteo data retrieval\" enabled."); 
+      - script.execute: perform_open_meteo_data_retrieval
+
+  - platform: template
     name: "Auto control elevation angle activation at boot"
     id: auto_control_elevation_angle_activation_at_boot
     icon: "mdi:angle-acute"
@@ -2588,6 +2652,39 @@ switch:
     on_turn_off:
       - lambda: |-
           ESP_LOGE("Switches", "\"Auto calculate elevation angle\" disabled.");
+
+  - platform: template
+    name: "Elevation override azimuth zone 1"
+    id: azimuth_elevation_override_zone1_enabled
+    icon: "mdi:map-marker-radius"
+    optimistic: True
+    entity_category: "config"
+    restore_mode: RESTORE_DEFAULT_OFF
+    web_server:
+      sorting_group_id: sorting_group_elevation_axis
+      sorting_weight: 30
+
+  - platform: template
+    name: "Elevation override azimuth zone 2"
+    id: azimuth_elevation_override_zone2_enabled
+    icon: "mdi:map-marker-radius"
+    optimistic: True
+    entity_category: "config"
+    restore_mode: RESTORE_DEFAULT_OFF
+    web_server:
+      sorting_group_id: sorting_group_elevation_axis
+      sorting_weight: 31
+
+  - platform: template
+    name: "Elevation override azimuth zone 3"
+    id: azimuth_elevation_override_zone3_enabled
+    icon: "mdi:map-marker-radius"
+    optimistic: True
+    entity_category: "config"
+    restore_mode: RESTORE_DEFAULT_OFF
+    web_server:
+      sorting_group_id: sorting_group_elevation_axis
+      sorting_weight: 32
 
   - platform: template
     name: "Auto calculate azimuth angle"
@@ -3124,6 +3221,159 @@ number:
       sorting_weight: ${sorting_groups.elevation_axis.panel_elev_target_angle}
 
   - platform: template
+    name: "Azimuth override zone 1 min"
+    id: azimuth_elevation_override_zone1_min
+    icon: "mdi:ray-start"
+    max_value: 360
+    min_value: 0
+    step: 0.1
+    initial_value: ${initial_value.azimuth_elevation_override_zone1_min}
+    unit_of_measurement: "°"
+    optimistic: true
+    restore_value: true
+    entity_category: "config"
+    mode: box
+    web_server:
+      sorting_group_id: sorting_group_elevation_axis
+      sorting_weight: 33
+
+  - platform: template
+    name: "Azimuth override zone 1 max"
+    id: azimuth_elevation_override_zone1_max
+    icon: "mdi:ray-end"
+    max_value: 360
+    min_value: 0
+    step: 0.1
+    initial_value: ${initial_value.azimuth_elevation_override_zone1_max}
+    unit_of_measurement: "°"
+    optimistic: true
+    restore_value: true
+    entity_category: "config"
+    mode: box
+    web_server:
+      sorting_group_id: sorting_group_elevation_axis
+      sorting_weight: 34
+
+  - platform: template
+    name: "Azimuth override zone 1 elevation target"
+    id: azimuth_elevation_override_zone1_target
+    icon: "mdi:angle-acute"
+    max_value: 90
+    min_value: -90
+    step: 0.1
+    initial_value: ${initial_value.azimuth_elevation_override_zone1_target}
+    unit_of_measurement: "°"
+    optimistic: true
+    restore_value: true
+    entity_category: "config"
+    mode: box
+    web_server:
+      sorting_group_id: sorting_group_elevation_axis
+      sorting_weight: 35
+
+  - platform: template
+    name: "Azimuth override zone 2 min"
+    id: azimuth_elevation_override_zone2_min
+    icon: "mdi:ray-start"
+    max_value: 360
+    min_value: 0
+    step: 0.1
+    initial_value: ${initial_value.azimuth_elevation_override_zone2_min}
+    unit_of_measurement: "°"
+    optimistic: true
+    restore_value: true
+    entity_category: "config"
+    mode: box
+    web_server:
+      sorting_group_id: sorting_group_elevation_axis
+      sorting_weight: 36
+
+  - platform: template
+    name: "Azimuth override zone 2 max"
+    id: azimuth_elevation_override_zone2_max
+    icon: "mdi:ray-end"
+    max_value: 360
+    min_value: 0
+    step: 0.1
+    initial_value: ${initial_value.azimuth_elevation_override_zone2_max}
+    unit_of_measurement: "°"
+    optimistic: true
+    restore_value: true
+    entity_category: "config"
+    mode: box
+    web_server:
+      sorting_group_id: sorting_group_elevation_axis
+      sorting_weight: 37
+
+  - platform: template
+    name: "Azimuth override zone 2 elevation target"
+    id: azimuth_elevation_override_zone2_target
+    icon: "mdi:angle-acute"
+    max_value: 90
+    min_value: -90
+    step: 0.1
+    initial_value: ${initial_value.azimuth_elevation_override_zone2_target}
+    unit_of_measurement: "°"
+    optimistic: true
+    restore_value: true
+    entity_category: "config"
+    mode: box
+    web_server:
+      sorting_group_id: sorting_group_elevation_axis
+      sorting_weight: 38
+
+  - platform: template
+    name: "Azimuth override zone 3 min"
+    id: azimuth_elevation_override_zone3_min
+    icon: "mdi:ray-start"
+    max_value: 360
+    min_value: 0
+    step: 0.1
+    initial_value: ${initial_value.azimuth_elevation_override_zone3_min}
+    unit_of_measurement: "°"
+    optimistic: true
+    restore_value: true
+    entity_category: "config"
+    mode: box
+    web_server:
+      sorting_group_id: sorting_group_elevation_axis
+      sorting_weight: 39
+
+  - platform: template
+    name: "Azimuth override zone 3 max"
+    id: azimuth_elevation_override_zone3_max
+    icon: "mdi:ray-end"
+    max_value: 360
+    min_value: 0
+    step: 0.1
+    initial_value: ${initial_value.azimuth_elevation_override_zone3_max}
+    unit_of_measurement: "°"
+    optimistic: true
+    restore_value: true
+    entity_category: "config"
+    mode: box
+    web_server:
+      sorting_group_id: sorting_group_elevation_axis
+      sorting_weight: 40
+
+  - platform: template
+    name: "Azimuth override zone 3 elevation target"
+    id: azimuth_elevation_override_zone3_target
+    icon: "mdi:angle-acute"
+    max_value: 90
+    min_value: -90
+    step: 0.1
+    initial_value: ${initial_value.azimuth_elevation_override_zone3_target}
+    unit_of_measurement: "°"
+    optimistic: true
+    restore_value: true
+    entity_category: "config"
+    mode: box
+    web_server:
+      sorting_group_id: sorting_group_elevation_axis
+      sorting_weight: 41
+
+  - platform: template
     name: "Panel elevation target angle tolerance"
     id: panel_elev_target_angle_tolerance
     icon: "mdi:swap-vertical"
@@ -3287,6 +3537,46 @@ select:
               ESP_LOGD("lambda", "Set rotation to 180°");             
             } 
         #- component.update: display1
+
+  - platform: template
+    name: "Cloudy mode weather service"
+    id: cloudy_mode_weather_service_select
+    icon: "mdi:cloud-cog"
+    entity_category: "config"
+    options:
+      - "Open-Meteo"
+      - "OpenWeatherMap"
+    initial_option: "Open-Meteo"
+    optimistic: true
+    restore_value: true
+    web_server:
+      sorting_group_id: sorting_group_weather_settings
+      sorting_weight: ${sorting_groups.weather_settings.cloudy_mode_weather_service_select}
+    on_value:
+      then:
+        - lambda: |-
+            ESP_LOGI("Weather service", "Cloudy mode service changed to: %s", x.c_str());
+        - script.execute: perform_automatic_cloudy_mode_control_estimation
+
+  - platform: template
+    name: "Wind standby weather service"
+    id: wind_protection_weather_service_select
+    icon: "mdi:weather-windy"
+    entity_category: "config"
+    options:
+      - "Open-Meteo"
+      - "OpenWeatherMap"
+    initial_option: "Open-Meteo"
+    optimistic: true
+    restore_value: true
+    web_server:
+      sorting_group_id: sorting_group_weather_settings
+      sorting_weight: ${sorting_groups.weather_settings.wind_protection_weather_service_select}
+    on_value:
+      then:
+        - lambda: |-
+            ESP_LOGI("Weather service", "Wind standby service changed to: %s", x.c_str());
+        - script.execute: perform_stand_by_mode_activation_check
 
 psram:
   mode: octal
@@ -3972,6 +4262,119 @@ sensor:
       } else
       {
         return id(global_owm_wind_gusts_current);
+      }
+
+  - platform: template
+    name: "Open-Meteo Wind speed current"
+    id: open_meteo_wind_speed_current
+    icon: "mdi:weather-windy"
+    unit_of_measurement: "m/s"
+    accuracy_decimals: 1
+    update_interval: 1s
+    web_server:
+      sorting_group_id: sorting_group_weather_settings
+      sorting_weight: ${sorting_groups.weather_settings.open_meteo_wind_speed_current}
+    lambda: |-
+      if (abs(id(global_open_meteo_wind_speed_current) - float(${initial_value.number})) < 0.001
+        or id(open_meteo_data_is_expired).state)
+      {
+        return NAN;
+      } else
+      {
+        return id(global_open_meteo_wind_speed_current);
+      }
+    on_value:
+      then:
+        - script.execute: perform_stand_by_mode_activation_check
+
+  - platform: template
+    name: "Open-Meteo Wind gusts current"
+    id: open_meteo_wind_gusts_current
+    icon: "mdi:wind-power"
+    unit_of_measurement: "m/s"
+    accuracy_decimals: 1
+    update_interval: 1s
+    web_server:
+      sorting_group_id: sorting_group_weather_settings
+      sorting_weight: ${sorting_groups.weather_settings.open_meteo_wind_gusts_current}
+    lambda: |-
+      if (abs(id(global_open_meteo_wind_gusts_current) - float(${initial_value.number})) < 0.001
+        or id(open_meteo_data_is_expired).state)
+      {
+        return NAN;
+      } else
+      {
+        return id(global_open_meteo_wind_gusts_current);
+      }
+    on_value:
+      then:
+        - script.execute: perform_stand_by_mode_activation_check
+
+  - platform: template
+    name: "Open-Meteo DNI current"
+    id: open_meteo_direct_normal_irradiance_current
+    icon: "mdi:white-balance-sunny"
+    unit_of_measurement: "W/m²"
+    accuracy_decimals: 1
+    update_interval: 1s
+    web_server:
+      sorting_group_id: sorting_group_weather_settings
+      sorting_weight: ${sorting_groups.weather_settings.open_meteo_direct_normal_irradiance_current}
+    lambda: |-
+      if (abs(id(global_open_meteo_direct_normal_irradiance_current) - float(${initial_value.number})) < 0.001
+        or id(open_meteo_data_is_expired).state)
+      {
+        return NAN;
+      } else
+      {
+        return id(global_open_meteo_direct_normal_irradiance_current);
+      }
+    on_value:
+      then:
+        - script.execute: perform_automatic_cloudy_mode_control_estimation
+
+  - platform: template
+    name: "Open-Meteo DHI current"
+    id: open_meteo_diffuse_radiation_current
+    icon: "mdi:weather-cloudy"
+    unit_of_measurement: "W/m²"
+    accuracy_decimals: 1
+    update_interval: 1s
+    web_server:
+      sorting_group_id: sorting_group_weather_settings
+      sorting_weight: ${sorting_groups.weather_settings.open_meteo_diffuse_radiation_current}
+    lambda: |-
+      if (abs(id(global_open_meteo_diffuse_radiation_current) - float(${initial_value.number})) < 0.001
+        or id(open_meteo_data_is_expired).state)
+      {
+        return NAN;
+      } else
+      {
+        return id(global_open_meteo_diffuse_radiation_current);
+      }
+    on_value:
+      then:
+        - script.execute: perform_automatic_cloudy_mode_control_estimation
+
+  - platform: template
+    name: "Open-Meteo Total Radiation current"
+    id: open_meteo_total_radiation_current
+    icon: "mdi:sun-thermometer"
+    unit_of_measurement: "W/m²"
+    accuracy_decimals: 1
+    update_interval: 1s
+    web_server:
+      sorting_group_id: sorting_group_weather_settings
+      sorting_weight: ${sorting_groups.weather_settings.open_meteo_total_radiation_current}
+    lambda: |-
+      if ((abs(id(global_open_meteo_direct_normal_irradiance_current) - float(${initial_value.number})) < 0.001
+        && abs(id(global_open_meteo_diffuse_radiation_current) - float(${initial_value.number})) < 0.001)
+        or id(open_meteo_data_is_expired).state)
+      {
+        return NAN;
+      } else
+      {
+        return id(global_open_meteo_direct_normal_irradiance_current) + id(global_open_meteo_diffuse_radiation_current);
       }
 
   - platform: template
@@ -4779,16 +5182,6 @@ binary_sensor:
       return id(owm_data_is_expired).state && id(owm_api_key_valid).state;
 
   - platform: template
-    name: "Standby mode trigger high winds"
-    id: stand_by_mode_trigger_high_winds
-    icon: "mdi:sleep"
-    web_server:
-      sorting_group_id: sorting_group_standby_mode
-      sorting_weight: ${sorting_groups.standby_mode.stand_by_mode_trigger_high_winds}
-    lambda: |-
-      return (id(owm_wind_gusts_above_threshold).state || id(owm_wind_speed_above_threshold).state) && !id(owm_data_is_expired).state && id(owm_api_key_valid).state;
-
-  - platform: template
     name: "Standby mode trigger azimuth fault"
     id: stand_by_mode_trigger_azimuth_fault
     icon: "mdi:sleep"
@@ -4837,6 +5230,82 @@ binary_sensor:
         return !id(motor_elevation_plus_pin).state and id(motor_elevation_minus_pin).state;
       else
         return id(motor_elevation_plus_pin).state and !id(motor_elevation_minus_pin).state;
+
+  - platform: template
+    name: "Open-Meteo data is old"
+    id: open_meteo_data_is_old
+    icon: "mdi:clock-alert"
+    disabled_by_default: false
+    entity_category: "diagnostic"
+    web_server:
+      sorting_group_id: sorting_group_weather_settings
+      sorting_weight: ${sorting_groups.weather_settings.open_meteo_data_is_old}
+    lambda: |-
+      return ((id(global_open_meteo_last_data_retrieval_success) + ${open_meteo_data_expiration_time} ) <= id(ds3231_time).now().timestamp);
+
+  - platform: template
+    name: "Open-Meteo data is expired"
+    id: open_meteo_data_is_expired
+    icon: "mdi:clock-remove"
+    disabled_by_default: false
+    entity_category: "diagnostic"
+    web_server:
+      sorting_group_id: sorting_group_weather_settings
+      sorting_weight: ${sorting_groups.weather_settings.open_meteo_data_is_expired}
+    lambda: |-
+      return ((id(global_open_meteo_last_data_retrieval_success) + ${open_meteo_data_expiration_shutdown_time} ) <= id(ds3231_time).now().timestamp);
+
+  - platform: template
+    name: "Standby mode trigger expired weather data"
+    id: stand_by_mode_trigger_expired_weather_data
+    icon: "mdi:sleep"
+    web_server:
+      sorting_group_id: sorting_group_standby_mode
+      sorting_weight: ${sorting_groups.standby_mode.stand_by_mode_trigger_expired_owm_data}
+    lambda: |-
+      auto selected_wind_service = id(wind_protection_weather_service_select).active_index();
+      if (selected_wind_service.has_value() && selected_wind_service.value() == 1)
+      {
+        return id(open_meteo_data_is_expired).state;
+      }
+      return id(owm_data_is_expired).state && id(owm_api_key_valid).state;
+
+  - platform: template
+    name: "Standby mode trigger high winds"
+    id: stand_by_mode_trigger_high_winds
+    icon: "mdi:sleep"
+    web_server:
+      sorting_group_id: sorting_group_standby_mode
+      sorting_weight: ${sorting_groups.standby_mode.stand_by_mode_trigger_high_winds}
+    lambda: |-
+      auto selected_wind_service = id(wind_protection_weather_service_select).active_index();
+      if (selected_wind_service.has_value() && selected_wind_service.value() == 1)
+      {
+        if (!id(open_meteo_data_is_expired).state)
+        {
+          if (!id(global_open_meteo_wind_speed_hysteresis_active) && id(global_open_meteo_wind_speed_current) >= float(${weather_hysteresis.wind_speed_activation_threshold}))
+          {
+            id(global_open_meteo_wind_speed_hysteresis_active) = true;
+          }
+          else if (id(global_open_meteo_wind_speed_hysteresis_active) && id(global_open_meteo_wind_speed_current) < float(${weather_hysteresis.wind_speed_deactivation_threshold}))
+          {
+            id(global_open_meteo_wind_speed_hysteresis_active) = false;
+          }
+
+          if (!id(global_open_meteo_wind_gusts_hysteresis_active) && id(global_open_meteo_wind_gusts_current) >= float(${weather_hysteresis.wind_gusts_activation_threshold}))
+          {
+            id(global_open_meteo_wind_gusts_hysteresis_active) = true;
+          }
+          else if (id(global_open_meteo_wind_gusts_hysteresis_active) && id(global_open_meteo_wind_gusts_current) < float(${weather_hysteresis.wind_gusts_deactivation_threshold}))
+          {
+            id(global_open_meteo_wind_gusts_hysteresis_active) = false;
+          }
+
+          return id(global_open_meteo_wind_speed_hysteresis_active) || id(global_open_meteo_wind_gusts_hysteresis_active);
+        }
+        return false;
+      }
+      return (id(owm_wind_gusts_above_threshold).state || id(owm_wind_speed_above_threshold).state) && !id(owm_data_is_expired).state && id(owm_api_key_valid).state;
 
   - platform: template
     name: "Panel lowering planned"
@@ -5161,7 +5630,7 @@ binary_sensor:
     disabled_by_default: false
     web_server:
       sorting_group_id: sorting_group_buttons
-      sorting_weight: ${sorting_groups.buttons.button_up_cw_physical}
+      sorting_weight: 1
     pin:
       mcp23xxx: mcp23017_main
       number: ${gpio_ids.button_up_cw_physical}
@@ -5204,7 +5673,7 @@ binary_sensor:
     disabled_by_default: false
     web_server:
       sorting_group_id: sorting_group_buttons
-      sorting_weight: ${sorting_groups.buttons.button_up_ccw_physical}
+      sorting_weight: 2
     pin:
       mcp23xxx: mcp23017_main
       number: ${gpio_ids.button_down_ccw_physical}
@@ -5349,6 +5818,46 @@ globals:
     type: float
     restore_value: yes
     initial_value: '123.456'
+
+  - id: global_open_meteo_wind_speed_current
+    type: float
+    restore_value: yes
+    initial_value: '123.456'
+
+  - id: global_open_meteo_wind_gusts_current
+    type: float
+    restore_value: yes
+    initial_value: '123.456'
+
+  - id: global_open_meteo_direct_normal_irradiance_current
+    type: float
+    restore_value: yes
+    initial_value: '123.456'
+
+  - id: global_open_meteo_diffuse_radiation_current
+    type: float
+    restore_value: yes
+    initial_value: '123.456'
+
+  - id: global_open_meteo_last_data_retrieval_success
+    type: int
+    restore_value: yes
+    initial_value: '0'
+
+  - id: global_open_meteo_diffuse_ratio_hysteresis_active
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+
+  - id: global_open_meteo_wind_speed_hysteresis_active
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+
+  - id: global_open_meteo_wind_gusts_hysteresis_active
+    type: bool
+    restore_value: no
+    initial_value: 'false'
 
   - id: global_internet_connection_test_success
     type: bool
@@ -6297,7 +6806,38 @@ script:
       - lambda: |-     
           if (id(auto_cloudy_mode_control).state)
           {
-            if (id(owm_cloud_coverage_above_threshold).state)
+            auto selected_cloud_service = id(cloudy_mode_weather_service_select).active_index();
+            bool cloudy_mode_reached = false;
+
+            if (selected_cloud_service.has_value() && selected_cloud_service.value() == 1)
+            {
+              if (!id(open_meteo_data_is_expired).state)
+              {
+                const float dni = id(global_open_meteo_direct_normal_irradiance_current);
+                const float dhi = id(global_open_meteo_diffuse_radiation_current);
+                const float total_radiation = dni + dhi;
+                const float diffuse_ratio = total_radiation > 0.001f ? (dhi / total_radiation) : 0.0f;
+
+                if (!id(global_open_meteo_diffuse_ratio_hysteresis_active)
+                  && diffuse_ratio >= float(${weather_hysteresis.open_meteo_diffuse_ratio_activation_threshold}))
+                {
+                  id(global_open_meteo_diffuse_ratio_hysteresis_active) = true;
+                }
+                else if (id(global_open_meteo_diffuse_ratio_hysteresis_active)
+                  && diffuse_ratio < float(${weather_hysteresis.open_meteo_diffuse_ratio_deactivation_threshold}))
+                {
+                  id(global_open_meteo_diffuse_ratio_hysteresis_active) = false;
+                }
+
+                cloudy_mode_reached = id(global_open_meteo_diffuse_ratio_hysteresis_active);
+              }
+            }
+            else
+            {
+              cloudy_mode_reached = id(owm_cloud_coverage_above_threshold).state;
+            }
+
+            if (cloudy_mode_reached)
             {
               id(cloudy_mode_active).turn_on();  
               ESP_LOGI("Cloudy mode control:", "Cloudiness threshold reached. Enabling Switch: \"Cloudy Mode Active\".");
@@ -6319,7 +6859,7 @@ script:
           bool reason_sun = id(stand_by_mode_trigger_sun_elevation).state;
 
           bool reason_expired_control_active = id(auto_stand_by_mode_if_owm_data_expired_control).state;
-          bool reason_expired = id(stand_by_mode_trigger_expired_owm_data).state;
+          bool reason_expired = id(stand_by_mode_trigger_expired_weather_data).state;
 
           bool reason_wind_control_active = id(auto_wind_protection_control).state;
           bool reason_wind = id(stand_by_mode_trigger_high_winds).state;
@@ -7019,6 +7559,60 @@ script:
                 ESP_LOGI("Elevation angle calculation:", "Sun elevation value is %2.0f", id(sun_elevation).state);
 
               }
+            }
+
+            // Optional elevation override based on current panel azimuth angle.
+            // Each zone can be enabled/disabled independently and can span across 0° (e.g. 340°..20°).
+            if (!id(stand_by_mode_active).state && !(id(cloudy_mode_active).state && id(auto_cloudy_mode_elevation_control).state))
+            {
+              const float current_azimuth = id(panel_compass_heading).state;
+
+              auto azimuth_in_zone = [&](float zone_min, float zone_max) -> bool {
+                if (zone_min <= zone_max)
+                {
+                  return current_azimuth >= zone_min && current_azimuth <= zone_max;
+                }
+                // Wrap-around zone crossing 360/0 boundary
+                return current_azimuth >= zone_min || current_azimuth <= zone_max;
+              };
+
+              if (id(azimuth_elevation_override_zone1_enabled).state
+                  && azimuth_in_zone(id(azimuth_elevation_override_zone1_min).state, id(azimuth_elevation_override_zone1_max).state))
+              {
+                tmp_panel_elev_target_value = id(azimuth_elevation_override_zone1_target).state;
+                ESP_LOGI("Elevation angle calculation:", "Azimuth override zone 1 active (%.1f°..%.1f°). Elevation target overridden to %.1f°.",
+                         id(azimuth_elevation_override_zone1_min).state,
+                         id(azimuth_elevation_override_zone1_max).state,
+                         tmp_panel_elev_target_value);
+              }
+              else if (id(azimuth_elevation_override_zone2_enabled).state
+                       && azimuth_in_zone(id(azimuth_elevation_override_zone2_min).state, id(azimuth_elevation_override_zone2_max).state))
+              {
+                tmp_panel_elev_target_value = id(azimuth_elevation_override_zone2_target).state;
+                ESP_LOGI("Elevation angle calculation:", "Azimuth override zone 2 active (%.1f°..%.1f°). Elevation target overridden to %.1f°.",
+                         id(azimuth_elevation_override_zone2_min).state,
+                         id(azimuth_elevation_override_zone2_max).state,
+                         tmp_panel_elev_target_value);
+              }
+              else if (id(azimuth_elevation_override_zone3_enabled).state
+                       && azimuth_in_zone(id(azimuth_elevation_override_zone3_min).state, id(azimuth_elevation_override_zone3_max).state))
+              {
+                tmp_panel_elev_target_value = id(azimuth_elevation_override_zone3_target).state;
+                ESP_LOGI("Elevation angle calculation:", "Azimuth override zone 3 active (%.1f°..%.1f°). Elevation target overridden to %.1f°.",
+                         id(azimuth_elevation_override_zone3_min).state,
+                         id(azimuth_elevation_override_zone3_max).state,
+                         tmp_panel_elev_target_value);
+              }
+            }
+
+            // Keep overridden values inside configured mechanical limits.
+            if (tmp_panel_elev_target_value > id(panel_elevation_angle_max).state)
+            {
+              tmp_panel_elev_target_value = id(panel_elevation_angle_max).state;
+            }
+            else if (tmp_panel_elev_target_value < id(panel_elevation_angle_min).state)
+            {
+              tmp_panel_elev_target_value = id(panel_elevation_angle_min).state;
             }
 
             // only update the target angle value when the calculation lead to a different value than the current one
@@ -8123,6 +8717,71 @@ script:
                 - lambda: ESP_LOGE("OWM retrieval:", "Internet connection is not available.");  
         else:
           - lambda: ESP_LOGE("OWM retrieval:", "API key is not entered.");  
+
+  - id: perform_open_meteo_data_retrieval_if_open_meteo_data_is_old
+    mode: single
+    then:
+      - if:
+          condition:
+            - lambda: 'return id(open_meteo_data_is_old).state;'
+          then:
+            - script.execute: perform_open_meteo_data_retrieval
+
+  - id: perform_open_meteo_data_retrieval
+    mode: single
+    then:
+      - script.execute: perform_internet_connection_test
+      - script.wait: perform_internet_connection_test
+      - if:
+          condition:
+            - lambda: 'return id(global_internet_connection_test_success);'
+          then:
+            - lambda: ESP_LOGI("Open-Meteo retrieval:", "Internet connection is available. Starting Open-Meteo data retrieval.");
+            - http_request.get:
+                url: !lambda |-
+                  return "https://api.open-meteo.com/v1/forecast?latitude=" + to_string(id(device_latitude).state)
+                    + "&longitude=" + to_string(id(device_longitude).state)
+                    + "&current=wind_speed_10m,wind_gusts_10m,direct_normal_irradiance,diffuse_radiation"
+                    + "&wind_speed_unit=ms&timezone=auto";
+                request_headers:
+                  Content-Type: application/json
+                capture_response: true
+                max_response_buffer_size: 20kB
+                on_response:
+                  then:
+                    - logger.log:
+                        format: "Response status: %d, Duration: %u ms, Content length: %d"
+                        args:
+                          - response->status_code
+                          - response->duration_ms
+                          - response->content_length
+                    - logger.log:
+                        format: "Response body: %s"
+                        args:
+                          - body.c_str()
+                    - lambda: |-
+                        if (int(response->status_code) == 200)
+                        {
+                          json::parse_json(body, [](JsonObject root) -> bool
+                            {
+                                id(global_open_meteo_wind_speed_current) = float(root["current"]["wind_speed_10m"]);
+                                id(global_open_meteo_wind_gusts_current) = float(root["current"]["wind_gusts_10m"]);
+                                id(global_open_meteo_direct_normal_irradiance_current) = float(root["current"]["direct_normal_irradiance"]);
+                                id(global_open_meteo_diffuse_radiation_current) = float(root["current"]["diffuse_radiation"]);
+
+                                id(global_open_meteo_last_data_retrieval_success) = id(ds3231_time).now().timestamp;
+                                ESP_LOGI("Open-Meteo retrieval:", "Open-Meteo data retrieval finished.");
+
+                                return true;
+                            }
+                          );
+                        }
+                        else
+                        {
+                          ESP_LOGE("Open-Meteo retrieval:", "Open-Meteo retrieval failed.");
+                        }
+          else:
+            - lambda: ESP_LOGE("Open-Meteo retrieval:", "Internet connection is not available.");
 
 
 display:
