@@ -16,6 +16,7 @@ This document answers common questions from users and developers about the Sunch
 - [Why not just build a polar-aligned single-axis tracker?](#q-why-not-just-build-a-single-axis-tracker-that-rotates-around-an-axis-parallel-to-earths-rotation-axis-polar-aligned-tracker-that-would-track-the-sun-perfectly-with-only-one-motor)
 - [Why does CH2 (S2) sometimes show higher peak power than CH4 (D2)?](#q-why-does-ch2-sunchronizer-s2-sometimes-show-higher-peak-power-than-ch4-sunchronizer-d2-even-though-d2-uses-full-dual-axis-tracking)
 - [Can I modify the firmware?](#q-can-i-modify-the-firmware)
+- [Where can I get the current control PCB?](#q-where-can-i-get-the-current-control-pcb)
 - [Where can I get the 3D models (STLs)?](#q-where-can-i-get-the-3d-models-stls)
 - [What if I have problems?](#q-what-if-i-have-problems)
 
@@ -45,6 +46,7 @@ This document answers common questions from users and developers about the Sunch
 
 **[Technical Details & Algorithms](#technical-details--algorithms)**
 - [How are elevation and azimuth angles calculated?](#q-how-are-elevation-and-azimuth-angles-calculated)
+- [How is the tracker controlled in different situations to maximize yield?](#q-how-is-the-tracker-controlled-in-different-situations-to-maximize-yield)
 - [What is Cloudy mode and why does the panel go flatter in indirect light?](#q-what-is-cloudy-mode-and-why-does-the-panel-go-flatter-in-indirect-light)
 
 **[Integration & Connectivity](#integration--connectivity)**
@@ -110,6 +112,9 @@ Every kilowatt-hour generated locally from sunlight is one that doesn't need to 
 
 **8. The system pays for itself**
 With a total material cost of around 150 € and measurable additional yield of several hundred kilowatt-hours per year, the Sunchronizer typically pays for itself within **1–3 years** in central European conditions — and then generates free additional energy for years to come. → See [When does the system pay for itself?](#q-when-does-the-system-pay-for-itself) for detailed scenarios and a payback calculation.
+
+**9. More independence from rising energy costs and energy shortages**
+By increasing usable self-generation, the Sunchronizer reduces dependence on grid electricity and future price increases. In combination with a battery that can be charged via the solar installation, this also improves resilience during local supply bottlenecks or temporary outages, because more energy can be shifted to the hours when it is needed. This can also help ensure the battery is charged earlier and to a higher state of charge before or during a power outage, so more stored energy is available during the outage itself.
 
 **Bottom line:** In clear-sky or mixed conditions at mid-latitudes, a dual-axis tracker like the Sunchronizer D2 reliably produces **50–80% more energy per day** than a comparably sized static panel. For a 400 W panel in central Europe, this translates to a meaningful real-world gain in daily yield.
 
@@ -283,6 +288,18 @@ CH2's panel has a **10 W higher nameplate rating** than CH4's panel. Under ideal
 - Export and compile your own changes
 
 **See also:** [Firmware Configuration Guide](firmware/config/pcb_v1.3/README.md)
+
+---
+
+### Q: Where can I get the current control PCB?
+
+**A:** At the moment, you can order it via the contact form:
+
+[https://nerdiy.de/en/contact/](https://nerdiy.de/en/contact/)
+
+Just send a short message and you'll receive a reply with the current options.
+
+For the future, improved ordering methods are being worked on.
 
 ---
 
@@ -749,6 +766,43 @@ That is all. It is basically a constant "compare and correct" process.
 If those three are correct, the panel stays very close to the optimal sun-facing angle throughout the day.
 
 **See also:** [Firmware Configuration Guide](firmware/config/pcb_v1.3/README.md) for tuning parameters.
+
+---
+
+### Q: How is the tracker controlled in different light conditions to maximize yield?
+
+**A:** The control strategy adapts to operating conditions instead of using one rigid movement pattern all day.
+
+In practice, the tracker behaves roughly like this:
+
+1. **Clear sky / direct sun:**
+   The controller follows calculated sun elevation and azimuth closely. This is where active tracking gives the largest energy gain.
+
+2. **Cloudy / diffuse light:**
+   Exact pointing becomes less important. The system can switch to a flatter, less movement-intensive behavior (Cloudy mode), which often improves robustness and can be similar or better for diffuse-light periods.
+
+3. **High wind conditions:**
+   Yield is no longer the only goal. If configured, wind protection has priority and the panel moves to a safer storm position to reduce mechanical load and damage risk. These situations often coincide with cloud cover, so lowering/flattening is usually beneficial for both protection and practical energy capture.
+
+4. **Night / very low sun elevation:**
+   A dedicated standby position is used. The tracker transitions to this standby position at night or when sun elevation is too low, then resumes normal tracking when conditions become useful again.
+
+5. **Sensor mismatch or drift correction:**
+   During normal operation, the firmware continuously compares target angles with measured panel orientation and applies small corrections. If a relevant tracking/sensor error is detected, the system attempts to move automatically to the standby position and reports the error accordingly.
+
+**How weather data (DHI/DNI) is used for decisions:**
+
+- **DNI (Direct Normal Irradiance):** direct beam sunlight coming from the sun's direction (high DNI usually means tracking precision has strong benefit).
+- **DHI (Diffuse Horizontal Irradiance):** scattered light from the sky dome (high DHI relative to DNI usually means exact pointing matters less).
+- Open-Meteo can provide these irradiance components via API forecasts/nowcasts for the current location.
+- In simple terms, the controller (or supervisory logic) can compare the expected direct vs diffuse share:
+  - higher DNI share -> prioritize sun-following accuracy,
+  - higher DHI share -> prioritize flatter/low-movement behavior (Cloudy-like strategy),
+  - with strong wind signals -> prioritize safe/storm or standby positioning.
+
+So the system optimizes for **energy when conditions are good**, and for **stability/protection when tracking benefit is low or mechanical risk is high**.
+
+**See also:** [What is Cloudy mode and why does the panel go flatter in indirect light?](#q-what-is-cloudy-mode-and-why-does-the-panel-go-flatter-in-indirect-light) | [What safety mechanisms protect the Sunchronizer in high winds?](#q-what-safety-mechanisms-protect-the-sunchronizer-in-high-winds)
 
 ---
 
