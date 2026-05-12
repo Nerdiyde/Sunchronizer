@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sunchronizer Onboarding</title>
+    <meta name="theme-color" content="#0f5d3f" />
+    <link rel="manifest" href="onboarding.webmanifest" />
+    <link rel="icon" href="onboarding-icon.svg" type="image/svg+xml" />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Sora:wght@500;700&display=swap");
+
+      :root {
+        --bg-0: #f5efe6;
+        --bg-1: #f3f7ee;
+        --ink: #1b2a21;
+        --muted: #4b6055;
+        --accent: #0f5d3f;
+        --accent-2: #1f8a5b;
+        --accent-soft: #d8efe3;
+        --panel: #ffffffee;
+        --border: #c8d5cc;
+        --warn-bg: #fff6de;
+        --warn-border: #f0cc67;
+        --error-bg: #fde9e7;
+        --error-border: #dd8f86;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        font-family: "Space Grotesk", "Trebuchet MS", sans-serif;
+        min-height: 100vh;
+        background:
+          radial-gradient(circle at 8% 10%, #f7d58a 0, #f7d58a00 25%),
+          radial-gradient(circle at 92% 85%, #8fd8b0 0, #8fd8b000 24%),
+          linear-gradient(145deg, var(--bg-0) 0%, var(--bg-1) 100%);
+      }
+
+      .shell {
+        max-width: 1040px;
+        margin: 0 auto;
+        padding: 20px 14px 28px;
+      }
+
+      .hero {
+        background: linear-gradient(130deg, #124f39 0%, #1c7c53 75%, #58b37f 100%);
+        color: #f7fff8;
+        border-radius: 24px;
+        border: 1px solid #0a3d2d;
+        padding: clamp(20px, 4vw, 34px);
+        box-shadow: 0 18px 36px #09352340;
+        animation: fadeUp 450ms ease;
+      }
+
+      .hero h1 {
+        margin: 0;
+        line-height: 1.1;
+        font-family: "Sora", "Segoe UI", sans-serif;
+        font-size: clamp(1.5rem, 4vw, 2.6rem);
+      }
+
+      .hero p {
+        margin: 10px 0 0;
+        max-width: 70ch;
+        color: #e7fff1;
+      }
+
+      .hero-actions {
+        margin-top: 14px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .grid {
+        display: grid;
+        margin-top: 14px;
+        gap: 14px;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      }
+
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 16px;
+        box-shadow: 0 10px 24px #0f473414;
+        animation: fadeUp 500ms ease;
+      }
+
+      h2 {
+        margin: 0 0 8px;
+        font-family: "Sora", "Segoe UI", sans-serif;
+        font-size: 1.05rem;
+      }
+
+      .step {
+        display: inline-flex;
+        min-width: 24px;
+        min-height: 24px;
+        justify-content: center;
+        align-items: center;
+        border-radius: 999px;
+        color: #fff;
+        margin-right: 8px;
+        background: var(--accent);
+        font-size: 0.84rem;
+      }
+
+      .status {
+        margin-top: 12px;
+        border-radius: 11px;
+        padding: 10px 11px;
+        font-size: 0.92rem;
+        border: 1px solid var(--border);
+        background: #f8fbf9;
+      }
+
+      .status.warn {
+        border-color: var(--warn-border);
+        background: var(--warn-bg);
+      }
+
+      .status.error {
+        border-color: var(--error-border);
+        background: var(--error-bg);
+      }
+
+      .row {
+        display: grid;
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      label {
+        font-weight: 600;
+        font-size: 0.94rem;
+      }
+
+      input {
+        width: 100%;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 12px;
+        font: inherit;
+        color: inherit;
+        background: #fff;
+      }
+
+      .btn {
+        border: 1px solid #136547;
+        border-radius: 12px;
+        padding: 10px 12px;
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer;
+        color: #f8fffb;
+        background: linear-gradient(160deg, var(--accent-2) 0%, var(--accent) 100%);
+      }
+
+      .btn.secondary {
+        color: var(--ink);
+        border-color: var(--border);
+        background: #f8fcf9;
+      }
+
+      .btn:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+
+      .btn-row {
+        margin-top: 10px;
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .chip {
+        border: 1px solid #9fc6b2;
+        border-radius: 999px;
+        padding: 7px 11px;
+        background: #f2fbf6;
+        color: #174732;
+        font-size: 0.86rem;
+        cursor: pointer;
+      }
+
+      .mode-grid {
+        display: grid;
+        gap: 8px;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        margin-top: 8px;
+      }
+
+      .mode-btn {
+        border: 1px solid #8bb9a4;
+        border-radius: 12px;
+        background: #eff9f3;
+        color: #174732;
+        font: inherit;
+        font-weight: 600;
+        text-align: left;
+        padding: 11px;
+        cursor: pointer;
+      }
+
+      .mode-btn span {
+        display: block;
+        margin-top: 4px;
+        font-weight: 400;
+        color: #426455;
+        font-size: 0.84rem;
+      }
+
+      details.expert {
+        margin-top: 12px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: #f9fcfa;
+        padding: 8px 10px;
+      }
+
+      details.expert summary {
+        cursor: pointer;
+        font-weight: 600;
+        color: #204a38;
+      }
+
+      .mini {
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 0.88rem;
+      }
+
+      ul {
+        margin: 8px 0 0 18px;
+        padding: 0;
+      }
+
+      code {
+        background: #edf5ef;
+        border: 1px solid #d2e4d8;
+        border-radius: 6px;
+        padding: 1px 5px;
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 760px) {
+        .shell {
+          padding: 10px 10px 18px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <h1>Sunchronizer Setup & Control</h1>
+        <p>
+          Initial implementation of a progressive web app for onboarding. Preferred flow is
+          Improv BLE provisioning. If Bluetooth is unavailable, use AP fallback. Runtime control
+          is handled via the ESPHome Web API (REST + EventSource).
+        </p>
+        <div class="hero-actions">
+          <button id="installPwaButton" class="btn secondary" type="button" style="display:none;">Install App</button>
+          <a class="btn secondary" href="index.html">Open Firmware Installer</a>
+        </div>
+        <div id="globalStatus" class="status">Ready. Start with Step 1.</div>
+      </section>
+
+      <section class="grid">
+        <article class="panel">
+          <h2><span class="step">1</span>Onboarding via Improv BLE</h2>
+          <p class="mini">
+            Uses Web Bluetooth and the Improv service. Works best in Chrome or Edge on desktop/Android.
+          </p>
+
+          <div class="row">
+            <label for="wifiSsid">Wi-Fi SSID</label>
+            <input id="wifiSsid" name="wifiSsid" autocomplete="off" placeholder="Your 2.4 GHz SSID" />
+          </div>
+
+          <div class="row">
+            <label for="wifiPassword">Wi-Fi Password</label>
+            <input id="wifiPassword" name="wifiPassword" type="password" autocomplete="off" placeholder="Wi-Fi password" />
+          </div>
+
+          <div class="btn-row">
+            <button id="connectBleButton" class="btn" type="button">Connect via BLE</button>
+            <button id="sendWifiButton" class="btn" type="button" disabled>Send Wi-Fi Credentials</button>
+          </div>
+
+          <div id="bleStatus" class="status">BLE not connected.</div>
+          <div id="bleDetailStatus" class="status">BLE state machine idle.</div>
+
+          <ul class="mini">
+            <li>Requires HTTPS or localhost.</li>
+            <li>Device picker only appears after user interaction.</li>
+            <li>If BLE is unsupported, continue with Step 2.</li>
+          </ul>
+        </article>
+
+        <article class="panel">
+          <h2><span class="step">2</span>Fallback via AP Onboarding</h2>
+          <p class="mini">
+            If Improv BLE is unavailable, connect to the device access point and complete setup in the captive portal.
+          </p>
+
+          <ul>
+            <li>Power on device and wait for setup AP.</li>
+            <li>Connect phone or laptop to the setup Wi-Fi.</li>
+            <li>Open portal URL and enter your Wi-Fi credentials.</li>
+          </ul>
+
+          <div class="row">
+            <label for="portalUrl">Portal URL</label>
+            <input id="portalUrl" name="portalUrl" value="http://192.168.4.1" />
+          </div>
+
+          <div class="btn-row">
+            <button id="openPortalButton" class="btn" type="button">Open AP Portal</button>
+          </div>
+
+          <div id="apStatus" class="status">AP fallback not started.</div>
+        </article>
+
+        <article class="panel">
+          <h2><span class="step">3</span>Discovery & Live Telemetry</h2>
+          <p class="mini">
+            After onboarding, save your local URL and verify ESPHome endpoints.
+            Live telemetry uses <code>/events</code> via Server-Sent Events.
+          </p>
+
+          <div class="row">
+            <label for="deviceUrl">Local Device URL</label>
+            <input id="deviceUrl" name="deviceUrl" placeholder="http://sunchronizer.local or http://192.168.x.x" />
+          </div>
+
+          <div class="btn-row">
+            <button id="saveDeviceUrlButton" class="btn secondary" type="button">Save URL</button>
+            <button id="probeDeviceButton" class="btn secondary" type="button">Probe Web API</button>
+            <button id="refreshCommonStatesButton" class="btn secondary" type="button">Fetch Common States</button>
+            <button id="openDeviceButton" class="btn" type="button">Open Device UI</button>
+          </div>
+
+          <div class="btn-row">
+            <button id="connectEventsButton" class="btn secondary" type="button">Connect Live Events</button>
+            <button id="disconnectEventsButton" class="btn secondary" type="button" disabled>Disconnect Live Events</button>
+          </div>
+
+          <div id="controlStatus" class="status">No device URL saved yet.</div>
+          <pre id="telemetryLog" class="status" style="max-height: 180px; overflow:auto; white-space: pre-wrap;">No telemetry yet.</pre>
+        </article>
+
+        <article class="panel">
+          <h2><span class="step">4</span>ESPHome REST Control</h2>
+          <p class="mini">
+            Send commands directly to the ESPHome REST API.
+            URL schema: <code>/domain/entity/action</code> with optional query parameters.
+          </p>
+
+          <div class="row">
+            <label for="apiDomain">Domain</label>
+            <input id="apiDomain" name="apiDomain" value="switch" placeholder="switch, button, number, select, ..." />
+          </div>
+
+          <div class="row">
+            <label for="apiEntity">Entity Name</label>
+            <input id="apiEntity" name="apiEntity" placeholder="Exactly as configured in ESPHome (supports spaces)" />
+          </div>
+
+          <div class="row">
+            <label for="apiAction">Action</label>
+            <input id="apiAction" name="apiAction" value="turn_on" placeholder="turn_on, turn_off, toggle, set, press" />
+          </div>
+
+          <div class="row">
+            <label for="apiQuery">Query Parameters (optional)</label>
+            <input id="apiQuery" name="apiQuery" placeholder="value=20 or option=Auto" />
+          </div>
+
+          <div class="btn-row">
+            <button id="apiGetButton" class="btn secondary" type="button">GET State</button>
+            <button id="apiPostButton" class="btn" type="button">POST Action</button>
+          </div>
+
+          <div id="apiStatus" class="status">No API request sent yet.</div>
+          <pre id="apiResponse" class="status" style="max-height: 180px; overflow:auto; white-space: pre-wrap;">Response output appears here.</pre>
+
+          <h2 style="margin-top:14px;"><span class="step">5</span>Sunchronizer Presets</h2>
+          <p class="mini">
+            Quick actions below are pre-mapped to known Sunchronizer entities from the PCB v1.3 configuration.
+          </p>
+
+          <div class="mode-grid">
+            <button id="modeAutoTracking" class="mode-btn" type="button">
+              Auto Tracking
+              <span>Enable automatic elevation + azimuth tracking</span>
+            </button>
+            <button id="modeStandbySafe" class="mode-btn" type="button">
+              Standby / Safe Position
+              <span>Move to configured standby elevation + azimuth targets</span>
+            </button>
+            <button id="modeServicePosition" class="mode-btn" type="button">
+              Service Position
+              <span>Set a maintenance-friendly default pose</span>
+            </button>
+            <button id="modeCalibration" class="mode-btn" type="button">
+              Calibration Mode
+              <span>Disable auto tracking and run calibration actions</span>
+            </button>
+          </div>
+
+          <details class="expert">
+            <summary>Advanced Position Input (manual values)</summary>
+
+            <div class="row">
+              <label for="manualElevationInput">Manual Elevation Target (deg)</label>
+              <input id="manualElevationInput" type="number" step="0.1" placeholder="e.g. 35" />
+            </div>
+
+            <div class="row">
+              <label for="manualAzimuthInput">Manual Azimuth Target (deg)</label>
+              <input id="manualAzimuthInput" type="number" step="0.1" placeholder="e.g. 180" />
+            </div>
+
+            <div class="row">
+              <label for="manualToleranceInput">Target Tolerance (deg, optional)</label>
+              <input id="manualToleranceInput" type="number" step="0.1" placeholder="e.g. 2" />
+            </div>
+
+            <div class="btn-row">
+              <button id="applyManualTargetsButton" class="btn secondary" type="button">Apply Targets</button>
+            </div>
+          </details>
+
+          <div class="btn-row" id="presetControls"></div>
+
+          <div class="btn-row">
+            <button id="refreshPresetStatesButton" class="btn secondary" type="button">Refresh Key States</button>
+          </div>
+
+          <div id="presetStateOutput" class="status">No key state snapshot yet.</div>
+
+          <h2 style="margin-top:14px;"><span class="step">6</span>Calibration Hub</h2>
+          <p class="mini">
+            Dedicated controls to trigger calibration procedures without switching modes.
+          </p>
+
+          <div class="mode-grid">
+            <button id="calibMagDeclinationButton" class="mode-btn" type="button">
+              Magnetic Declination Calibration
+              <span>Runs full declination calibration routine</span>
+            </button>
+            <button id="calibElevationButton" class="mode-btn" type="button">
+              Elevation Axis Measurement
+              <span>Measures elevation axis and updates calibration data</span>
+            </button>
+            <button id="calibAzimuthButton" class="mode-btn" type="button">
+              Azimuth Axis Measurement
+              <span>Measures azimuth axis and updates calibration data</span>
+            </button>
+            <button id="calibSaveDeclinationButton" class="mode-btn" type="button">
+              Save Current Declination
+              <span>Saves current magnetic declination to config value</span>
+            </button>
+          </div>
+
+          <div id="calibrationStatus" class="status">No calibration action triggered yet.</div>
+        </article>
+      </section>
+    </main>
+
+    <script src="onboarding-app.js"></script>
+  </body>
+</html>

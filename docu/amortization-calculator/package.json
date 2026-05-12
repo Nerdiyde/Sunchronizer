@@ -1,0 +1,37 @@
+{
+  "name": "sunchronizer-amortization-calculator",
+  "version": "1.0.0",
+  "description": "Automated tests for Sunchronizer ROI & Amortization Calculator",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:verbose": "jest --verbose"
+  },
+  "keywords": [
+    "sunchronizer",
+    "calculator",
+    "roi",
+    "amortization",
+    "solar"
+  ],
+  "devDependencies": {
+    "jest": "^29.0.0",
+    "jsdom": "^22.0.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/__tests__/**/*.test.js"
+    ],
+    "collectCoverageFrom": [
+      "calculator.js",
+      "index.html",
+      "styles.css"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ],
+    "verbose": true
+  }
+}

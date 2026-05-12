@@ -1,0 +1,314 @@
+name: Deploy Pages (Calculator + Web Installer)
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - "docu/amortization-calculator/**"
+      - "firmware/web-installer/**"
+      - ".github/workflows/deploy-pages.yml"
+  workflow_run:
+    workflows:
+      - Build ESPHome Firmware
+    types:
+      - completed
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Build & Deploy to GitHub Pages
+    if: ${{ github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'release') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Build Pages Site
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import pathlib
+          import shutil
+          import urllib.request
+
+          # Setup directories
+          site_dir = pathlib.Path("site")
+          shutil.rmtree(site_dir, ignore_errors=True)
+          site_dir.mkdir(parents=True, exist_ok=True)
+
+          # ==========================================
+          # Build Web Installer
+          # ==========================================
+          repo = os.environ["GITHUB_REPOSITORY"]
+          releases_api_url = f"https://api.github.com/repos/{repo}/releases?per_page=20"
+
+          req = urllib.request.Request(
+              releases_api_url,
+              headers={
+                  "Accept": "application/vnd.github+json",
+                  "User-Agent": "sunchronizer-pages-workflow",
+              },
+          )
+
+          with urllib.request.urlopen(req) as response:
+              releases = json.load(response)
+
+          if isinstance(releases, list) and releases:
+              installer_dir = site_dir / "web-installer"
+              installer_dir.mkdir(parents=True, exist_ok=True)
+              
+              source_dir = pathlib.Path("firmware/web-installer")
+
+              # Copy installer frontend files
+              for source_file in source_dir.rglob("*"):
+                  if source_file.is_file():
+                      target_file = installer_dir / source_file.relative_to(source_dir)
+                      target_file.parent.mkdir(parents=True, exist_ok=True)
+                      shutil.copy2(source_file, target_file)
+
+              binaries_dir = installer_dir / "binaries"
+              binaries_dir.mkdir(parents=True, exist_ok=True)
+
+              release_entries = []
+
+              for release in releases:
+                  tag = release.get("tag_name")
+                  if not tag:
+                      continue
+
+                  release_assets = []
+                  target_release_dir = binaries_dir / tag
+                  target_release_dir.mkdir(parents=True, exist_ok=True)
+
+                  for asset in release.get("assets", []):
+                      name = asset.get("name", "")
+                      if not name.lower().endswith(".bin"):
+                          continue
+
+                      target = target_release_dir / name
+                      print(f"Downloading {tag} / {name}...")
+                      urllib.request.urlretrieve(asset["browser_download_url"], target)
+
+                      release_assets.append(
+                          {
+                              "name": name,
+                              "path": f"binaries/{tag}/{name}",
+                          }
+                      )
+
+                  if release_assets:
+                      release_entries.append(
+                          {
+                              "tag": tag,
+                              "release_url": release.get("html_url"),
+                              "binaries": release_assets,
+                          }
+                      )
+
+              if release_entries:
+                  metadata = {
+                      "latest": release_entries[0]["tag"],
+                      "releases": release_entries,
+                  }
+                  (installer_dir / "release-metadata.json").write_text(
+                      json.dumps(metadata, indent=2),
+                      encoding="utf-8",
+                  )
+                  print(f"✓ Web Installer built to site/web-installer/")
+
+          # ==========================================
+          # Build Calculator
+          # ==========================================
+          calculator_dir = site_dir / "calculator"
+          calculator_dir.mkdir(parents=True, exist_ok=True)
+          
+          source_dir = pathlib.Path("docu/amortization-calculator")
+          for file in ["index.html", "calculator.js", "styles.css"]:
+              source_file = source_dir / file
+              if source_file.exists():
+                  shutil.copy2(source_file, calculator_dir / file)
+          
+          print(f"✓ Calculator built to site/calculator/")
+
+          PY
+
+      - name: Create Root Index
+        run: |
+          cat > site/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Sunchronizer Tools</title>
+              <style>
+                  * { margin: 0; padding: 0; box-sizing: border-box; }
+                  body {
+                      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+                      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                      min-height: 100vh;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      padding: 20px;
+                  }
+                  .container {
+                      max-width: 1000px;
+                      width: 100%;
+                  }
+                  .header {
+                      text-align: center;
+                      color: white;
+                      margin-bottom: 50px;
+                  }
+                  .header h1 {
+                      font-size: 2.5em;
+                      margin-bottom: 10px;
+                      text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+                  }
+                  .header p {
+                      font-size: 1.1em;
+                      opacity: 0.95;
+                  }
+                  .tools-grid {
+                      display: grid;
+                      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                      gap: 25px;
+                      margin-bottom: 40px;
+                  }
+                  .tool-card {
+                      background: white;
+                      border-radius: 12px;
+                      overflow: hidden;
+                      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                      transition: transform 0.3s ease, box-shadow 0.3s ease;
+                      text-decoration: none;
+                      color: inherit;
+                      display: flex;
+                      flex-direction: column;
+                  }
+                  .tool-card:hover {
+                      transform: translateY(-5px);
+                      box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+                  }
+                  .tool-icon {
+                      height: 80px;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      font-size: 3em;
+                  }
+                  .tool-calculator .tool-icon {
+                      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                  }
+                  .tool-installer .tool-icon {
+                      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                  }
+                  .tool-content {
+                      padding: 25px;
+                      flex: 1;
+                      display: flex;
+                      flex-direction: column;
+                  }
+                  .tool-content h2 {
+                      font-size: 1.5em;
+                      margin-bottom: 10px;
+                      color: #333;
+                  }
+                  .tool-content p {
+                      color: #666;
+                      margin-bottom: 15px;
+                      flex: 1;
+                  }
+                  .tool-link {
+                      display: inline-block;
+                      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                      color: white;
+                      padding: 10px 20px;
+                      border-radius: 6px;
+                      text-decoration: none;
+                      transition: opacity 0.3s ease;
+                      font-weight: 600;
+                      width: fit-content;
+                  }
+                  .tool-calculator .tool-link {
+                      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                  }
+                  .tool-installer .tool-link {
+                      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                  }
+                  .tool-link:hover {
+                      opacity: 0.9;
+                  }
+                  .footer {
+                      text-align: center;
+                      color: white;
+                      opacity: 0.8;
+                      padding: 20px;
+                  }
+              </style>
+          </head>
+          <body>
+              <div class="container">
+                  <div class="header">
+                      <h1>☀️ Sunchronizer Tools</h1>
+                      <p>Optimize your solar installation</p>
+                  </div>
+
+                  <div class="tools-grid">
+                      <a href="calculator/" class="tool-card tool-calculator">
+                          <div class="tool-icon">📊</div>
+                          <div class="tool-content">
+                              <h2>ROI Calculator</h2>
+                              <p>Calculate the return on investment for your Sunchronizer system vs. fixed installations. Compare energy yields and financial metrics.</p>
+                              <span class="tool-link">Open Calculator →</span>
+                          </div>
+                      </a>
+
+                      <a href="web-installer/" class="tool-card tool-installer">
+                          <div class="tool-icon">⚡</div>
+                          <div class="tool-content">
+                              <h2>Web Installer</h2>
+                              <p>Flash firmware to your Sunchronizer device directly from your browser. Supports all latest firmware versions.</p>
+                              <span class="tool-link">Open Installer →</span>
+                          </div>
+                      </a>
+                  </div>
+
+                  <div class="footer">
+                      <p>Sunchronizer — Dual-Axis Solar Tracking System</p>
+                  </div>
+              </div>
+          </body>
+          </html>
+          EOF
+          echo "✓ Root index created"
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

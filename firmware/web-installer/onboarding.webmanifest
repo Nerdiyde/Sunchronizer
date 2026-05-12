@@ -1,0 +1,17 @@
+{
+  "name": "Sunchronizer Onboarding",
+  "short_name": "Sunchronizer",
+  "start_url": "onboarding.html",
+  "display": "standalone",
+  "background_color": "#f5efe6",
+  "theme_color": "#0f5d3f",
+  "description": "Onboarding and local access app for Sunchronizer with Improv BLE and AP fallback.",
+  "icons": [
+    {
+      "src": "onboarding-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

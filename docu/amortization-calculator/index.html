@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sunchronizer ROI & Amortization Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; position: relative;">
+                <button id="langToggle" style="position: absolute; right: 0; top: 0; padding: 8px 12px; background-color: #34495e; color: white; border: 1px solid #1abc9c; border-radius: 4px; cursor: pointer; font-weight: bold;">DE</button>
+                <h1>Sunchronizer ROI Calculator</h1>
+                <p class="subtitle">Calculate the payback period and return on investment for your dual-axis solar tracking system</p>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <!-- Input Panel -->
+            <div class="panel input-panel">
+                <h2>System Configuration</h2>
+                
+                <!-- SHARED SETTINGS SECTION -->
+                <div class="section" style="background-color: rgba(52, 152, 219, 0.1); border-left: 4px solid #3498db; padding: 20px;">
+                    <h3 id="sharedSettingsTitle" style="color: #2980b9; margin-top: 0;">Shared System Settings</h3>
+                    <p id="sharedSettingsHint" style="font-size: 0.9rem; color: #7f8c8d; margin-bottom: 15px;">These settings apply to both System 1 and System 2</p>
+                    
+                    <div class="input-group">
+                        <label for="moduleCount">
+                            Total Number of PV Modules
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-text">Total PV panels across all systems (1-4 typical for balcony systems)</span>
+                            </span>
+                        </label>
+                        <input type="number" id="moduleCount" min="1" max="500" step="1" value="1" placeholder="e.g., 1">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="modulePower">
+                            Module Power (W)
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-text">Nominal power per panel. Standard: 300-600W</span>
+                            </span>
+                        </label>
+                        <input type="number" id="modulePower" min="100" max="600" step="25" value="400" placeholder="e.g., 400">
+                        <small id="modulePowerHint">Adjustable in 25W steps (typical: 300-600W)</small>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="totalCapacity">Total System Capacity:</label>
+                        <div class="info-display">
+                            <span id="capacityDisplay">0.4</span> kWp
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>
+                            PV System Costs
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-text">Breakdown of component costs</span>
+                            </span>
+                        </label>
+                        <div class="investment-components">
+                            <div class="component-row">
+                                <div class="component-label">Cost for one solar panel</div>
+                                <input type="number" id="investmentPanels" min="0" step="50" value="80" placeholder="€">
+                            </div>
+                            <div class="component-row">
+                                <div class="component-label">Cables & Connectors</div>
+                                <input type="number" id="investmentCables" min="0" step="10" value="30" placeholder="€">
+                            </div>
+                            <div class="component-row">
+                                <div class="component-label">Inverter</div>
+                                <input type="number" id="investmentInverter" min="0" step="50" value="200" placeholder="€">
+                            </div>
+                            <div class="component-row">
+                                <div class="component-label">Accessories & Installation</div>
+                                <input type="number" id="investmentAccessories" min="0" step="50" value="50" placeholder="€">
+                            </div>
+                            <div class="total-cost-display">
+                                <span class="total-cost-label">Total PV System Cost:</span>
+                                <span class="total-cost-value"><span id="pvSystemTotal">630</span> <span id="currencySymbolInvest">€</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SYSTEM 1 SECTION -->
+                <div class="section" style="border-top: 3px solid var(--accent-color); padding-top: 30px; margin-top: 30px;">
+                    <h3 id="system1Title">System 1: Sunchronizer System</h3>
+                    <p id="system1Description" style="font-size: 0.9rem; color: #7f8c8d; margin-bottom: 15px;">Configure your dual-axis tracking system with Sunchronizer trackers. This system can consist of both tracked and fixed panels: the trackers handle the movable panels, while the remaining panels can be fixed installations.</p>
+                    
+                    <div class="input-group">
+                        <label for="trackerCount">
+                            Number of Sunchronizer Trackers
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-text">How many dual-axis tracking systems? Use multiple for larger installations with separate trackers</span>
+                            </span>
+                        </label>
+                        <input type="number" id="trackerCount" min="1" max="50" step="1" value="1" placeholder="e.g., 1">
+                    </div>
+
+                    <div class="input-group">
+                        <label>
+                            Sunchronizer Dual-Axis Tracker Cost (per unit)
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-text">Cost of one Sunchronizer tracking system, 2-axis motors, sensors, and electronics. See <a href="../../FAQ.md#q-when-does-the-sunchronizer-pay-for-itself" target="_blank" style="color: white; text-decoration: underline;">FAQ</a> for payback details</span>
+                            </span>
+                        </label>
+                        <div class="input-row">
+                            <input type="number" id="investmentTracker" min="0" step="50" value="250" placeholder="Tracker cost per unit">
+                            <select id="currency">
+                                <option value="EUR">EUR €</option>
+                                <option value="USD">USD $</option>
+                                <option value="GBP">GBP £</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="total-cost-display" style="background-color: rgba(46, 204, 113, 0.1); border-left: 3px solid #27ae60; color: black;">
+                        <span class="total-cost-label" id="system1TotalCostLabel">Total System 1 Investment:</span>
+                        <span class="total-cost-value"><span id="system1TotalCost">880</span> <span id="currencySymbolSystem1">€</span></span>
+                    </div>
+
+                    <div class="input-group" id="fixedPanelSettingsGroup" style="margin-top: 20px;">
+                        <label for="fixedPanelSettingsContainer" id="system1PanelConfigLabel">
+                            System 1: Panel Configuration (Fixed Panels in System 1)
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-text" id="system1PanelConfigTooltip">Configure orientation and tilt for panels NOT covered by trackers. These panels remain in fixed position while trackers automatically adjust the other panels.</span>
+                            </span>
+                        </label>
+                        <div id="fixedPanelSettingsContainer" class="fixed-panel-settings"></div>
+                        <small id="system1PanelConfigHint">Shows N panels where N = Total Modules - Number of Trackers. These fixed panels are included in your Sunchronizer system.</small>
+                    </div>
+                </div>
+
+                <!-- SYSTEM 2 SECTION -->
+                <div class="section" style="border-top: 3px solid var(--accent-color); padding-top: 30px; margin-top: 30px;">
+                    <h3 id="system2Title">System 2: Reference System (Pure Fixed Installation)</h3>
+                    <p id="system2Description" style="font-size: 0.9rem; color: #7f8c8d; margin-bottom: 15px;">Configure a comparison system with the SAME module count, power, and location as System 1, but with different panel orientations and tilt angles. This is your "no tracking" baseline.</p>
+                    
+                    <div class="info-box" style="margin-bottom: 20px;">
+                        <p id="system2Shares"><strong>System 2 shares these values with System 1:</strong> Module count, module power, location, electricity price, self-consumption rate, maintenance costs, degradation, system efficiency.</p>
+                    </div>
+
+                    <div class="total-cost-display" style="background-color: rgba(52, 152, 219, 0.1); border-left: 3px solid #3498db; color: black;">
+                        <span class="total-cost-label" id="system2TotalCostLabel">Total System 2 Investment:</span>
+                        <span class="total-cost-value"><span id="system2TotalCost">630</span> <span id="currencySymbolSystem2">€</span></span>
+                    </div>
+
+                    <div class="input-group" id="comparisonPanelSettingsGroup" style="margin-top: 20px;">
+                        <label for="comparisonPanelSettingsContainer" id="system2PanelConfigLabel">
+                            System 2: Panel Configuration (All Fixed)
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-text" id="system2PanelConfigTooltip">Configure orientation and tilt for ALL panels in the reference system. Use different angles than System 1 to see how orientation affects performance.</span>
+                            </span>
+                        </label>
+                        <div id="comparisonPanelSettingsContainer" class="fixed-panel-settings"></div>
+                        <small id="system2PanelConfigHint">All modules in System 2 are configured here with fixed orientations and tilt angles (no tracking).</small>
+                    </div>
+                </div>
+
+                <!-- LOCATION SECTION -->
+                <div class="section">
+                    <h3 id="locationTitle">Location</h3>
+                    <div class="input-group">
+                        <label for="locationPreset">
+                            Preset Location
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-text">Select a city to auto-populate coordinates and irradiance</span>
+                            </span>
+                        </label>
+                        <select id="locationPreset">
+                            <option value="custom">Custom (Enter Coordinates)</option>
+                            <optgroup label="Europe">
+                                <option value="germany">Germany (Berlin, 52.5°N)</option>
+                                <option value="spain">Spain (Madrid, 40.4°N)</option>
+                                <option value="italy">Italy (Rome, 41.9°N)</option>
+                                <option value="greece">Greece (Athens, 37.9°N)</option>
+                                <option value="portugal">Portugal (Lisbon, 38.7°N)</option>
+                                <option value="uk">United Kingdom (London, 51.5°N)</option>
+                                <option value="france">France (Paris, 48.9°N)</option>
+                                <option value="sweden">Sweden (Stockholm, 59.3°N)</option>
+                            </optgroup>
+                            <optgroup label="Middle East & Africa">
+                                <option value="middle-east">Middle East (Dubai, 25.2°N)</option>
+                                <option value="egypt">Egypt (Cairo, 30.0°N)</option>
+                                <option value="south-africa">South Africa (Cape Town, 33.9°S)</option>
+                                <option value="morocco">Morocco (Marrakech, 31.6°N)</option>
+                            </optgroup>
+                            <optgroup label="Asia">
+                                <option value="india">India (Delhi, 28.6°N)</option>
+                                <option value="japan">Japan (Tokyo, 35.7°N)</option>
+                                <option value="china">China (Shanghai, 31.2°N)</option>
+                                <option value="thailand">Thailand (Bangkok, 13.7°N)</option>
+                            </optgroup>
+                            <optgroup label="Americas">
+                                <option value="usa-south">USA South (Miami, 25.8°N)</option>
+                                <option value="usa-north">USA North (New York, 40.7°N)</option>
+                                <option value="canada">Canada (Toronto, 43.7°N)</option>
+                                <option value="mexico">Mexico (Mexico City, 19.4°N)</option>
+                                <option value="brazil">Brazil (São Paulo, 23.5°S)</option>
+                                <option value="chile">Chile (Santiago, 33.4°S)</option>
+                            </optgroup>
+                            <optgroup label="Oceania">
+                                <option value="australia">Australia (Sydney, 33.9°S)</option>
+                                <option value="newzealand">New Zealand (Auckland, 37.0°S)</option>
+                            </optgroup>
+                        </select>
+                        <small id="coordinatesHint">Need to find exact coordinates? Use <a href="https://maps.google.com" target="_blank">Google Maps</a>, <a href="https://www.openstreetmap.org" target="_blank">OpenStreetMap</a>, or <a href="https://pvgis.ec.europa.eu/pvgis.php" target="_blank">PVGIS</a> to get your location's precise latitude/longitude.</small>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="latitude">
+                            Latitude (°)
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-text">North positive, South negative. Affects solar irradiance and optimal tilt</span>
+                            </span>
+                        </label>
+                        <input type="number" id="latitude" min="-90" max="90" step="0.1" value="52.5" placeholder="North positive">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="longitude">
+                            Longitude (°)
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-text">East positive, West negative. Used for precise location mapping</span>
+                            </span>
+                        </label>
+                        <input type="number" id="longitude" min="-180" max="180" step="0.1" value="13.4" placeholder="East positive">
+                    </div>
+
+                    <div class="info-box">
+                        <p><strong id="annualIrradianceLabel">Annual Irradiance:</strong> <span id="irradianceDisplay">3.8</span> kWh/m²/day
+                        <span class="tooltip-container" style="margin-left: 10px;">
+                            <span class="tooltip-icon">?</span>
+                            <span class="tooltip-text">Global Horizontal Irradiance (GHI) from PVGIS and NASA POWER databases. Represents average daily solar radiation at your location.</span>
+                        </span></p>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Location</h3>
+                    <div class="input-group">
+                        <label for="electricityPrice">
+                            Electricity Price (Grid Purchase)
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-text">Cost per kWh. Check your utility bill</span>
+                            </span>
+                        </label>
+                        <div class="input-row">
+                            <input type="number" id="electricityPrice" min="0" step="0.01" value="0.30" placeholder="Price per kWh">
+                            <span class="unit">/kWh</span>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="selfConsumption">
+                            Self-Consumption Rate
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-text">What % of generated electricity do you use directly? (50% typical for home use)</span>
+                            </span>
+                        </label>
+                        <div class="input-row">
+                            <input type="number" id="selfConsumption" min="0" max="100" step="5" value="50" placeholder="Percentage">
+                            <span class="unit">%</span>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="feedInTariff">
+                            Feed-In Tariff (Grid Export Rate)
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-text">Price per kWh for electricity sold back to grid. Leave 0€ if not applicable</span>
+                            </span>
+                        </label>
+                        <div class="input-row">
+                            <input type="number" id="feedInTariff" min="0" step="0.01" value="0" placeholder="Price per kWh">
+                            <span class="unit">/kWh</span>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="maintenanceCost">
+                            Annual Maintenance Cost
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-text">Yearly costs for cleaning, inspection, repairs (typically 0-50€/year)</span>
+                            </span>
+                        </label>
+                        <div class="input-row">
+                            <input type="number" id="maintenanceCost" min="0" step="10" value="0" placeholder="EUR/year">
+                            <span class="unit">/year</span>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="moduleDegradation">
+                            Annual Module Degradation
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-text">How much efficiency is lost per year. Typical: 0.5% for quality panels</span>
+                            </span>
+                        </label>
+                        <div class="input-row">
+                            <input type="number" id="moduleDegradation" min="0" step="0.1" value="0.5" placeholder="Percentage per year">
+                            <span class="unit">% /year</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Economics</h3>
+                    <div class="input-group">
+                        <label for="systemEfficiency">System Efficiency (Inverter, Wiring):</label>
+                        <div class="input-row">
+                            <input type="number" id="systemEfficiency" min="50" max="100" step="1" value="85" placeholder="Percentage">
+                            <span class="unit">%</span>
+                        </div>
+                        <small id="systemEfficiencyHintLabel">Typical: 85% (includes inverter losses and wiring)</small>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="trackingBonus">
+                            Dual-Axis Tracking Bonus
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-text">Additional yield vs fixed panels. See <a href="../../docu/measurements" target="_blank" style="color: #f39c12; text-decoration: underline;">Measurements Data</a></span>
+                            </span>
+                        </label>
+                        <div class="input-row">
+                            <input type="number" id="trackingBonus" min="0" max="100" step="1" value="30" placeholder="Percentage">
+                            <span class="unit">%</span>
+                        </div>
+                        <small id="trackingBonusHintLabel">Typical: 25-40% vs. fixed installation. See <a href="https://github.com/nerdiy/Sunchronizer/tree/main/docu/measurements" target="_blank">Measurements Data</a> for real-world values.</small>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="environmentalLosses">
+                            Environmental Losses (Dust, Soiling)
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-text">Power loss due to dust, dirt, snow, and other soiling. Varies by climate (1-5% typical). See <a href="https://www.nrel.gov/docs/fy14osti/61693.pdf" target="_blank" style="color: white; text-decoration: underline;">NREL studies</a> or local PV data</span>
+                            </span>
+                        </label>
+                        <div class="input-row">
+                            <input type="number" id="environmentalLosses" min="0" max="50" step="0.5" value="2" placeholder="Percentage">
+                            <span class="unit">%</span>
+                        </div>
+                        <small id="environmentalLossesHintLabel">Climate guide: Mediterranean 2-3%, Sahara 4-5%, Tropical 3-4%, Temperate 1-2%</small>
+                    </div>
+                </div>
+
+                <button id="calculateBtn" class="btn-primary">Calculate</button>
+
+                <div class="methodology-section">
+                    <div class="methodology-header">
+                        <span>How does the calculator work?</span>
+                        <span class="methodology-toggle">▼</span>
+                    </div>
+                    <div class="methodology-content">
+                        <p><strong>Calculation Method:</strong></p>
+                        <ol>
+                            <li><strong>System Capacity:</strong> Number of modules × Power per module = Total capacity (kW)</li>
+                            <li><strong>Annual Generation:</strong> Irradiance × System capacity × 365 days × System efficiency × Tracking bonus</li>
+                            <li><strong>Module Degradation:</strong> Each year, panels lose 0.5% (default) efficiency due to aging</li>
+                            <li><strong>Inflation Adjustment:</strong> Electricity prices increase 2% annually (default)</li>
+                            <li><strong>Annual Savings:</strong> Generated energy × Electricity price - Annual maintenance costs</li>
+                            <li><strong>Payback Period:</strong> Total investment ÷ Annual savings (Year 1)</li>
+                            <li><strong>30-Year ROI:</strong> (Total savings - Investment) ÷ Investment × 100%</li>
+                            <li><strong>CO₂ Avoidance:</strong> Generated energy × 0.4 kg CO₂/kWh (European average)</li>
+                        </ol>
+                        <p style="margin-top: 15px;"><strong>Comparison:</strong> The tracker's yield is compared against a fixed panel system with the same capacity, considering orientation and tilt angle penalties.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Panel -->
+            <div class="panel results-panel">
+                <h2>Investment Analysis</h2>
+                
+                <div class="results-grid">
+                    <div class="result-card highlight">
+                        <div class="result-label">Payback Period</div>
+                        <div class="result-compare">
+                            <div class="result-compare-item">
+                                <div class="result-compare-label">with Sunchronizer</div>
+                                <div class="result-value" id="paybackPeriod">--</div>
+                                <div class="result-unit">years</div>
+                            </div>
+                            <div class="result-compare-item">
+                                <div class="result-compare-label">fixed installation</div>
+                                <div class="result-value" id="paybackPeriodFixed">--</div>
+                                <div class="result-unit">years</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="result-card">
+                        <div class="result-label">Annual Energy Yield</div>
+                        <div class="result-compare">
+                            <div class="result-compare-item">
+                                <div class="result-compare-label">with Sunchronizer</div>
+                                <div class="result-value" id="annualYield">--</div>
+                                <div class="result-unit">kWh/year</div>
+                            </div>
+                            <div class="result-compare-item">
+                                <div class="result-compare-label">fixed installation</div>
+                                <div class="result-value" id="annualYieldFixed">--</div>
+                                <div class="result-unit">kWh/year</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="result-card">
+                        <div class="result-label">Annual Savings</div>
+                        <div class="result-compare">
+                            <div class="result-compare-item">
+                                <div class="result-compare-label">with Sunchronizer</div>
+                                <div class="result-value" id="annualSavings">--</div>
+                                <div class="result-unit">per year</div>
+                            </div>
+                            <div class="result-compare-item">
+                                <div class="result-compare-label">fixed installation</div>
+                                <div class="result-value" id="annualSavingsFixed">--</div>
+                                <div class="result-unit">per year</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="result-card">
+                        <div class="result-label">30-Year ROI</div>
+                        <div class="result-compare">
+                            <div class="result-compare-item">
+                                <div class="result-compare-label">with Sunchronizer</div>
+                                <div class="result-value" id="roiValue">--</div>
+                                <div class="result-unit">%</div>
+                            </div>
+                            <div class="result-compare-item">
+                                <div class="result-compare-label">fixed installation</div>
+                                <div class="result-value" id="roiValueFixed">--</div>
+                                <div class="result-unit">%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="result-card">
+                        <div class="result-label">Cumulative Savings (30 years)</div>
+                        <div class="result-compare">
+                            <div class="result-compare-item">
+                                <div class="result-compare-label">with Sunchronizer</div>
+                                <div class="result-value" id="cumulativeSavings">--</div>
+                                <div class="result-unit"></div>
+                            </div>
+                            <div class="result-compare-item">
+                                <div class="result-compare-label">fixed installation</div>
+                                <div class="result-value" id="cumulativeSavingsFixed">--</div>
+                                <div class="result-unit"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="result-card">
+                        <div class="result-label">CO₂ Emissions Avoided (30 years)</div>
+                        <div class="result-compare">
+                            <div class="result-compare-item">
+                                <div class="result-compare-label">with Sunchronizer</div>
+                                <div class="result-value" id="co2Avoided">--</div>
+                                <div class="result-unit">tons</div>
+                            </div>
+                            <div class="result-compare-item">
+                                <div class="result-compare-label">fixed installation</div>
+                                <div class="result-value" id="co2AvoidedFixed">--</div>
+                                <div class="result-unit">tons</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="explanation-section">
+                    <h3>Explanation</h3>
+                    <p id="explanationText">
+                        <!-- Filled by JavaScript -->
+                    </p>
+                    <div style="margin-bottom: 40px;"></div>
+                </div>
+
+                <div class="chart-container">
+                    <h3>Cumulative Savings Over Time</h3>
+                    <canvas id="savingsChart"></canvas>
+                </div>
+
+                <div class="chart-container">
+                    <h3>Annual Energy Yield by Year</h3>
+                    <canvas id="yieldChart"></canvas>
+                </div>
+
+                <div class="chart-container">
+                    <h3>CO₂ Emissions Avoided (30 Years)</h3>
+                    <canvas id="co2Chart"></canvas>
+                </div>
+
+                <div class="details-section">
+                    <h3>Detailed Breakdown</h3>
+                    <table class="details-table">
+                        <tr>
+                            <td>System Capacity</td>
+                            <td id="detailCapacity">--</td>
+                        </tr>
+                        <tr>
+                            <td>Location Irradiance</td>
+                            <td id="detailIrradiance">--</td>
+                        </tr>
+                        <tr>
+                            <td>Annual Generation (Year 1)</td>
+                            <td id="detailGeneration">--</td>
+                        </tr>
+                        <tr>
+                            <td>Annual Savings (Year 1, before degradation)</td>
+                            <td id="detailSavingsYear1">--</td>
+                        </tr>
+                        <tr>
+                            <td>Total 30-Year Energy (with degradation)</td>
+                            <td id="detailTotalEnergy">--</td>
+                        </tr>
+                        <tr>
+                            <td>Total 30-Year Maintenance Costs</td>
+                            <td id="detailMaintenance">--</td>
+                        </tr>
+                        <tr>
+                            <td>Net 30-Year Profit</td>
+                            <td id="detailNetProfit">--</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="comparison-section">
+                    <h3>Comparison: Sunchronizer vs. Fixed Installation</h3>
+
+                    <div class="chart-container">
+                        <h4>Annual Energy Yield Comparison</h4>
+                        <canvas id="comparisonChart"></canvas>
+                    </div>
+                    
+                    <table class="comparison-table">
+                        <tr>
+                            <th></th>
+                            <th>Fixed Installation</th>
+                            <th>Dual-Axis Tracker</th>
+                            <th>Additional Benefit</th>
+                        </tr>
+                        <tr>
+                            <td>Annual Yield (Year 1)</td>
+                            <td id="compareFixedYield">--</td>
+                            <td id="compareTrackerYield">--</td>
+                            <td id="compareYieldDiff">--</td>
+                        </tr>
+                        <tr>
+                            <td>Payback Period</td>
+                            <td id="compareFixedPayback">--</td>
+                            <td id="compareTrackerPayback">--</td>
+                            <td id="comparePaybackDiff">--</td>
+                        </tr>
+                        <tr>
+                            <td>30-Year Revenue</td>
+                            <td id="compareFixedRevenue">--</td>
+                            <td id="compareTrackerRevenue">--</td>
+                            <td id="compareRevenueDiff">--</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Sunchronizer ROI Calculator | <a href="https://nerdiy.de" target="_blank">Nerdiy.de</a> | Data sources: PVGIS, NASA POWER</p>
+        </footer>
+    </div>
+
+    <script src="calculator.js"></script>
+</body>
+</html>

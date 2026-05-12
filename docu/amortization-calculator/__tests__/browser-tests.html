@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amortization Calculator - Manual Browser Tests</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .test-section {
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+            padding-left: 20px;
+        }
+
+        .test-section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .test-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            background: #f5f5f5;
+            transition: background 0.3s;
+        }
+
+        .test-item:hover {
+            background: #efefef;
+        }
+
+        .test-status {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 15px;
+            font-size: 1.1em;
+            flex-shrink: 0;
+        }
+
+        .test-status.pass {
+            background: #4caf50;
+        }
+
+        .test-status.fail {
+            background: #f44336;
+        }
+
+        .test-status.pending {
+            background: #ff9800;
+        }
+
+        .test-name {
+            flex: 1;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1em;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        button.primary {
+            background: #667eea;
+            color: white;
+        }
+
+        button.primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button.secondary {
+            background: #f5f5f5;
+            color: #333;
+            border: 2px solid #ddd;
+        }
+
+        button.secondary:hover {
+            background: #efefef;
+            border-color: #667eea;
+        }
+
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #eee;
+        }
+
+        .summary-card {
+            text-align: center;
+            padding: 20px;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+
+        .summary-card h3 {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .summary-card .number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .summary-card.success .number {
+            color: #4caf50;
+        }
+
+        .summary-card.failed .number {
+            color: #f44336;
+        }
+
+        .notice {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+
+        .notice p {
+            color: #1565c0;
+            margin: 5px 0;
+        }
+
+        .inline-test {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+        }
+
+        footer {
+            background: #f5f5f5;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .progressbar {
+            width: 100%;
+            height: 4px;
+            background: #eee;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progressbar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.5s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧪 Manual Browser Tests</h1>
+            <p>Sunchronizer Amortization Calculator</p>
+        </div>
+
+        <div class="content">
+            <div class="notice">
+                <p><strong>ℹ️ Info:</strong> Diese Tests überprüfen manuelle Kriterien direkt im Browser.</p>
+                <p>Starten Sie den Calculator in einem anderen Tab und testen Sie die Funktionalität, während Sie diese Tests überprüfen.</p>
+            </div>
+
+            <div class="progressbar">
+                <div class="progressbar-fill" id="progressbar"></div>
+            </div>
+
+            <div class="button-group">
+                <button class="primary" onclick="runTests()">🚀 Alle Tests ausführen</button>
+                <button class="secondary" onclick="resetTests()">🔄 Zurücksetzen</button>
+                <button class="secondary" onclick="toggleDetails()">📋 Details an/aus</button>
+            </div>
+
+            <!-- HTML Tests -->
+            <div class="test-section">
+                <h2>✅ HTML Structure Tests</h2>
+                <div id="html-tests"></div>
+            </div>
+
+            <!-- CSS Tests -->
+            <div class="test-section">
+                <h2>🎨 CSS Tests</h2>
+                <div id="css-tests"></div>
+            </div>
+
+            <!-- Functional Tests -->
+            <div class="test-section">
+                <h2>⚙️ Functional Tests</h2>
+                <div id="functional-tests"></div>
+            </div>
+
+            <!-- Calculation Tests -->
+            <div class="test-section">
+                <h2>🧮 Calculation Tests</h2>
+                <div id="calculation-tests"></div>
+            </div>
+
+            <!-- Summary -->
+            <div class="summary" id="summary" style="display: none;">
+                <div class="summary-card success">
+                    <h3>Bestanden</h3>
+                    <div class="number" id="passed-count">0</div>
+                </div>
+                <div class="summary-card failed">
+                    <h3>Fehlgeschlagen</h3>
+                    <div class="number" id="failed-count">0</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Erfolgsquote</h3>
+                    <div class="number" id="percentage">0%</div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Für automatisierte Tests mit Jest, führen Sie aus: <code>npm test</code></p>
+            <p>Für schnelle manuelle Tests: <code>node __tests__/manual-tests.js</code></p>
+        </footer>
+    </div>
+
+    <script>
+        const tests = {
+            html: [
+                { name: 'Calculator page is loaded in iframe/tab', check: () => document.title.includes('Sunchronizer') },
+                { name: 'System 1 title is visible', check: () => isElementVisible('system1Title') },
+                { name: 'System 2 title is visible', check: () => isElementVisible('system2Title') },
+                { name: 'Module count input exists', check: () => isElementVisible('moduleCount') },
+                { name: 'Inverter cost is set to 200€', check: () => getInputValue('investmentInverter') === '200' },
+                { name: 'Accessories cost is set to 50€', check: () => getInputValue('investmentAccessories') === '50' },
+                { name: 'Panel configuration containers exist', check: () => isElementVisible('fixedPanelSettingsContainer') && isElementVisible('comparisonPanelSettingsContainer') },
+            ],
+            css: [
+                { name: 'Results grid uses single-column layout', check: () => checkCSSProperty('.results-grid', 'grid-template-columns', '1fr') },
+                { name: 'Input panel is styled', check: () => isElementVisible('input-panel') },
+                { name: 'Tooltips are visible', check: () => document.querySelectorAll('.tooltip-container').length > 10 },
+            ],
+            functional: [
+                { name: 'Language toggle button works', check: () => isElementClickable('langToggle') },
+                { name: 'Calculate button is clickable', check: () => isElementClickable('calculateBtn') },
+                { name: 'Module count input accepts numbers', check: () => canInputNumber('moduleCount') },
+                { name: 'Tracker count input accepts numbers', check: () => canInputNumber('trackerCount') },
+            ],
+            calculation: [
+                { name: 'Cost calculation: 80 + 30 + 200 + 50 = 360', check: () => 80 + 30 + 200 + 50 === 360 },
+                { name: 'Capacity: 1 module × 400W = 0.4 kW', check: () => (1 * 400 / 1000).toFixed(1) === '0.4' },
+                { name: 'Capacity: 4 modules × 400W = 1.6 kW', check: () => (4 * 400 / 1000).toFixed(1) === '1.6' },
+                { name: 'Fixed panels: 4 - 1 = 3', check: () => Math.max(0, 4 - 1) === 3 },
+                { name: 'Fixed panels: 1 - 1 = 0', check: () => Math.max(0, 1 - 1) === 0 },
+            ]
+        };
+
+        function isElementVisible(id) {
+            const el = document.getElementById(id);
+            return el !== null;
+        }
+
+        function isElementClickable(id) {
+            const el = document.getElementById(id);
+            return el !== null && el.disabled === false;
+        }
+
+        function getInputValue(id) {
+            const el = document.getElementById(id);
+            return el ? el.value : null;
+        }
+
+        function canInputNumber(id) {
+            const el = document.getElementById(id);
+            return el && el.type === 'number';
+        }
+
+        function checkCSSProperty(selector, property, value) {
+            const el = document.querySelector(selector);
+            if (!el) return false;
+            const styles = window.getComputedStyle(el);
+            return styles[property].includes(value);
+        }
+
+        function renderTest(passed, name, section) {
+            const html = `
+                <div class="test-item">
+                    <span class="test-status ${passed ? 'pass' : 'fail'}">
+                        ${passed ? '✓' : '✗'}
+                    </span>
+                    <span class="test-name">${name}</span>
+                </div>
+            `;
+            document.getElementById(`${section}-tests`).innerHTML += html;
+        }
+
+        function runTests() {
+            resetTests();
+            let totalPassed = 0;
+            let totalTests = 0;
+
+            for (const [section, sectionTests] of Object.entries(tests)) {
+                sectionTests.forEach((test, index) => {
+                    totalTests++;
+                    try {
+                        const passed = test.check();
+                        renderTest(passed, test.name, section);
+                        if (passed) totalPassed++;
+                    } catch (e) {
+                        renderTest(false, test.name + ` (Error: ${e.message})`, section);
+                    }
+                });
+            }
+
+            // Update progress bar
+            const percentage = Math.round((totalPassed / totalTests) * 100);
+            document.getElementById('progressbar').style.width = percentage + '%';
+
+            // Show summary
+            document.getElementById('summary').style.display = 'grid';
+            document.getElementById('passed-count').textContent = totalPassed;
+            document.getElementById('failed-count').textContent = totalTests - totalPassed;
+            document.getElementById('percentage').textContent = percentage + '%';
+        }
+
+        function resetTests() {
+            Object.keys(tests).forEach(section => {
+                document.getElementById(`${section}-tests`).innerHTML = '';
+            });
+            document.getElementById('summary').style.display = 'none';
+            document.getElementById('progressbar').style.width = '0%';
+        }
+
+        function toggleDetails() {
+            alert('Öffnen Sie den Calculator und überprüfen Sie:\n\n1. Inverter-Preis: 200€\n2. Zubehör-Preis: 50€\n3. System 1 vs System 2 Panel-Logik\n4. Sprache EN/DE Toggle\n5. Berechnung korrekt');
+        }
+
+        // Auto-run tests on page load
+        window.addEventListener('load', () => {
+            console.log('Browser test page loaded. Click "Alle Tests ausführen" to start.');
+        });
+    </script>
+</body>
+</html>

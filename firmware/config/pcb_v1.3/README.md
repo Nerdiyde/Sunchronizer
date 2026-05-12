@@ -25,6 +25,7 @@ This is the ESPHome configuration file for the **Sunchronizer** - an intelligent
 
 ### Software Features
 - ✅ Automatic sun tracking (elevation and azimuth axes)
+- ✅ Azimuth-based elevation override zones (3 configurable zones)
 - ✅ Magnetic declination calibration (manual and periodic)
 - ✅ Fault detection (motor blockage, connectivity issues)
 - ✅ Weather integration (OpenWeatherMap API)
@@ -61,6 +62,7 @@ Before using this configuration, please adjust the following areas:
 - Calibration values for angle limits
 - Wind and cloud thresholds
 - Standby positions
+- Azimuth-range elevation override zones
 - Motor blockage thresholds
 - LED brightness for day/night
 
@@ -114,6 +116,7 @@ All web interface elements are configured with:
 ## 📚 Additional Documentation
 
 For more information, see:
+- **[Central Software Reference](../../../docu/firmware/software_reference.md)** - Complete firmware functions and configuration options
 - **[Main Project README](../README.md)** - Project overview and hardware specifications
 - **[PCB Documentation](../pcb/README.md)** - Schematic details and component placement
 - **[Calibration Guide](../docs/CALIBRATION.md)** - Detailed calibration procedures
