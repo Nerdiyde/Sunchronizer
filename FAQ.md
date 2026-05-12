@@ -15,6 +15,7 @@ This document answers common questions from users and developers about the Sunch
 - [What's the difference between S1, S2, D1, and D2?](#q-whats-the-difference-between-s1-s2-d1-and-d2)
 - [Why not just build a polar-aligned single-axis tracker?](#q-why-not-just-build-a-single-axis-tracker-that-rotates-around-an-axis-parallel-to-earths-rotation-axis-polar-aligned-tracker-that-would-track-the-sun-perfectly-with-only-one-motor)
 - [Why does CH2 (S2) sometimes show higher peak power than CH4 (D2)?](#q-why-does-ch2-sunchronizer-s2-sometimes-show-higher-peak-power-than-ch4-sunchronizer-d2-even-though-d2-uses-full-dual-axis-tracking)
+- [Why isn't the D2 compared to a south-facing static panel in the test setup?](#q-why-isnt-the-d2-compared-to-a-south-facing-static-panel-in-the-test-setup)
 - [Can I modify the firmware?](#q-can-i-modify-the-firmware)
 - [Where can I get the current control PCB?](#q-where-can-i-get-the-current-control-pcb)
 - [Where can I get the 3D models (STLs)?](#q-where-can-i-get-the-3d-models-stls)
@@ -276,6 +277,32 @@ CH2's panel has a **10 W higher nameplate rating** than CH4's panel. Under ideal
 **In short:** The higher momentary peak of CH2 is an artifact of its slightly larger panel rating, not a sign of superior tracking. The daily energy yield — not the peak — is the relevant metric for practical solar performance.
 
 **See also:** [Measurement Analysis Overview](docu/measurements/MEASUREMENT_OVERVIEW.md) for real-world yield comparisons across multiple days.
+
+---
+
+### Q: Why isn't the D2 compared to a south-facing static panel in the test setup?
+
+**A:** The simple reason is a hardware constraint at the test stand: there is no free inverter channel available to connect an additional static reference panel.
+
+That said, a useful indirect comparison is available: **CH2 (Sunchronizer S2)** is south-facing and uses single-axis elevation tracking. Its fixed azimuth pointing south means it behaves much like a well-optimised static south-facing panel for the elevation dimension, while adding elevation tracking on top. A truly static south-facing panel at the optimal fixed tilt angle would be expected to yield somewhat less than the S2 — since the S2 continuously adjusts its elevation to follow the sun, which the static panel cannot. This makes the S2 a reasonable upper bound for what a static south-facing panel would achieve.
+
+Phrased differently: the real-world yield gap between D2 and a static south-facing panel is expected to be **larger** than the already-measured gap between D2 and S2.
+
+**Test stand photos:**
+
+<div style="display:flex; flex-wrap:wrap; gap:10px; margin:15px 0;">
+  <a href="pictures/testbench/sunchronizer_testbench_(1).jpg" target="_blank">
+    <img src="pictures/testbench/sunchronizer_testbench_(1).jpg" alt="Sunchronizer test stand 1" style="height:180px; width:auto; object-fit:cover; border-radius:6px; cursor:zoom-in;">
+  </a>
+  <a href="pictures/testbench/sunchronizer_testbench_(2).jpg" target="_blank">
+    <img src="pictures/testbench/sunchronizer_testbench_(2).jpg" alt="Sunchronizer test stand 2" style="height:180px; width:auto; object-fit:cover; border-radius:6px; cursor:zoom-in;">
+  </a>
+  <a href="pictures/testbench/sunchronizer_testbench_(3).jpg" target="_blank">
+    <img src="pictures/testbench/sunchronizer_testbench_(3).jpg" alt="Sunchronizer test stand 3" style="height:180px; width:auto; object-fit:cover; border-radius:6px; cursor:zoom-in;">
+  </a>
+</div>
+
+**See also:** [Why does CH2 (S2) sometimes show higher peak power than CH4 (D2)?](#q-why-does-ch2-sunchronizer-s2-sometimes-show-higher-peak-power-than-ch4-sunchronizer-d2-even-though-d2-uses-full-dual-axis-tracking) | [Measurement Analysis Overview](docu/measurements/MEASUREMENT_OVERVIEW.md)
 
 ---
 
