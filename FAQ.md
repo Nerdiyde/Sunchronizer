@@ -47,7 +47,7 @@ This document answers common questions from users and developers about the Sunch
 
 **[Technical Details & Algorithms](#technical-details--algorithms)**
 - [How are elevation and azimuth angles calculated?](#q-how-are-elevation-and-azimuth-angles-calculated)
-- [How is the tracker controlled in different situations to maximize yield?](#q-how-is-the-tracker-controlled-in-different-situations-to-maximize-yield)
+- [How is the tracker controlled in different light conditions to maximize yield?](#q-how-is-the-tracker-controlled-in-different-light-conditions-to-maximize-yield)
 - [What is Cloudy mode and why does the panel go flatter in indirect light?](#q-what-is-cloudy-mode-and-why-does-the-panel-go-flatter-in-indirect-light)
 
 **[Integration & Connectivity](#integration--connectivity)**
