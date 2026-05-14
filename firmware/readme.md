@@ -6,7 +6,7 @@ This directory contains firmware configuration files and flashing documentation 
 
 Current pre-compiled binaries are published as assets in GitHub Releases:
 - **Latest release:** [GitHub Releases (latest)](https://github.com/Nerdiyde/Sunchronizer/releases/latest)
-- **Web installer:** [Flash directly in browser](https://nerdiyde.github.io/sunchronizer/web-installer/)
+- **Web installer:** [Flash directly in browser](https://nerdiyde.github.io/Sunchronizer/web-installer/)
 
 ## 📁 Directory Structure
 
@@ -27,7 +27,7 @@ firmware/
 ## 📦 Binaries Folder
 
 Flash directly from the latest release in a Chromium-based browser:
-- [Web Installer](https://nerdiyde.github.io/sunchronizer/web-installer/)
+- [Web Installer](https://nerdiyde.github.io/Sunchronizer/web-installer/)
 
 Or download **pre-compiled firmware binaries** from release assets (recommended):
 - [GitHub Releases (latest)](https://github.com/Nerdiyde/Sunchronizer/releases/latest)

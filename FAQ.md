@@ -157,13 +157,13 @@ A tracker requires a stable foundation (e.g. concrete slab with anchor bolts for
 Use this checklist:
 
 1. **Compare against a fair baseline**
-   Compare against a realistic fixed system at your site (orientation, tilt, and shading), not against a worst-case static setup. Use the [Sunchronizer ROI Calculator](https://nerdiyde.github.io/sunchronizer/calculator/) for a like-for-like comparison and check [Can't I just invest in additional panels instead of a tracker?](#q-cant-i-just-invest-in-additional-panels-instead-of-a-tracker).
+   Compare against a realistic fixed system at your site (orientation, tilt, and shading), not against a worst-case static setup. Use the [Sunchronizer ROI Calculator](https://nerdiyde.github.io/Sunchronizer/calculator/) for a like-for-like comparison and check [Can't I just invest in additional panels instead of a tracker?](#q-cant-i-just-invest-in-additional-panels-instead-of-a-tracker).
 
 2. **Focus on energy, not just peak power**
    Daily and annual yield (kWh) matter more than short peak watt values. See [How much energy does the Sunchronizer produce?](#q-how-much-energy-does-the-sunchronizer-produce) and [Measurement Analysis Overview](docu/measurements/MEASUREMENT_OVERVIEW.md).
 
 3. **Use your local economics**
-   Calculate with your own electricity price, feed-in tariff, self-consumption rate, and maintenance assumptions. See [When does the system pay for itself?](#q-when-does-the-system-pay-for-itself) and test your own values in the [Sunchronizer ROI Calculator](https://nerdiyde.github.io/sunchronizer/calculator/).
+   Calculate with your own electricity price, feed-in tariff, self-consumption rate, and maintenance assumptions. See [When does the system pay for itself?](#q-when-does-the-system-pay-for-itself) and test your own values in the [Sunchronizer ROI Calculator](https://nerdiyde.github.io/Sunchronizer/calculator/).
 
 4. **Include total cost of ownership**
    Consider not only initial hardware cost, but also expected maintenance, potential replacements, and operating consumption. See [What are the disadvantages of a solar tracker?](#q-what-are-the-disadvantages-of-a-solar-tracker), [How complicated is the maintenance?](#q-how-complicated-is-the-maintenance) and [How much power does the tracker electronics consume?](#q-how-much-power-does-the-tracker-electronics-consume).
@@ -172,11 +172,11 @@ Use this checklist:
    Ask how wind safety, sensor faults, motor faults, and fallback positions are handled. See [What safety mechanisms protect the Sunchronizer in high winds?](#q-what-safety-mechanisms-protect-the-sunchronizer-in-high-winds).
 
 6. **Validate with a calculator**
-   Run your own scenario with the [Sunchronizer ROI Calculator](https://nerdiyde.github.io/sunchronizer/calculator/) instead of relying on generic claims.
+   Run your own scenario with the [Sunchronizer ROI Calculator](https://nerdiyde.github.io/Sunchronizer/calculator/) instead of relying on generic claims.
 
 **Bottom line:** Skepticism is useful. If assumptions are transparent and the comparison is fair, you can decide based on evidence rather than marketing.
 
-> **See also:** [Why should I build a solar tracker? What are the actual advantages?](#q-why-should-i-build-a-solar-tracker-what-are-the-actual-advantages) | [What are the disadvantages of a solar tracker?](#q-what-are-the-disadvantages-of-a-solar-tracker) | [When does the system pay for itself?](#q-when-does-the-system-pay-for-itself) | [Sunchronizer ROI Calculator](https://nerdiyde.github.io/sunchronizer/calculator/) | [Measurement Analysis Overview](docu/measurements/MEASUREMENT_OVERVIEW.md)
+> **See also:** [Why should I build a solar tracker? What are the actual advantages?](#q-why-should-i-build-a-solar-tracker-what-are-the-actual-advantages) | [What are the disadvantages of a solar tracker?](#q-what-are-the-disadvantages-of-a-solar-tracker) | [When does the system pay for itself?](#q-when-does-the-system-pay-for-itself) | [Sunchronizer ROI Calculator](https://nerdiyde.github.io/Sunchronizer/calculator/) | [Measurement Analysis Overview](docu/measurements/MEASUREMENT_OVERVIEW.md)
 
 ---
 
@@ -936,7 +936,7 @@ Without Home Assistant, the system still operates fully — WiFi integration is 
 **A:** This depends heavily on your location, local electricity price, and how much direct sunlight your site receives. A precise universal answer is not possible — but the following worked examples give a realistic range.
 
 For an interactive estimate based on your own assumptions, use the **Sunchronizer ROI Calculator**:
-[https://nerdiyde.github.io/sunchronizer/calculator/](https://nerdiyde.github.io/sunchronizer/calculator/)
+[https://nerdiyde.github.io/Sunchronizer/calculator/](https://nerdiyde.github.io/Sunchronizer/calculator/)
 
 **Key assumptions for the calculation:**
 
@@ -971,7 +971,7 @@ The tracking gain depends strongly on climate: the measured +66% (clear-sky days
 
 **Bottom line:** In central European conditions with typical German electricity prices (~0.30 €/kWh), a payback period of **2–3 years** is a realistic expectation. In sunnier locations or with higher electricity prices, the system can pay for itself within a year or two. In persistently cloudy climates, expect 5–7 years.
 
-> **See also:** [How much energy does the Sunchronizer produce?](#q-how-much-energy-does-the-sunchronizer-produce) | [Sunchronizer ROI Calculator](https://nerdiyde.github.io/sunchronizer/calculator/)
+> **See also:** [How much energy does the Sunchronizer produce?](#q-how-much-energy-does-the-sunchronizer-produce) | [Sunchronizer ROI Calculator](https://nerdiyde.github.io/Sunchronizer/calculator/)
 
 ---
 
