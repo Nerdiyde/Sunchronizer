@@ -9,7 +9,7 @@
 - **What it is:** A 3D-printable solar tracker platform with single-axis (**S2**) and dual-axis (**D2**) variants.
 - **Who it is for:** DIY builders who want higher yield from limited panel area (for example balcony PV or space-constrained installs).
 - **Why it matters:** Better morning/evening generation, higher self-consumption, and measurable real-world yield gains.
-- **Start now:** [FAQ](FAQ.md) | [Is Sunchronizer useful for my use case?](FAQ.md#q-in-which-cases-can-the-sunchronizer-be-useful-for-me) | [Firmware Documentation](firmware/README.md) | [Web Installer](firmware/web-installer/index.html)
+- **Start now:** [FAQ](FAQ.md) | [Is Sunchronizer useful for my use case?](FAQ.md#q-in-which-cases-can-the-sunchronizer-be-useful-for-me) | [Firmware Documentation](firmware/README.md) | [Web Installer](https://nerdiyde.github.io/sunchronizer/web-installer/) | [ROI Calculator](https://nerdiyde.github.io/sunchronizer/calculator/)
 
 <p align="center">
 	<img src="https://github.com/Nerdiyde/Sunchronizer/blob/main/pictures/S1/GIFs/sunchronizer_timelapse_smaller_5mb.gif" width="49%" />
@@ -43,14 +43,14 @@ The project supports two actively maintained variants:
 ### Essential Links
 
 - **[FAQ](FAQ.md)** - Assembly, operation, troubleshooting, and practical decisions
-- **[Web Installer](firmware/web-installer/index.html)** - Flash firmware from a Chromium-based browser
+- **[ROI Calculator](https://nerdiyde.github.io/sunchronizer/calculator/)** - Compare tracked vs. fixed systems and estimate payback period
+- **[Web Installer](https://nerdiyde.github.io/sunchronizer/web-installer/)** - Flash firmware from a Chromium-based browser
 - **[Firmware Documentation](firmware/README.md)** - Configuration and firmware details
 - **[Measurement Analysis Overview](docu/measurements/MEASUREMENT_OVERVIEW.md)** - Real daily performance data and reports
 - **[Project Wiki](https://github.com/Nerdiyde/Sunchronizer/wiki)** - Full project documentation
 
 ### Additional Resources
 
-- **[Public Web Installer](https://nerdiyde.github.io/Sunchronizer/)**
 - **[Latest Firmware Release](https://github.com/Nerdiyde/Sunchronizer/releases/latest)**
 - **[Prototype Development History](docu/development_history/DEVELOPMENT_HISTORY.md)**
 - **[Materials and BOM](https://github.com/Nerdiyde/Sunchronizer/wiki/1.-Preparations)**

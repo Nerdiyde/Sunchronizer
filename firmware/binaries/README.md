@@ -3,8 +3,7 @@
 Firmware binaries are published as GitHub Release assets.
 
 - Latest release download page: [GitHub Releases (latest)](https://github.com/Nerdiyde/Sunchronizer/releases/latest)
-- Browser installer page: [Web Installer](../web-installer/index.html)
-- Hosted browser installer: [GitHub Pages](https://nerdiyde.github.io/Sunchronizer/)
+- Browser installer page: [Web Installer](https://nerdiyde.github.io/sunchronizer/web-installer/)
 
 ## 📦 Available Binaries
 
@@ -17,7 +16,7 @@ Firmware binaries are published as GitHub Release assets.
 
 ### Option 0: Browser-based Install (Direct from Latest Release)
 
-1. Open: [Web Installer](../web-installer/index.html)
+1. Open: [Web Installer](https://nerdiyde.github.io/sunchronizer/web-installer/)
 2. Use a Chromium-based browser (Chrome, Edge, Brave, Opera)
 3. Select the detected `.factory.bin` from the latest release and click Install
 
